@@ -8,7 +8,7 @@ export default function Master({ children }) {
             <div className="drawer-content">
                 <Navbar />
 
-                <main className="p-4">{children}</main>
+                <main>{children}</main>
             </div>
         
             <Sidebar />
