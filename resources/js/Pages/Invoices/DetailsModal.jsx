@@ -1,4 +1,8 @@
-import { Building2, User, FileText, Calendar, DollarSign } from "lucide-react";
+import {
+    Building2,
+    FileText,
+    DollarSign,
+} from "lucide-react";
 
 export default function DetailsModal({
     selectedInvoice,
@@ -8,114 +12,84 @@ export default function DetailsModal({
 }) {
     return (
         <dialog open className="modal">
-            <div className="modal-box max-w-5xl bg-gradient-to-br from-base-100 to-base-200 shadow-2xl rounded-2xl p-6">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 mb-6 border-b-2 border-base-300">
-                    <div>
-                        <h2 className="text-2xl font-bold text-base-content">
-                            Invoice Details
-                        </h2>
-                        <p className="text-xs text-base-content/60 mt-1">
-                            Complete invoice information and history
-                        </p>
-                    </div>
-
-                    <div className="flex gap-4">
-                        <div className="bg-gradient-to-r from-gray-700 to-gray-900 flex flex-col gap-3 text-white p-4 rounded-xl">
-                            <p className="text-xs font-medium opacity-90 uppercase tracking-wider">
-                                Invoice
+            <div className="modal-box max-w-4xl p-0 rounded-2xl overflow-hidden shadow-xl">
+                
+                <div className="bg-gradient-to-br from-primary/10 to-base-200 p-8 border-b border-base-300">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                        <div>
+                            <h1 className="text-3xl font-bold tracking-wide">
+                                INVOICE DETAILS
+                            </h1>
+                            <p className="text-xs opacity-60 mt-1">
+                                Complete invoice information and history
                             </p>
-                            <h3 className="text-lg font-bold">
-                                #{selectedInvoice.invoice_number}
-                            </h3>
                         </div>
 
-                        <div className="card bg-base-100 shadow-md">
-                            <div className="card-body p-4">
-                                <p className="text-xs text-base-content/60 uppercase tracking-wider">
-                                    Created By / At
-                                </p>
-                                <p className="text-sm font-semibold text-base-content">
-                                    {selectedInvoice.creator.name}
-                                </p>
-                                <p className="text-xs font-semibold text-base-content">
-                                    {new Date(
-                                        selectedInvoice.created_at
-                                    ).toLocaleDateString("en-PH", {
-                                        month: "short",
-                                        day: "numeric",
-                                        year: "numeric",
-                                    })}
-                                </p>
-                            </div>
+                        <div className="text-right mt-4 sm:mt-0">
+                            <p className="text-xs opacity-60 uppercase">
+                                Invoice No.
+                            </p>
+                            <p className="font-bold text-lg">
+                                #{selectedInvoice.invoice_number}
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-4 mb-6">
-                    <div className="card bg-base-100 shadow-lg">
-                        <div className="card-body p-4">
-                            <div className="flex items-center gap-3 mb-2">
-                                <div className="bg-success/10 p-2 rounded-lg">
-                                    <DollarSign className="w-5 h-5 text-success" />
-                                </div>
-                                <p className="text-xs font-medium text-base-content/60 uppercase tracking-wider">
-                                    Amount
-                                </p>
-                            </div>
-                            <p className="text-xl font-bold text-success">
-                                ₱
-                                {parseFloat(
-                                    selectedInvoice.amount
-                                ).toLocaleString("en-PH", {
-                                    minimumFractionDigits: 2,
+                <div className="p-8 space-y-10">
+                    <div className="grid md:grid-cols-3 gap-6">
+                        <div>
+                            <p className="text-xs uppercase opacity-60 mb-1">
+                                Created By
+                            </p>
+                            <p className="font-semibold">
+                                {selectedInvoice.creator.name}
+                            </p>
+                            <p className="text-xs opacity-60">
+                                {new Date(
+                                    selectedInvoice.created_at
+                                ).toLocaleDateString("en-PH", {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
                                 })}
                             </p>
                         </div>
-                    </div>
 
-                    <div className="card bg-base-100 shadow-lg">
-                        <div className="card-body p-4">
-                            <div className="flex items-center gap-3 mb-2">
-                                <div className="bg-primary/10 p-2 rounded-lg">
-                                    <Building2 className="w-5 h-5 text-primary" />
-                                </div>
-                                <p className="text-xs font-medium text-base-content/60 uppercase tracking-wider">
-                                    Hospital
-                                </p>
-                            </div>
-                            <p className="text-base font-bold text-base-content">
-                                {hospitalName}
+                        <div>
+                            <p className="text-xs uppercase opacity-60 mb-1">
+                                Hospital
                             </p>
+                            <div className="flex items-center gap-2 font-semibold">
+                                <Building2 className="w-4 h-4 text-primary" />
+                                {hospitalName}
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="card bg-base-100 shadow-lg">
-                        <div className="card-body p-4">
-                            <p className="text-xs font-medium text-base-content/60 uppercase tracking-wider mb-2">
+                        <div>
+                            <p className="text-xs uppercase opacity-60 mb-1">
                                 Status
                             </p>
                             <span
-                                className={`badge badge-lg font-semibold w-fit ${
+                                className={`badge badge-lg font-semibold ${
                                     selectedInvoice.status === "Paid"
                                         ? "badge-success"
                                         : selectedInvoice.status === "Pending"
                                         ? "badge-warning"
-                                        : "badge-ghost"
+                                        : "badge-neutral"
                                 }`}
                             >
                                 {selectedInvoice.status}
                             </span>
                         </div>
                     </div>
-                </div>
 
-                <div className="grid md:grid-cols-4 gap-4 mb-6">
-                    <div className="card bg-base-100 shadow-md">
-                        <div className="card-body p-4">
-                            <p className="text-xs text-base-content/60 uppercase tracking-wider mb-1">
+                    <div className="grid md:grid-cols-3 gap-6">
+                        <div>
+                            <p className="text-xs uppercase opacity-60 mb-1">
                                 Transaction Date
                             </p>
-                            <p className="text-sm font-semibold text-base-content">
+                            <p className="font-semibold">
                                 {new Date(
                                     selectedInvoice.transaction_date
                                 ).toLocaleDateString("en-PH", {
@@ -125,56 +99,51 @@ export default function DetailsModal({
                                 })}
                             </p>
                         </div>
+
+                        <div>
+                            <p className="text-xs uppercase opacity-60 mb-1">
+                                Date Closed
+                            </p>
+                            <p className="font-semibold">
+                                {selectedInvoice.date_closed
+                                    ? new Date(
+                                          selectedInvoice.date_closed
+                                      ).toLocaleDateString("en-PH", {
+                                          month: "short",
+                                          day: "numeric",
+                                          year: "numeric",
+                                      })
+                                    : "—"}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className="text-xs uppercase opacity-60 mb-1">
+                                Amount
+                            </p>
+                            <div className="flex gap-2 items-center text-base font-medium">
+                                <DollarSign className="w-4 h-4 opacity-70" />
+                                ₱
+                                {parseFloat(
+                                    selectedInvoice.amount
+                                ).toLocaleString("en-PH", {
+                                    minimumFractionDigits: 2,
+                                })}
+                            </div>
+                        </div>
                     </div>
 
-                    {selectedInvoice.date_closed && (
-                        <div className="card bg-base-100 shadow-md">
-                            <div className="card-body p-4">
-                                <p className="text-xs text-base-content/60 uppercase tracking-wider mb-1">
-                                    Date Closed
-                                </p>
-                                <p className="text-sm font-semibold text-base-content">
-                                    {new Date(
-                                        selectedInvoice.date_closed
-                                    ).toLocaleDateString("en-PH", {
-                                        month: "short",
-                                        day: "numeric",
-                                        year: "numeric",
-                                    })}
-                                </p>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                <div className="card bg-base-100 shadow-lg">
-                    <div className="card-body p-5">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="bg-base-200 p-2 rounded-lg">
-                                <FileText className="w-4 h-4 text-base-content" />
-                            </div>
-                            <h4 className="card-title text-lg">
+                    <div>
+                        <div className="flex items-center gap-2 mb-4">
+                            <FileText className="w-5 h-5" />
+                            <h2 className="font-bold text-xl tracking-wide">
                                 Update History
-                            </h4>
-                            <div>
-                                <p className="text-xs text-base-content/60 uppercase tracking-wider mb-1">
-                                    Date Closed
-                                </p>
-                                <p className="text-sm font-semibold text-base-content">
-                                    {new Date(
-                                        selectedInvoice.date_closed
-                                    ).toLocaleDateString("en-PH", {
-                                        month: "short",
-                                        day: "numeric",
-                                        year: "numeric",
-                                    })}
-                                </p>
-                            </div>
+                            </h2>
                         </div>
 
-                        <div className="overflow-x-auto rounded-xl border border-base-200 bg-base-200/30">
-                            <table className="table w-full">
-                                <thead className="bg-base-200 text-base-content text-sm uppercase tracking-wide">
+                        <div className="overflow-x-auto rounded-xl border border-base-300 bg-base-100">
+                            <table className="table table-md">
+                                <thead className="bg-base-200 text-base-content/80 text-xs uppercase">
                                     <tr>
                                         <th>Updated At</th>
                                         <th>Updated By</th>
@@ -183,10 +152,14 @@ export default function DetailsModal({
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>
+                                        <td className="w-[150px]">
                                             {new Date(
                                                 selectedInvoice.updated_at
-                                            ).toLocaleDateString()}
+                                            ).toLocaleDateString("en-PH", {
+                                                month: "short",
+                                                day: "numeric",
+                                                year: "numeric",
+                                            })}
                                         </td>
                                         <td className="w-[200px]">
                                             {selectedInvoice.updater.name}
@@ -207,9 +180,7 @@ export default function DetailsModal({
                     setOpen(false);
                     setSelectedInvoice(null);
                 }}
-            >
-                <button>close</button>
-            </form>
+            />
         </dialog>
     );
 }
