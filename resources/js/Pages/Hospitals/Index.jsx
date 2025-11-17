@@ -36,7 +36,7 @@ export default function Index({ hospitals }) {
                     </table>
                 </div>
 
-                <div className="join flex justify-center mt-4">
+                <div className="join flex justify-end mt-4">
                     {hospitals.links.map((link, index) => {
                         const isPrevious = link.label
                             .toLowerCase()
@@ -52,8 +52,16 @@ export default function Index({ hospitals }) {
                                 onClick={() => link.url && router.get(link.url)}
                                 className={`
                                     join-item btn
-                                    ${link.active ? "bg-neutral-800 text-white" : ""}
-                                    ${!link.url ? "opacity-50 cursor-not-allowed" : ""}
+                                    ${
+                                        link.active
+                                            ? "bg-neutral-800 text-white"
+                                            : ""
+                                    }
+                                    ${
+                                        !link.url
+                                            ? "opacity-50 cursor-not-allowed"
+                                            : ""
+                                    }
                                 `}
                             >
                                 {isPrevious ? (
