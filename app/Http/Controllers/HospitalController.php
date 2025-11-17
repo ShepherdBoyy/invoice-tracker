@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreHospitalRequest;
+use App\Http\Requests\UpdateHospitalRequest;
 use App\Models\Hospital;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -12,17 +13,12 @@ class HospitalController extends Controller
     public function index()
     {
         $hospitals = Hospital::withCount("invoices")
-            ->orderBy("hospital_name")
+            ->orderBy("created_at", "desc")
             ->paginate(10);
 
         return Inertia::render("Hospitals/Index", [
             "hospitals" => $hospitals
         ]);
-    }
-
-    public function create()
-    {
-        return Inertia::render("Hospitals/Create");
     }
 
     public function store(StoreHospitalRequest $request)
@@ -42,20 +38,19 @@ class HospitalController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(UpdateHospitalRequest $request, string $id)
     {
-        //
-    }
+        $hospital = Hospital::findOrFail($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
+        if ($request->input("hospital_name") === $hospital->hospital_name) {
+            return back()->withErrors(["hospital_name" => "Update requires a different value"]);
+        }
+
+        $validated = $request->validated();
+
+        $hospital->update($validated);
+
+        return back()->with("success", true);
     }
 
     /**
