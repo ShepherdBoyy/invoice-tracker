@@ -18,6 +18,7 @@ class InvoiceController extends Controller
         $hospitalId = $request->query("hospital_id");
         $searchQuery = $request->query("search");
         $processingFilter = $request->query("processing_days") ?? "0-30 days";
+        $invoicesCount = $request->query("invoices_count");
 
         $invoices = Invoice::query()
             ->with(["hospital", "creator", "updater"])
@@ -44,7 +45,8 @@ class InvoiceController extends Controller
             "invoices" => $invoices,
             "hospital" => $hospitalId ? Hospital::find($hospitalId) : null,
             "searchQuery" => $searchQuery,
-            "processingFilter" => $processingFilter ?? "0-30 days"
+            "processingFilter" => $processingFilter ?? "0-30 days",
+            "invoicesCount" => $invoicesCount
         ]);
     }
 
