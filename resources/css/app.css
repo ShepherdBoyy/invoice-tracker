@@ -6,3 +6,22 @@
 @source "../../storage/framework/views/*.php";
 
 @plugin "daisyui";
+
+/* Custom font */
+@font-face {
+    font-family: "Poppins";
+    src: url("/fonts/Poppins-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Apply to the whole project */
+html,
+body {
+    font-family: "Poppins", sans-serif;
+}
+
+:root {
+    --font-family-sans: "Poppins", sans-serif;
+}
