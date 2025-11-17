@@ -9,7 +9,7 @@ export default function Sidebar() {
                 aria-label="close sidebar"
                 className="drawer-overlay"
             ></label>
-            <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
+            <div className="flex min-h-full flex-col items-start bg-base-100 is-drawer-close:w-14 is-drawer-open:w-64">
                 <ul className="menu w-full grow">
                     <li>
                         <Link
@@ -18,9 +18,9 @@ export default function Sidebar() {
                             data-tip="Hospitals"
                         >
                             <Hospital className="my-1.5 inline-block size-4" />
-                                <span className="is-drawer-close:hidden">
-                                    Hospitals
-                                </span>
+                            <span className="is-drawer-close:hidden">
+                                Hospitals
+                            </span>
                         </Link>
                     </li>
 
