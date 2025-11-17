@@ -1,11 +1,17 @@
 import { router } from "@inertiajs/react";
 import Master from "../components/Master";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Eye, SquarePen, Plus } from "lucide-react";
 import { useState } from "react";
 import Create from "./Create";
+import Edit from "./Edit";
+import Pagination from "./elements/Pagination";
 
 export default function Index({ hospitals }) {
-    const [open, setOpen] = useState(false);
+    const [openCreateModal, setOpenCreateModal] = useState(false);
+    const [openEditModal, setOpenEditModal] = useState(false);
+    const [hospital, setHospital] = useState("");
+    const [showToast, setShowToast] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
 
     return (
         <Master>
@@ -15,7 +21,7 @@ export default function Index({ hospitals }) {
                         <span className="text-xl">All Hospitals</span>
                         <button
                             className="btn btn-neutral rounded-xl text-sm"
-                            onClick={() => setOpen(true)}
+                            onClick={() => setOpenCreateModal(true)}
                         >
                             <Plus size={18} />
                             Add Hospital
@@ -29,78 +35,72 @@ export default function Index({ hospitals }) {
                                     <th>#</th>
                                     <th>Hospital Name</th>
                                     <th>Number of Invoices</th>
+                                    <th className="text-right">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {hospitals.data.map((hospital, index) => (
                                     <tr
                                         key={hospital.id}
-                                        className="hover:bg-base-300 cursor-pointer"
-                                        onClick={() =>
-                                            router.get(`/invoices`, {
-                                                hospital_id: hospital.id,
-                                                processing_days: "0-30 days",
-                                                invoices_count:
-                                                    hospital.invoices_count,
-                                            })
-                                        }
+                                        className="hover:bg-base-300"
                                     >
                                         <td>{index + 1}</td>
                                         <td>{hospital.hospital_name}</td>
                                         <td>{hospital.invoices_count}</td>
+                                        <td className="flex gap-3 justify-end">
+                                            <Eye
+                                                onClick={() =>
+                                                    router.get(`/invoices`, {
+                                                        hospital_id:
+                                                            hospital.id,
+                                                        processing_days:
+                                                            "30 days",
+                                                        invoices_count:
+                                                            hospital.invoices_count
+                                                    })
+                                                }
+                                                className="cursor-pointer"
+                                            />
+                                            <SquarePen
+                                                className="cursor-pointer"
+                                                onClick={() => {
+                                                    setOpenEditModal(true);
+                                                    setHospital(hospital);
+                                                }}
+                                            />
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
 
-                    <div className="join flex justify-end mt-4">
-                        {hospitals.links.map((link, index) => {
-                            const isPrevious = link.label
-                                .toLowerCase()
-                                .includes("previous");
-                            const isNext = link.label
-                                .toLowerCase()
-                                .includes("next");
+                    <Pagination hospitals={hospitals} />
 
-                            return (
-                                <button
-                                    key={index}
-                                    disabled={!link.url}
-                                    onClick={() =>
-                                        link.url && router.get(link.url)
-                                    }
-                                    className={`
-                                    join-item btn
-                                    ${
-                                        link.active
-                                            ? "bg-neutral-800 text-white"
-                                            : ""
-                                    }
-                                    ${
-                                        !link.url
-                                            ? "opacity-50 cursor-not-allowed"
-                                            : ""
-                                    }
-                                `}
-                                >
-                                    {isPrevious ? (
-                                        <ChevronLeft size={18} />
-                                    ) : isNext ? (
-                                        <ChevronRight size={18} />
-                                    ) : (
-                                        <span
-                                            dangerouslySetInnerHTML={{
-                                                __html: link.label,
-                                            }}
-                                        />
-                                    )}
-                                </button>
-                            );
-                        })}
-                    </div>
+                    {openCreateModal && (
+                        <Create
+                            setOpenCreateModal={setOpenCreateModal}
+                            setShowToast={setShowToast}
+                            setSuccessMessage={setSuccessMessage}
+                        />
+                    )}
 
-                    {open && <Create setOpen={setOpen} />}
+                    {openEditModal && (
+                        <Edit
+                            setOpenEditModal={setOpenEditModal}
+                            hospital={hospital}
+                            setShowToast={setShowToast}
+                            setSuccessMessage={setSuccessMessage}
+                        />
+                    )}
+
+                    {showToast && (
+                        <div className="toast toast-top toast-center">
+                            <div className="alert alert-success">
+                                <span>{successMessage}</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </Master>
