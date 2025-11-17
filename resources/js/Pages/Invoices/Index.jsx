@@ -10,6 +10,7 @@ export default function Index({
     hospital,
     searchQuery,
     processingFilter,
+    invoicesCount,
 }) {
     const [open, setOpen] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
@@ -29,7 +30,7 @@ export default function Index({
     const showEmptyState = !hospital && !searchQuery;
 
     const processingDays = [
-        { label: "0-30 days" },
+        { label: "30 days" },
         { label: "31-60 days" },
         { label: "61-90 days" },
         { label: "91-over" },
@@ -37,7 +38,7 @@ export default function Index({
 
     return (
         <Master>
-            <div className="p-6 bg-base-200">
+            <div className="px-10 py-8 bg-base-200 min-h-screen">
                 {showEmptyState ? (
                     <div className="flex flex-col justify-center items-center h-150 py-12">
                         <UserSearch size={80} />
@@ -48,25 +49,28 @@ export default function Index({
                 ) : (
                     <div className="p-6 bg-white rounded-xl">
                         <div className="flex items-center justify-between mb-4 gap-2 ">
-                            <div className="flex">
+                            <div className="flex items-center gap-x-3">
                                 <h1 className="flex-1 text-3xl">
                                     {hospital
-                                        ? `${hospital.hospital_name} Invoices`
+                                        ? `${hospital.hospital_name} `
                                         : searchQuery && invoices.length > 0
                                         ? `${invoices[0].hospital?.hospital_name} Invoices`
                                         : searchQuery
                                         ? "No invoices found"
                                         : ""}
                                 </h1>
+                                <div className="badge badge-sm badge-primary">
+                                    {invoicesCount} invoices
+                                </div>
                             </div>
-                            <div className="flex items-center gap-x-2">
-                                <fieldset className="fieldset w-36">
+                            <div className="flex items-center gap-x-2 ">
+                                <fieldset className="fieldset w-36 ">
                                     <select
                                         defaultValue="Filter By Age"
-                                        className="select"
+                                        className="select rounded-xl"
                                     >
                                         <option disabled={true}>
-                                            Filter By Age
+                                            Filter By Days
                                         </option>
                                         {processingDays.map((day, index) => (
                                             <>
@@ -86,6 +90,8 @@ export default function Index({
                                                                     undefined,
                                                                 processing_days:
                                                                     day.label,
+                                                                invoices_count:
+                                                                    invoicesCount,
                                                             },
                                                             {
                                                                 preserveState: true,
@@ -144,7 +150,7 @@ export default function Index({
                                             </td>
                                             <td className="text-left">
                                                 <span
-                                                    className={`inline-block px-2.5 py-1 text-sm font-medium rounded-full ${
+                                                    className={`badge badge-sm  text-sm font-medium rounded-full ${
                                                         invoice.status.toLowerCase() ===
                                                         "closed"
                                                             ? "bg-emerald-100 text-emerald-700"
