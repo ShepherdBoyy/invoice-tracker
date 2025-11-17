@@ -2,7 +2,7 @@ import { ArrowRightLeft } from "lucide-react";
 
 export default function Navbar() {
     return (
-        <div className="navbar py-6 bg-base-100 shadow-sm">
+        <div className="navbar py-3 bg-base-200 ">
             <div className="flex-1">
                 <label
                     htmlFor="my-drawer-4"
