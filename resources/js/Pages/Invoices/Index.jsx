@@ -5,7 +5,7 @@ import SearchIt from "../components/SearchIt";
 import { router } from "@inertiajs/react";
 import { UserSearch } from "lucide-react";
 
-export default function Invoices({
+export default function Index({
     invoices,
     hospital,
     searchQuery,
@@ -15,8 +15,6 @@ export default function Invoices({
     const [selectedInvoice, setSelectedInvoice] = useState(null);
     const [search, setSearch] = useState(searchQuery || "");
     const [active, setActive] = useState(processingFilter);
-
-    console.log(invoices);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -91,9 +89,12 @@ export default function Invoices({
                             <h1 className="flex-1 text-center">
                                 {hospital
                                     ? `${hospital.hospital_name} Invoices`
-                                    : searchQuery
+                                    : searchQuery && invoices.length > 0        
                                     ? `${invoices[0].hospital?.hospital_name} Invoices`
-                                    : ""}
+                                    : searchQuery
+                                    ? "No invoices found"
+                                    : ""
+                                }
                             </h1>
 
                             <div className="flex-shrink-0 w-[120px]"></div>
@@ -135,10 +136,10 @@ export default function Invoices({
                                                 <span
                                                     className={`inline-block px-2.5 py-1 text-sm font-medium rounded-full ${
                                                         invoice.status.toLowerCase() ===
-                                                        "paid"
+                                                        "closed"
                                                             ? "bg-emerald-100 text-emerald-700"
                                                             : invoice.status.toLowerCase() ===
-                                                              "pending"
+                                                              "open"
                                                             ? "bg-yellow-100 text-yellow-700"
                                                             : invoice.status.toLowerCase() ===
                                                               "overdue"

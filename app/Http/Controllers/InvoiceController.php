@@ -17,7 +17,7 @@ class InvoiceController extends Controller
     {
         $hospitalId = $request->query("hospital_id");
         $searchQuery = $request->query("search");
-        $processingFilter = $request->query("processing_days");
+        $processingFilter = $request->query("processing_days") ?? "0-30 days";
 
         $invoices = Invoice::query()
             ->with(["hospital", "creator", "updater"])
@@ -38,11 +38,9 @@ class InvoiceController extends Controller
             ->orderBy("transaction_date", "desc")
             ->get();
         
-        if ($processingFilter) {
-            $invoices = $this->filterByProcessingDays($invoices, $processingFilter);
-        }
+        $invoices = $this->filterByProcessingDays($invoices, $processingFilter);
 
-        return Inertia::render("Invoices/Invoices", [
+        return Inertia::render("Invoices/Index", [
             "invoices" => $invoices,
             "hospital" => $hospitalId ? Hospital::find($hospitalId) : null,
             "searchQuery" => $searchQuery,
