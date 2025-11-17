@@ -1,7 +1,4 @@
-import {
-    Building2,
-    FileText,
-} from "lucide-react";
+import { Building2, FileText } from "lucide-react";
 
 export default function DetailsModal({
     selectedInvoice,
@@ -12,13 +9,10 @@ export default function DetailsModal({
     return (
         <dialog open className="modal">
             <div className="modal-box max-w-4xl p-0 rounded-2xl overflow-hidden shadow-xl">
-                
-                <div className="bg-gradient-to-br from-primary/10 to-base-200 p-8 border-b border-base-300">
+                <div className="bg-linear-to-br from-primary/10 to-base-200 p-8 border-b border-base-300">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                         <div>
-                            <h1 className="text-3xl font-bold tracking-wide">
-                                INVOICE DETAILS
-                            </h1>
+                            <h1 className="text-3xl">Invoice Details</h1>
                             <p className="text-xs opacity-60 mt-1">
                                 Complete invoice information and history
                             </p>
@@ -28,7 +22,7 @@ export default function DetailsModal({
                             <p className="text-xs opacity-60 uppercase">
                                 Invoice No.
                             </p>
-                            <p className="font-bold text-lg">
+                            <p className="font-semi-bold text-lg">
                                 {selectedInvoice.invoice_number}
                             </p>
                         </div>
@@ -36,15 +30,21 @@ export default function DetailsModal({
                 </div>
 
                 <div className="p-8 space-y-10">
-                    <div className="grid md:grid-cols-3 gap-6">
+                    <div className="grid md:grid-cols-4 gap-6">
                         <div>
-                            <p className="text-xs uppercase opacity-60 mb-1">
-                                Created By / At
+                            <p className="text-sm  opacity-60 mb-1">
+                                Issued by
                             </p>
-                            <p className="font-semibold">
+                            <p className="text-md">
                                 {selectedInvoice.creator.name}
                             </p>
-                            <p className="text-xs opacity-60">
+                        </div>
+
+                        <div>
+                            <p className="text-sm  opacity-60 mb-1">
+                                Created At
+                            </p>
+                            <p className="">
                                 {new Date(
                                     selectedInvoice.created_at
                                 ).toLocaleDateString("en-PH", {
@@ -56,25 +56,23 @@ export default function DetailsModal({
                         </div>
 
                         <div>
-                            <p className="text-xs uppercase opacity-60 mb-1">
-                                Hospital
-                            </p>
-                            <div className="flex items-center gap-2 font-semibold">
-                                <Building2 className="w-4 h-4 text-primary" />
+                            <p className="text-sm opacity-60 mb-1">Hospital</p>
+                            <div className="flex items-center gap-2 text-md">
+                                {/* <Building2 className="w-4 h-4 text-primary" /> */}
                                 {hospitalName}
                             </div>
                         </div>
 
                         <div>
-                            <p className="text-xs uppercase opacity-60 mb-1">
-                                Status
-                            </p>
+                            <p className="text-sm  opacity-60 mb-1">Status</p>
                             <span
-                                className={`badge badge-lg font-semibold ${
-                                    selectedInvoice.status === "Paid"
-                                        ? "badge-success"
-                                        : selectedInvoice.status === "Pending"
-                                        ? "badge-warning"
+                                className={`badge badge-lg   ${
+                                    selectedInvoice.status === "closed"
+                                        ? "bg-green-100 text-green-700"
+                                        : selectedInvoice.status === "open"
+                                        ? "bg-yellow-100 text-yellow-700"
+                                        : selectedInvoice.status === "overdue"
+                                        ? "bg-red-100 text-red-700"
                                         : "badge-neutral"
                                 }`}
                             >
@@ -83,12 +81,12 @@ export default function DetailsModal({
                         </div>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-6">
+                    <div className="grid md:grid-cols-4 gap-6">
                         <div>
-                            <p className="text-xs uppercase opacity-60 mb-1">
+                            <p className="text-sm   opacity-60 mb-1">
                                 Transaction Date
                             </p>
-                            <p className="font-semibold">
+                            <p className="text-md">
                                 {new Date(
                                     selectedInvoice.transaction_date
                                 ).toLocaleDateString("en-PH", {
@@ -100,7 +98,7 @@ export default function DetailsModal({
                         </div>
 
                         <div>
-                            <p className="text-xs uppercase opacity-60 mb-1">
+                            <p className="text-sm   opacity-60 mb-1">
                                 Date Closed
                             </p>
                             <p className="font-semibold">
@@ -117,9 +115,7 @@ export default function DetailsModal({
                         </div>
 
                         <div>
-                            <p className="text-xs uppercase opacity-60 mb-1">
-                                Amount
-                            </p>
+                            <p className="text-sm   opacity-60 mb-1">Amount</p>
                             <div className="flex gap-2 items-center text-base font-medium">
                                 ₱
                                 {parseFloat(
@@ -134,9 +130,7 @@ export default function DetailsModal({
                     <div>
                         <div className="flex items-center gap-2 mb-4">
                             <FileText className="w-5 h-5" />
-                            <h2 className="font-bold text-xl tracking-wide">
-                                Update History
-                            </h2>
+                            <h2 className="text-xl">Update History</h2>
                         </div>
 
                         <div className="overflow-x-auto rounded-xl border border-base-300 bg-base-100">
