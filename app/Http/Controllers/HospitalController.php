@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreHospitalRequest;
 use App\Http\Requests\UpdateHospitalRequest;
 use App\Models\Hospital;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class HospitalController extends Controller
@@ -33,9 +35,41 @@ class HospitalController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request)
     {
-        //
+        $hospitalId = $request->hospital_id;
+        $searchQuery = $request->query("search");
+        $processingFilter = $request->processing_days;
+        $invoicesCount = $request->invoices_count;
+
+        $invoices = Invoice::query()
+            ->with(["hospital", "creator", "updater"])
+            ->select("*", DB::raw("
+                DATEDIFF(
+                    IFNULL(date_closed, CURDATE()),
+                    transaction_date
+                ) AS processing_days
+            "))
+            ->when($hospitalId, function ($query) use ($hospitalId) {
+                $query->where("hospital_id", $hospitalId);
+            })
+            ->when($searchQuery, function ($query) use ($searchQuery) {
+                $query->where("invoice_number", "like", "%{$searchQuery}%");
+            })
+            ->orderBy("transaction_date", "desc")
+            ->get();
+        
+        if (!$searchQuery) {
+            $invoices = $this->filterByProcessingDays($invoices, $processingFilter);
+        }
+        
+        return Inertia::render("Hospitals/Show", [
+            "invoices" => $invoices,
+            "hospital" => $hospitalId ? Hospital::find($hospitalId) : null,
+            "searchQuery" => $searchQuery,
+            "processingFilter" => $processingFilter ?? "30-days",
+            "invoicesCount" => $invoicesCount
+        ]);
     }
 
     public function update(UpdateHospitalRequest $request, string $id)
@@ -58,6 +92,24 @@ class HospitalController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $hospital = Hospital::findOrFail($id);
+        $hospital->delete();
+
+        return back()->with("success", true);
+    }
+
+    private function filterByProcessingDays($invoices, $range)
+    {
+        return $invoices->filter(function ($invoice) use ($range) {
+            $days = $invoice->processing_days;
+
+            return match($range) {
+                "30-days" => $days >= 0 && $days <= 30,
+                "31-60-days" => $days >= 31 && $days <= 60,
+                "61-90-days" => $days >= 61 && $days <= 90,
+                "91-over" => $days >= 91,
+                default => true
+            };
+        })->values();
     }
 }
