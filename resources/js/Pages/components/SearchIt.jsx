@@ -7,7 +7,7 @@ export default function SearchIt({ search, setSearch }) {
                 type="search"
                 className=""
                 required
-                placeholder="Search hospital name"
+                placeholder="Search Invoice No."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
             />
