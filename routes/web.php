@@ -7,6 +7,8 @@ use Inertia\Inertia;
 
 Route::redirect('/', '/hospitals');
 
+Route::get('/invoice_page', [InvoiceController::class, 'invoicePage']);
+    
 Route::prefix("hospitals")->group(function () {
     Route::get("/", [HospitalController::class, "index"]);
     Route::post("/create", [HospitalController::class, "store"]);
@@ -16,3 +18,4 @@ Route::prefix("hospitals")->group(function () {
 Route::prefix("invoices")->group(function () {
     Route::get("/", [InvoiceController::class, "index"]);
 });
+

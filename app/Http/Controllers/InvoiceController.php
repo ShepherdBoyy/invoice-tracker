@@ -40,7 +40,7 @@ class InvoiceController extends Controller
             ->get();
         
         $invoices = $this->filterByProcessingDays($invoices, $processingFilter);
-
+        
         return Inertia::render("Invoices/Index", [
             "invoices" => $invoices,
             "hospital" => $hospitalId ? Hospital::find($hospitalId) : null,
@@ -48,6 +48,12 @@ class InvoiceController extends Controller
             "processingFilter" => $processingFilter ?? "0-30 days",
             "invoicesCount" => $invoicesCount
         ]);
+        
+    }
+
+    public function invoicePage()
+    {
+        return Inertia::render('Invoices/InvoicePage'); // include folder name!
     }
 
     /**
