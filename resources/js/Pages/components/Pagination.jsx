@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function Pagination({ data }) {
     return (
-        <div className="join flex justify-end mt-4">
+        <div className="join flex justify-end mt-4 gap-2">
             {data.links.map((link, index) => {
                 const isPrevious = link.label
                     .toLowerCase()
@@ -23,7 +23,7 @@ export default function Pagination({ data }) {
                             )
                         }
                         className={`
-                                    join-item btn
+                                    join-item btn rounded-xl
                                     ${
                                         link.active
                                             ? "bg-neutral-800 text-white"
