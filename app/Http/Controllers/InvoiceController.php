@@ -18,7 +18,9 @@ class InvoiceController extends Controller
         $processingFilter = $request->processing_days;
 
         $invoices = Invoice::query()
-            ->with(["hospital", "creator", "updater"])
+            ->with(["hospital" => function ($query) {
+                $query->withCount("invoices");
+            }, "creator", "updater"])
             ->select("*", DB::raw("
                 DATEDIFF(
                     IFNULL(date_closed, CURDATE()),

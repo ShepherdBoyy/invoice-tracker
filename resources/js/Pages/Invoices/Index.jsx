@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import Master from "../components/Master";
-import DetailsModal from "./DetailsModal";
 import SearchIt from "../components/SearchIt";
 import { Link, router } from "@inertiajs/react";
-import Pagination from "../components/Pagination"
+import Pagination from "../components/Pagination";
 import useDebounce from "../hooks/useDebounce";
 
 export default function Index({ invoices, searchQuery, processingFilter }) {
@@ -18,9 +17,9 @@ export default function Index({ invoices, searchQuery, processingFilter }) {
                 `/invoices/${processingFilter}`,
                 { search: debouncedSearch },
                 { preserveState: true, replace: true }
-            )
+            );
         }
-    }, [debouncedSearch])
+    }, [debouncedSearch]);
 
     const processingDays = [
         { label: "30 days" },
@@ -51,7 +50,11 @@ export default function Index({ invoices, searchQuery, processingFilter }) {
                                             key={index}
                                             onClick={() => {
                                                 setActive(day.label);
-                                                router.get(`/invoices/${day.label.replace(/ /g, "-")}`,
+                                                router.get(
+                                                    `/invoices/${day.label.replace(
+                                                        / /g,
+                                                        "-"
+                                                    )}`,
                                                     {},
                                                     { preserveState: true }
                                                 );
@@ -76,8 +79,8 @@ export default function Index({ invoices, searchQuery, processingFilter }) {
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Hospital Name</th>
                                     <th>Invoice No.</th>
+                                    <th>Hospital Name</th>
                                     <th>Status</th>
                                     <th>Transaction Date</th>
                                 </tr>
@@ -85,14 +88,17 @@ export default function Index({ invoices, searchQuery, processingFilter }) {
 
                             <tbody>
                                 {invoices.data.map((invoice, index) => (
-                                    <tr key={invoice.id}> 
+                                    <tr key={invoice.id}>
                                         <td>{index + 1}</td>
+                                        <td>{invoice.invoice_number}</td>
                                         <td>
-                                            <Link href="/hospitals/invoices">
+                                            <Link
+                                                href={`/hospitals/invoices/${invoice.hospital.id}/all/${invoice.hospital.invoices_count}`}
+                                                className="hover:underline"
+                                            >
                                                 {invoice.hospital.hospital_name}
                                             </Link>
                                         </td>
-                                        <td>{invoice.invoice_number}</td>
                                         <td className="text-left">
                                             <span
                                                 className={`badge badge-md text-sm rounded-full ${
