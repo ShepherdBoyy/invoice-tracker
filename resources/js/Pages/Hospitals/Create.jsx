@@ -1,7 +1,11 @@
 import { Form } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Create({ setOpenCreateModal, setShowToast, setSuccessMessage }) {
+export default function Create({
+    setOpenCreateModal,
+    setShowToast,
+    setSuccessMessage,
+}) {
     const [error, setError] = useState("");
     const [hospitalName, setHospitalName] = useState("");
 
@@ -21,7 +25,7 @@ export default function Create({ setOpenCreateModal, setShowToast, setSuccessMes
                         setOpenCreateModal(false);
                         setShowToast(true);
                         setTimeout(() => setShowToast(false), 3000);
-                        setSuccessMessage(`${hospitalName} added successfully`)
+                        setSuccessMessage(`${hospitalName} added successfully`);
                     }}
                 >
                     <div className="flex flex-col gap-1 mt-8">
@@ -48,7 +52,7 @@ export default function Create({ setOpenCreateModal, setShowToast, setSuccessMes
                     <div className="flex justify-end mt-6">
                         <button
                             type="submit"
-                            className="btn bg-gray-800 text-white rounded-xl w-30"
+                            className="btn bg-gray-800 text-white rounded-xl "
                         >
                             Confirm
                         </button>
