@@ -39,7 +39,7 @@ export default function Show({
 
     return (
         <Master>
-            <div className="px-10 py-8 bg-base-200 min-h-screen">
+            <div className=" bg-base-200 ">
                 <div className="p-6 bg-white rounded-xl shadow-lg">
                     <div className="flex items-center justify-between mb-4 gap-2 ">
                         <div className="flex items-center gap-x-3">
@@ -66,7 +66,13 @@ export default function Show({
                                             key={index}
                                             onClick={() => {
                                                 setActive(day.label);
-                                                router.get(`/hospitals/invoices/${hospital.id}/${day.label.replace(/ /g, "-")}/${invoicesCount}`,
+                                                router.get(
+                                                    `/hospitals/invoices/${
+                                                        hospital.id
+                                                    }/${day.label.replace(
+                                                        / /g,
+                                                        "-"
+                                                    )}/${invoicesCount}`,
                                                     {},
                                                     { preserveState: true }
                                                 );
