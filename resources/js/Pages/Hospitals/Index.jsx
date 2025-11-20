@@ -1,10 +1,10 @@
 import { router } from "@inertiajs/react";
 import Master from "../components/Master";
-import { Eye, SquarePen, Plus, Trash2 } from "lucide-react";
+import { Eye, SquarePen, Plus, Trash2, Pencil } from "lucide-react";
 import { useState } from "react";
 import Create from "./Create";
 import Edit from "./Edit";
-import Pagination from "../components/Pagination"
+import Pagination from "../components/Pagination";
 import Destroy from "../components/Destroy";
 
 export default function Index({ hospitals }) {
@@ -17,20 +17,26 @@ export default function Index({ hospitals }) {
 
     return (
         <Master>
-            <div className="px-10 p-8 bg-base-200 min-h-screen">
-                <div className="p-6 bg-white rounded-xl shadow-lg">
+            <div className=" bg-base-200 ">
+                <div className="p-6">
+                    <span className="text-2xl">Hospitals</span>
+                </div>
+                <div className="p-6 bg-white rounded-xl shadow-lg ">
                     <div className="flex items-center justify-between mb-4">
-                        <span className="text-2xl">All Hospitals</span>
+                        <span className="text-xl">
+                            List of Hospitals with their invoices
+                        </span>
+
                         <button
-                            className="btn bg-gray-800 text-white rounded-xl"
+                            className="btn btn-primary rounded-xl "
                             onClick={() => setOpenCreateModal(true)}
                         >
-                            <Plus size={18} />
                             Add Hospital
+                            <Plus size={16} />
                         </button>
                     </div>
 
-                    <div className="rounded-box border border-base-content/5 bg-base-100 ">
+                    <div className="rounded-box border border-base-content/5 bg-base-100 pt-5">
                         <table className="table w-full">
                             <thead>
                                 <tr>
@@ -50,14 +56,17 @@ export default function Index({ hospitals }) {
                                         <td>{hospital.hospital_name}</td>
                                         <td>{hospital.invoices_count}</td>
                                         <td>
-                                            <div className="flex gap-3 justify-end">
+                                            <div className="flex gap-3 items-center justify-end">
                                                 <div
                                                     className="tooltip"
                                                     data-tip="View"
                                                 >
                                                     <Eye
+                                                        size={18}
                                                         onClick={() =>
-                                                            router.get(`/hospitals/invoices/${hospital.id}/all/${hospital.invoices_count}`)
+                                                            router.get(
+                                                                `/hospitals/invoices/${hospital.id}/all/${hospital.invoices_count}`
+                                                            )
                                                         }
                                                         className="cursor-pointer"
                                                     />
@@ -66,11 +75,16 @@ export default function Index({ hospitals }) {
                                                     className="tooltip"
                                                     data-tip="Edit"
                                                 >
-                                                    <SquarePen
+                                                    <Pencil
+                                                        size={18}
                                                         className="cursor-pointer"
                                                         onClick={() => {
-                                                            setOpenEditModal(true);
-                                                            setHospital(hospital);
+                                                            setOpenEditModal(
+                                                                true
+                                                            );
+                                                            setHospital(
+                                                                hospital
+                                                            );
                                                         }}
                                                     />
                                                 </div>
@@ -79,10 +93,15 @@ export default function Index({ hospitals }) {
                                                     data-tip="Delete"
                                                 >
                                                     <Trash2
+                                                        size={18}
                                                         className="cursor-pointer"
                                                         onClick={() => {
-                                                            setOpenDeleteModal(true);
-                                                            setHospital(hospital);
+                                                            setOpenDeleteModal(
+                                                                true
+                                                            );
+                                                            setHospital(
+                                                                hospital
+                                                            );
                                                         }}
                                                     />
                                                 </div>
@@ -112,7 +131,7 @@ export default function Index({ hospitals }) {
                             setSuccessMessage={setSuccessMessage}
                         />
                     )}
-                    
+
                     {openDeleteModal && (
                         <Destroy
                             setOpenDeleteModal={setOpenDeleteModal}
