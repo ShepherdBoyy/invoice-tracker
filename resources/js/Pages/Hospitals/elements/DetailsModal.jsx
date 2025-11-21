@@ -38,6 +38,7 @@ export default function DetailsModal({
                             <p className="text-md">
                                 {selectedInvoice.creator.name}
                             </p>
+                            <p className="text-xs">{selectedInvoice.creator.role}</p>
                         </div>
 
                         <div>
@@ -154,9 +155,9 @@ export default function DetailsModal({
                                             })}
                                         </td>
                                         <td className="w-[200px]">
-                                            {selectedInvoice.updater.name}
+                                            {selectedInvoice.updater?.name || selectedInvoice.creator.name}
                                         </td>
-                                        <td>{selectedInvoice.description}</td>
+                                        <td>{selectedInvoice.description || "Invoice has been created"}</td>
                                     </tr>
                                 </tbody>
                             </table>

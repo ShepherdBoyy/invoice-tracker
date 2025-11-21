@@ -5,10 +5,12 @@ export default function CreateInvoiceModal({
     setShowToast,
     setSuccessMessage,
     setOpenCreateInvoiceModal,
-    hospitalId
+    hospitalId,
 }) {
     const [error, setError] = useState("");
     const [invoiceNumber, setInvoiceNumber] = useState("");
+
+    console.log(error)
 
     return (
         <dialog open className="modal">
@@ -21,13 +23,17 @@ export default function CreateInvoiceModal({
                     transform={(data) => ({
                         ...data,
                         hospital_id: hospitalId,
-                        created_by: 2
                     })}
                     onSuccess={() => {
                         setOpenCreateInvoiceModal(false);
                         setShowToast(true);
-                        setSuccessMessage(`${invoiceNumber} added successfully`);
+                        setSuccessMessage(
+                            `${invoiceNumber} added successfully`
+                        );
                         setTimeout(() => setShowToast(false), 3000);
+                    }}
+                    onError={(error) => {
+                        setError(error);
                     }}
                 >
                     <div className="flex flex-col gap-1 mt-8">
@@ -35,11 +41,11 @@ export default function CreateInvoiceModal({
                             <label htmlFor="invoice_number" className="text-md">
                                 Invoice No.
                             </label>
-                            {/* {error && (
-                                    <span className="text-red-500 text-sm">
-                                        {error}
-                                    </span>
-                                )} */}
+                            {error.invoice_number && (
+                                <span className="text-red-500 text-sm">
+                                    {error.invoice_number}
+                                </span>
+                            )}
                         </div>
                         <input
                             type="text"
@@ -57,11 +63,11 @@ export default function CreateInvoiceModal({
                             <label htmlFor="amount" className="text-md">
                                 Amount
                             </label>
-                            {/* {error && (
-                                    <span className="text-red-500 text-sm">
-                                        {error}
-                                    </span>
-                                )} */}
+                            {error.amount && (
+                                <span className="text-red-500 text-sm">
+                                    {error.amount}
+                                </span>
+                            )}
                         </div>
                         <input
                             type="number"
@@ -74,9 +80,16 @@ export default function CreateInvoiceModal({
                     </div>
 
                     <div className="flex flex-col gap-1 mt-8">
-                        <label htmlFor="status" className="text-md">
-                            Status
-                        </label>
+                        <div className="flex justify-between">
+                            <label htmlFor="status" className="text-md">
+                                Status
+                            </label>
+                            {error.status && (
+                                <span className="text-red-500 text-sm">
+                                    {error.status}
+                                </span>
+                            )}
+                        </div>
                         <fieldset className="fieldset">
                             <select
                                 className="select w-full"
@@ -101,11 +114,11 @@ export default function CreateInvoiceModal({
                             >
                                 Transaction Date
                             </label>
-                            {/* {error && (
-                                    <span className="text-red-500 text-sm">
-                                        {error}
-                                    </span>
-                                )} */}
+                            {error.transaction_date && (
+                                <span className="text-red-500 text-sm">
+                                    {error.transaction_date}
+                                </span>
+                            )}
                         </div>
                         <input
                             type="date"
