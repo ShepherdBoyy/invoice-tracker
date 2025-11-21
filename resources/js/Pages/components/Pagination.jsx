@@ -23,7 +23,7 @@ export default function Pagination({ data }) {
                             )
                         }
                         className={`
-                                    join-item btn rounded-xl
+                                    join-item btn btn-sm rounded-xl
                                     ${
                                         link.active
                                             ? "bg-neutral-800 text-white"
