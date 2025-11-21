@@ -5,7 +5,7 @@ import { router } from "@inertiajs/react";
 import DetailsModal from "./elements/DetailsModal";
 import useDebounce from "../hooks/useDebounce";
 import Pagination from "../components/Pagination";
-import { Plus } from "lucide-react";
+import { Eye, Pencil, Plus, Trash2 } from "lucide-react";
 import CreateInvoiceModal from "./elements/CreateInvoiceModal";
 
 export default function Show({
@@ -13,7 +13,6 @@ export default function Show({
     hospital,
     searchQuery,
     processingFilter,
-    invoicesCount,
 }) {
     const [open, setOpen] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
@@ -22,13 +21,16 @@ export default function Show({
     const [openCreateInvoiceModal, setOpenCreateInvoiceModal] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
+    const [isDeleteMode, setIsDeleteMode] = useState(false);
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [error, setError] = useState("");
 
     const debouncedSearch = useDebounce(search, 300);
 
     useEffect(() => {
         if (debouncedSearch.trim() !== "") {
             router.get(
-                `/hospitals/invoices/${hospital.id}/${processingFilter}/${invoicesCount}`,
+                `/hospitals/${hospital.id}/invoices/${processingFilter}`,
                 { search: debouncedSearch },
                 { preserveState: true, replace: true }
             );
@@ -49,13 +51,12 @@ export default function Show({
                     <div className="flex items-center justify-between mb-4 gap-2 ">
                         <div className="flex items-center gap-x-3">
                             <h1 className="flex-1 text-3xl">
-                                {hospital ? `${hospital.hospital_name}` : ""}
+                                {hospital.hospital_name}
                             </h1>
-                            {invoicesCount && (
-                                <div className="badge badge-sm badge-primary">
-                                    {invoicesCount} invoices
-                                </div>
-                            )}
+                            <div className="badge badge-sm badge-primary">
+                                {hospital.invoices_count}{" "}
+                                invoices
+                            </div>
                         </div>
                         <div className="flex items-center gap-x-2">
                             <button
@@ -66,6 +67,15 @@ export default function Show({
                             >
                                 Add Invoice
                                 <Plus size={16} />
+                            </button>
+                            <button
+                                className="btn btn-primary rounded-xl"
+                                onClick={() => {
+                                    setIsDeleteMode(true);
+                                    setSelectedIds([]);
+                                }}
+                            >
+                                <Trash2 size={18} className="cursor-pointer" />
                             </button>
                             <fieldset className="fieldset w-36 ">
                                 <select
@@ -81,12 +91,12 @@ export default function Show({
                                             onClick={() => {
                                                 setActive(day.label);
                                                 router.get(
-                                                    `/hospitals/invoices/${
+                                                    `/hospitals/${
                                                         hospital.id
-                                                    }/${day.label.replace(
+                                                    }/invoices/${day.label.replace(
                                                         / /g,
                                                         "-"
-                                                    )}/${invoicesCount}`,
+                                                    )}`,
                                                     {},
                                                     { preserveState: true }
                                                 );
@@ -110,11 +120,37 @@ export default function Show({
                         <table className="table table-fixed ">
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Invoice No.</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    <th>Transaction Date</th>
+                                    <th className="w-[100px]">
+                                        {isDeleteMode ? (
+                                            <input
+                                                type="checkbox"
+                                                className="checkbox"
+                                                checked={
+                                                    selectedIds.length ===
+                                                        invoices.data.length &&
+                                                    invoices.data.length > 0
+                                                }
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setSelectedIds(
+                                                            invoices.data.map(
+                                                                (i) => i.id
+                                                            )
+                                                        );
+                                                    } else {
+                                                        setSelectedIds([]);
+                                                    }
+                                                }}
+                                            />
+                                        ) : (
+                                            "#"
+                                        )}
+                                    </th>
+                                    <th className="w-1/4">Invoice No.</th>
+                                    <th className="w-1/4">Amount</th>
+                                    <th className="w-1/4">Transaction Date</th>
+                                    <th className="w-1/4">Status</th>
+                                    <th className="w-1/5 text-right">Action</th>
                                 </tr>
                             </thead>
 
@@ -122,13 +158,37 @@ export default function Show({
                                 {invoices.data.map((invoice, index) => (
                                     <tr
                                         key={invoice.id}
-                                        className="hover:bg-base-300 cursor-pointer"
-                                        onClick={() => {
-                                            setSelectedInvoice(invoice);
-                                            setOpen(true);
-                                        }}
+                                        className="hover:bg-base-300"
                                     >
-                                        <td>{index + 1}</td>
+                                        <td>
+                                            {isDeleteMode ? (
+                                                <input
+                                                    type="checkbox"
+                                                    className="checkbox"
+                                                    checked={selectedIds.includes(
+                                                        invoice.id
+                                                    )}
+                                                    onChange={(e) => {
+                                                        if (e.target.checked) {
+                                                            setSelectedIds([
+                                                                ...selectedIds,
+                                                                invoice.id,
+                                                            ]);
+                                                        } else {
+                                                            setSelectedIds(
+                                                                selectedIds.filter(
+                                                                    (id) =>
+                                                                        id !==
+                                                                        invoice.id
+                                                                )
+                                                            );
+                                                        }
+                                                    }}
+                                                />
+                                            ) : (
+                                                index + 1
+                                            )}
+                                        </td>
                                         <td>{invoice.invoice_number}</td>
                                         <td>
                                             ₱
@@ -137,6 +197,11 @@ export default function Show({
                                             ).toLocaleString("en-PH", {
                                                 minimumFractionDigits: 2,
                                             })}
+                                        </td>
+                                        <td>
+                                            {new Date(
+                                                invoice.transaction_date
+                                            ).toLocaleDateString()}
                                         </td>
                                         <td className="text-left">
                                             <span
@@ -156,10 +221,43 @@ export default function Show({
                                                 {invoice.status}
                                             </span>
                                         </td>
+
                                         <td>
-                                            {new Date(
-                                                invoice.transaction_date
-                                            ).toLocaleDateString()}
+                                            <div className="flex gap-3 items-center justify-end">
+                                                <div
+                                                    className="tooltip"
+                                                    data-tip="View"
+                                                >
+                                                    <Eye
+                                                        size={18}
+                                                        className="cursor-pointer"
+                                                        onClick={() => {
+                                                            setSelectedInvoice(
+                                                                invoice
+                                                            );
+                                                            setOpen(true);
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div
+                                                    className="tooltip"
+                                                    data-tip="Edit"
+                                                >
+                                                    <Pencil
+                                                        size={18}
+                                                        className="cursor-pointer"
+                                                        onClick={() => {
+                                                            router.get(
+                                                                `/hospitals/invoices/${invoice.id}/edit`,
+                                                                {},
+                                                                {
+                                                                    preserveState: true,
+                                                                }
+                                                            );
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
@@ -200,6 +298,49 @@ export default function Show({
 
                     <Pagination data={invoices} />
                 </div>
+
+                {isDeleteMode && (
+                    <div className="flex justify-center gap-3 mt-5">
+                        <button
+                            className="btn btn-error text-white rounded-xl"
+                            disabled={selectedIds.length === 0}
+                            onClick={() => {
+                                router.post(
+                                    `/hospitals/${hospital.id}/invoices/delete`,
+                                    { ids: selectedIds },
+                                    {
+                                        onSuccess: () => {
+                                            setIsDeleteMode(false);
+                                            setSelectedIds([]);
+                                            setShowToast(true);
+                                            setSuccessMessage(
+                                                "Successfully Deleted"
+                                            );
+                                            setTimeout(
+                                                () => setShowToast(false),
+                                                3000
+                                            );
+                                        },
+                                        onError: (error) => {
+                                            setError(error)
+                                        }
+                                    }
+                                );
+                            }}
+                        >
+                            Confirm
+                        </button>
+                        <button
+                            className="btn rounded-xl"
+                            onClick={() => {
+                                setIsDeleteMode(false);
+                                setSelectedIds([]);
+                            }}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                )}
             </div>
         </Master>
     );

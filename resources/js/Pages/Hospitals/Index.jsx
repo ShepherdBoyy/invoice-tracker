@@ -67,7 +67,7 @@ export default function Index({ hospitals }) {
                                                         size={18}
                                                         onClick={() =>
                                                             router.get(
-                                                                `/hospitals/invoices/${hospital.id}/all/${hospital.invoices_count}`
+                                                                `/hospitals/${hospital.id}/invoices/all`
                                                             )
                                                         }
                                                         className="cursor-pointer"
