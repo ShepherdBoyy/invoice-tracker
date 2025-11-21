@@ -8,6 +8,8 @@ use Inertia\Inertia;
 Route::redirect('/', '/hospitals');
 
 Route::get('/invoice_page', [InvoiceController::class, 'invoicePage']);
+
+Route::inertia("/login", "Authentication/Login");
     
 Route::prefix("hospitals")->group(function () {
     Route::get("/", [HospitalController::class, "index"]);
