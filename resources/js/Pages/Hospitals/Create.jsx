@@ -24,8 +24,8 @@ export default function Create({
                     onSuccess={() => {
                         setOpenCreateModal(false);
                         setShowToast(true);
-                        setTimeout(() => setShowToast(false), 3000);
                         setSuccessMessage(`${hospitalName} added successfully`);
+                        setTimeout(() => setShowToast(false), 3000);
                     }}
                 >
                     <div className="flex flex-col gap-1 mt-8">

@@ -22,10 +22,12 @@ class StoreInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
+            "hospital_id" => "required|integer",
             "invoice_number" => "required|string|max:255",
             "amount" => "required|numeric|min:0.01",
             "status" => "required|in:open,closed",
-            "transaction_date" => "required|date"
+            "transaction_date" => "required|date",
+            "created_by" => "required|integer"
         ];
     }
 }

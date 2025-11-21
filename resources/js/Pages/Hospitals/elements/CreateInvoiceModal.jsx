@@ -4,10 +4,11 @@ import { useState } from "react";
 export default function CreateInvoiceModal({
     setShowToast,
     setSuccessMessage,
-    setOpenCreateInvoiceModal
+    setOpenCreateInvoiceModal,
+    hospitalId
 }) {
     const [error, setError] = useState("");
-    const [hospitalName, setHospitalName] = useState("");
+    const [invoiceNumber, setInvoiceNumber] = useState("");
 
     return (
         <dialog open className="modal">
@@ -20,7 +21,14 @@ export default function CreateInvoiceModal({
                     transform={(data) => ({
                         ...data,
                         hospital_id: hospitalId,
+                        created_by: 2
                     })}
+                    onSuccess={() => {
+                        setOpenCreateInvoiceModal(false);
+                        setShowToast(true);
+                        setSuccessMessage(`${invoiceNumber} added successfully`);
+                        setTimeout(() => setShowToast(false), 3000);
+                    }}
                 >
                     <div className="flex flex-col gap-1 mt-8">
                         <div className="flex justify-between">
@@ -36,9 +44,11 @@ export default function CreateInvoiceModal({
                         <input
                             type="text"
                             placeholder="Type here"
-                            className="input"
+                            className="input w-full"
                             name="invoice_number"
                             id="invoice_number"
+                            value={invoiceNumber}
+                            onChange={(e) => setInvoiceNumber(e.target.value)}
                         />
                     </div>
 
@@ -57,7 +67,7 @@ export default function CreateInvoiceModal({
                             type="number"
                             step="any"
                             placeholder="Type here"
-                            className="input"
+                            className="input w-full"
                             name="amount"
                             id="amount"
                         />
@@ -69,7 +79,7 @@ export default function CreateInvoiceModal({
                         </label>
                         <fieldset className="fieldset">
                             <select
-                                className="select"
+                                className="select w-full"
                                 defaultValue="default"
                                 name="status"
                                 id="status"
@@ -99,7 +109,7 @@ export default function CreateInvoiceModal({
                         </div>
                         <input
                             type="date"
-                            className="input"
+                            className="input w-full"
                             id="transaction_date"
                             name="transaction_date"
                         />
