@@ -38,15 +38,52 @@ export default function Show({
     }, [debouncedSearch]);
 
     const processingDays = [
+        { label: "Current" },
         { label: "30 days" },
         { label: "31-60 days" },
         { label: "61-90 days" },
         { label: "91-over" },
+        { label: "Closed" },
     ];
 
     return (
         <Master>
             <div className=" bg-base-200 ">
+                <div className="flex items-center gap-2 justify-between pb-4">
+                    <fieldset className="fieldset w-36">
+                        <select
+                            defaultValue="Filter By Age"
+                            className="select rounded-xl"
+                        >
+                            <option disabled={true}>Filter By Days</option>
+                            {processingDays.map((day, index) => (
+                                <option
+                                    key={index}
+                                    onClick={() => {
+                                        setActive(day.label);
+                                        router.get(
+                                            `/hospitals/${
+                                                hospital.id
+                                            }/invoices/${day.label.replace(
+                                                / /g,
+                                                "-"
+                                            )}`,
+                                            {},
+                                            { preserveState: true }
+                                        );
+                                    }}
+                                >
+                                    {day.label}
+                                </option>
+                            ))}
+                        </select>
+                    </fieldset>
+                    <SearchIt
+                        search={search}
+                        setSearch={setSearch}
+                        name="Invoice No."
+                    />
+                </div>
                 <div className="p-6 bg-white rounded-xl shadow-lg">
                     <div className="flex items-center justify-between mb-4 gap-2 ">
                         <div className="flex items-center gap-x-3">
@@ -54,11 +91,19 @@ export default function Show({
                                 {hospital.hospital_name}
                             </h1>
                             <div className="badge badge-sm badge-primary">
-                                {hospital.invoices_count}{" "}
-                                invoices
+                                {hospital.invoices_count} invoices
                             </div>
                         </div>
                         <div className="flex items-center gap-x-2">
+                            <button
+                                className="btn btn-outline rounded-xl"
+                                onClick={() => {
+                                    setIsDeleteMode(true);
+                                    setSelectedIds([]);
+                                }}
+                            >
+                                <Trash2 size={18} className="cursor-pointer" />
+                            </button>
                             <button
                                 className="btn btn-primary rounded-xl"
                                 onClick={() => {
@@ -68,51 +113,6 @@ export default function Show({
                                 Add Invoice
                                 <Plus size={16} />
                             </button>
-                            <button
-                                className="btn btn-primary rounded-xl"
-                                onClick={() => {
-                                    setIsDeleteMode(true);
-                                    setSelectedIds([]);
-                                }}
-                            >
-                                <Trash2 size={18} className="cursor-pointer" />
-                            </button>
-                            <fieldset className="fieldset w-36 ">
-                                <select
-                                    defaultValue="Filter By Age"
-                                    className="select rounded-xl"
-                                >
-                                    <option disabled={true}>
-                                        Filter By Days
-                                    </option>
-                                    {processingDays.map((day, index) => (
-                                        <option
-                                            key={index}
-                                            onClick={() => {
-                                                setActive(day.label);
-                                                router.get(
-                                                    `/hospitals/${
-                                                        hospital.id
-                                                    }/invoices/${day.label.replace(
-                                                        / /g,
-                                                        "-"
-                                                    )}`,
-                                                    {},
-                                                    { preserveState: true }
-                                                );
-                                            }}
-                                        >
-                                            {day.label}
-                                        </option>
-                                    ))}
-                                </select>
-                            </fieldset>
-                            <div className="flex justify-content-end">
-                                <SearchIt
-                                    search={search}
-                                    setSearch={setSearch}
-                                />
-                            </div>
                         </div>
                     </div>
 
@@ -147,9 +147,11 @@ export default function Show({
                                         )}
                                     </th>
                                     <th className="w-1/4">Invoice No.</th>
+                                    <th className="w-1/4">Document Date</th>
+                                    <th className="w-1/4">Due Date</th>
                                     <th className="w-1/4">Amount</th>
-                                    <th className="w-1/4">Transaction Date</th>
                                     <th className="w-1/4">Status</th>
+                                    <th className="w-1/4">Processing Days</th>
                                     <th className="w-1/5 text-right">Action</th>
                                 </tr>
                             </thead>
@@ -191,17 +193,22 @@ export default function Show({
                                         </td>
                                         <td>{invoice.invoice_number}</td>
                                         <td>
+                                            {new Date(
+                                                invoice.document_date
+                                            ).toLocaleDateString()}
+                                        </td>
+                                        <td>
+                                            {new Date(
+                                                invoice.due_date
+                                            ).toLocaleDateString()}
+                                        </td>
+                                        <td>
                                             ₱
                                             {parseFloat(
                                                 invoice.amount
                                             ).toLocaleString("en-PH", {
                                                 minimumFractionDigits: 2,
                                             })}
-                                        </td>
-                                        <td>
-                                            {new Date(
-                                                invoice.transaction_date
-                                            ).toLocaleDateString()}
                                         </td>
                                         <td className="text-left">
                                             <span
@@ -221,7 +228,7 @@ export default function Show({
                                                 {invoice.status}
                                             </span>
                                         </td>
-
+                                        <td>{invoice.processing_days}</td>
                                         <td>
                                             <div className="flex gap-3 items-center justify-end">
                                                 <div
@@ -322,8 +329,8 @@ export default function Show({
                                             );
                                         },
                                         onError: (error) => {
-                                            setError(error)
-                                        }
+                                            setError(error);
+                                        },
                                     }
                                 );
                             }}
