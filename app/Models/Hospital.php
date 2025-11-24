@@ -11,7 +11,8 @@ class Hospital extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'hospital_name'
+        'hospital_name',
+        'hospital_number'
     ];
 
     protected static function booted()

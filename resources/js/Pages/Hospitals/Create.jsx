@@ -9,6 +9,8 @@ export default function Create({
     const [error, setError] = useState("");
     const [hospitalName, setHospitalName] = useState("");
 
+    console.log(error)
+
     return (
         <dialog open className="modal">
             <div className="modal-box">
@@ -20,7 +22,7 @@ export default function Create({
                 <Form
                     action="/hospitals/create"
                     method="post"
-                    onError={(error) => setError(error.hospital_name)}
+                    onError={(error) => setError(error)}
                     onSuccess={() => {
                         setOpenCreateModal(false);
                         setShowToast(true);
@@ -30,12 +32,31 @@ export default function Create({
                 >
                     <div className="flex flex-col gap-1 mt-8">
                         <div className="flex justify-between">
+                            <label htmlFor="hospital_number" className="text-sm">
+                                Hospital No.
+                            </label>
+                            {error.hospital_number && (
+                                <span className="text-red-500 text-sm">
+                                    {error.hospital_number}
+                                </span>
+                            )}
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Type here"
+                            className="input w-full"
+                            name="hospital_number"
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-1 mt-8">
+                        <div className="flex justify-between">
                             <label htmlFor="hospital_name" className="text-sm">
                                 Hospital Name
                             </label>
-                            {error && (
+                            {error.hospital_name && (
                                 <span className="text-red-500 text-sm">
-                                    {error}
+                                    {error.hospital_name}
                                 </span>
                             )}
                         </div>

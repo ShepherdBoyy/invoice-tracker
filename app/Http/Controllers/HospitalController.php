@@ -7,16 +7,26 @@ use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateHospitalRequest;
 use App\Models\Hospital;
 use App\Models\Invoice;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+
+use function Symfony\Component\Clock\now;
 
 class HospitalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $searchQuery = $request->query("search");
+
         $hospitals = Hospital::withCount("invoices")
+            ->when($searchQuery, function ($query) use ($searchQuery) {
+                $query->where(function ($q) use ($searchQuery) {
+                    $q->where("hospital_name", "like", "%{$searchQuery}%")
+                        ->orWhere("hospital_number", "like", "%{$searchQuery}%");
+                });
+            })
             ->orderBy("created_at", "desc")
             ->paginate(10);
 
@@ -42,12 +52,17 @@ class HospitalController extends Controller
 
         $invoices = Invoice::query()
             ->with(["hospital", "creator", "updater"])
-            ->select("*", DB::raw("
-                DATEDIFF(
-                    IFNULL(date_closed, CURDATE()),
-                    transaction_date
-                ) AS processing_days
-            "))
+            ->select("invoices.*")
+            ->addSelect([
+                "processing_days" => function ($query) {
+                    $query->selectRaw("
+                        CASE
+                            WHEN date_closed IS NOT NULL THEN 0
+                            ELSE DATEDIFF(due_date, CURDATE())
+                        END
+                    ");
+                }
+            ])
             ->when($hospitalId, function ($query) use ($hospitalId) {
                 $query->where("hospital_id", $hospitalId);
             })
@@ -56,14 +71,16 @@ class HospitalController extends Controller
             })
             ->when(!$searchQuery && $processingFilter, function ($query) use ($processingFilter) {
                 match ($processingFilter) {
-                    "30-days" => $query->havingBetween("processing_days", [0, 30]),
-                    "31-60-days" => $query->havingBetween("processing_days", [31, 60]),
-                    "61-90-days" => $query->havingBetween("processing_days", [61, 90]),
-                    "91-over" => $query->having("processing_days", ">=", 91),
+                    "Current" => $query->having("processing_days", ">", 0),
+                    "30-days" => $query->havingBetween("processing_days", [-30, -1]),
+                    "31-60-days" => $query->havingBetween("processing_days", [-60, -31]),
+                    "61-90-days" => $query->havingBetween("processing_days", [-90, -61]),
+                    "91-over" => $query->having("processing_days", "<=", -91),
+                    "Closed" => $query->having("processing_days", "=", 0),
                     default => null,
                 };
             })
-            ->orderBy("transaction_date", "desc")
+            ->orderBy("due_date", "desc")
             ->paginate(10)
             ->withQueryString();
         
@@ -80,10 +97,6 @@ class HospitalController extends Controller
     public function update(UpdateHospitalRequest $request, string $id)
     {
         $hospital = Hospital::findOrFail($id);
-
-        if ($request->input("hospital_name") === $hospital->hospital_name) {
-            return back()->withErrors(["hospital_name" => "Update requires a different value"]);
-        }
 
         $validated = $request->validated();
 
@@ -112,14 +125,30 @@ class HospitalController extends Controller
         $validated = $request->validated();
         $validated['created_by'] = Auth::id();
 
+        $today = Carbon::today();
+        $dueDate = Carbon::parse($validated["due_date"])->startOfDay();
+
+        if (!empty($validated["date_closed"])) {
+            $validated["status"] = "closed";
+        } else {
+            $validated["status"] = $today->greaterThan($dueDate)
+                ? "overdue"
+                : "open";
+        }
+
         Invoice::create($validated);
 
         return back()->with("success", true);
     }
 
-    public function editInvoice()
+    public function editInvoice(string $id)
     {
-        return Inertia::render("Hospitals/elements/EditInvoice");
+        $invoice = Invoice::with(["hospital", "creator", "updater"])
+                        ->findOrFail($id);
+
+        return Inertia::render("Hospitals/elements/EditInvoice", [
+            "invoice" => $invoice
+        ]);
     }
 
     public function deleteInvoice(Request $request, $hospital_id)
