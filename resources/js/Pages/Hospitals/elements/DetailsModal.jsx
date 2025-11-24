@@ -89,7 +89,7 @@ export default function DetailsModal({
                             </p>
                             <p className="text-md">
                                 {new Date(
-                                    selectedInvoice.transaction_date
+                                    selectedInvoice.document_date
                                 ).toLocaleDateString("en-PH", {
                                     month: "short",
                                     day: "numeric",
