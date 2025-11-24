@@ -22,10 +22,12 @@ export default function Index({ invoices, searchQuery, processingFilter }) {
     }, [debouncedSearch]);
 
     const processingDays = [
+        { label: "Current" },
         { label: "30 days" },
         { label: "31-60 days" },
         { label: "61-90 days" },
         { label: "91-over" },
+        { label: "Closed" },
     ];
 
     return (
@@ -72,6 +74,7 @@ export default function Index({ invoices, searchQuery, processingFilter }) {
                                 <SearchIt
                                     search={search}
                                     setSearch={setSearch}
+                                    name="Invoice No."
                                 />
                             </div>
                         </div>
@@ -84,7 +87,7 @@ export default function Index({ invoices, searchQuery, processingFilter }) {
                                     <th className="w-[100px]">#</th>
                                     <th>Invoice No.</th>
                                     <th>Hospital Name</th>
-                                    <th>Transaction Date</th>
+                                    <th>Due Date</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -104,7 +107,7 @@ export default function Index({ invoices, searchQuery, processingFilter }) {
                                         </td>
                                         <td>
                                             {new Date(
-                                                invoice.transaction_date
+                                                invoice.due_date
                                             ).toLocaleDateString()}
                                         </td>
                                         <td className="text-left">
