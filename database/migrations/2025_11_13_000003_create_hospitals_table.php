@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('hospitals', function (Blueprint $table) {
             $table->id();
+            $table->string('hospital_number');
             $table->string('hospital_name');
             $table->timestamps();
             $table->softDeletes();
