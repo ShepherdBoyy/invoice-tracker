@@ -13,7 +13,8 @@ class HospitalFactory extends Factory
     public function definition(): array
     {
         return [
-            "hospital_name" => $this->faker->company()
+            "hospital_name" => $this->faker->company(),
+            'hospital_number' => 'HOS-' . $this->faker->unique()->randomNumber(5),
         ];
     }
 }
