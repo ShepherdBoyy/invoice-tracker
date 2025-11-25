@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreHospitalRequest;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateHospitalRequest;
+use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Hospital;
 use App\Models\Invoice;
 use Carbon\Carbon;
@@ -51,7 +52,7 @@ class HospitalController extends Controller
         $processingFilter = $request->processing_days;
 
         $invoices = Invoice::query()
-            ->with(["hospital", "creator", "updater"])
+            ->with(["hospital", "creator"])
             ->select("invoices.*")
             ->addSelect([
                 "processing_days" => function ($query) {
@@ -143,11 +144,12 @@ class HospitalController extends Controller
 
     public function editInvoice(string $id)
     {
-        $invoice = Invoice::with(["hospital", "creator", "updater"])
+        $invoice = Invoice::with(["hospital", "creator"])
                         ->findOrFail($id);
 
         return Inertia::render("Hospitals/elements/EditInvoice", [
-            "invoice" => $invoice
+            "invoice" => $invoice,
+            "editor" => Auth::user()
         ]);
     }
 

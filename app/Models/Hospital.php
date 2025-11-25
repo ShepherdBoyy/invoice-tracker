@@ -19,14 +19,23 @@ class Hospital extends Model
     {
         static::deleting(function ($hospital) {
             if ($hospital->isForceDeleting()) {
-                $hospital->invoices->forceDelete();
+                $hospital->invoices()->withTrashed()->get()->each(function ($invoice) {
+                    $invoice->history()->withTrashed()->forceDelete();
+                    $invoice->forceDelete();
+                });
             } else {
-                $hospital->invoices()->delete();
+                $hospital->invoices()->get()->each(function ($invoice) {
+                    $invoice->history()->delete();
+                    $invoice->delete();
+                });
             }
         });
 
         static::restoring(function ($hospital) {
-            $hospital->invoices()->restore();
+            $hospital->invoices()->withTrashed()->get()->each(function ($invoice) {
+                $invoice->restore();
+                $invoice->history->withTrashed()->restore();
+            });
         });
     }
 

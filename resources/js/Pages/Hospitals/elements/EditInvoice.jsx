@@ -1,6 +1,7 @@
+import { Form } from "@inertiajs/react";
 import Master from "../../components/Master";
 
-export default function EditInvoice({ invoice }) {
+export default function EditInvoice({ invoice, editor }) {
     console.log(invoice);
 
     return (
@@ -50,7 +51,18 @@ export default function EditInvoice({ invoice }) {
                                         <p className="text-sm opacity-60 mb-1">
                                             Status
                                         </p>
-                                        <span className="badge badge-lg bg-green-100 text-green-700">
+                                        <span
+                                            className={`badge badge-md text-sm rounded-full   ${
+                                                invoice.status === "closed"
+                                                    ? "bg-emerald-100 text-emerald-700 border-green-600"
+                                                    : invoice.status === "open"
+                                                    ? "bg-yellow-100 text-yellow-700 border-yellow-600"
+                                                    : invoice.status ===
+                                                      "overdue"
+                                                    ? "bg-red-100 text-red-700 border-red-600"
+                                                    : "badge-neutral"
+                                            }`}
+                                        >
                                             {invoice.status}
                                         </span>
                                     </div>
@@ -86,7 +98,94 @@ export default function EditInvoice({ invoice }) {
                                 <div className="p-6 bg-linear-to-br from-primary/10 to-base-200 border-b border-base-300 rounded-t-xl">
                                     Update Invoice
                                 </div>
-                                <div className="p-6"></div>
+                                <Form
+                                    className="flex flex-col gap-6 p-6"
+                                    action={`/hospitals/invoices/${invoice.id}/store`}
+                                    method="patch"
+                                >
+                                    <div>
+                                        <div className="flex justify-between">
+                                            <label
+                                                htmlFor="updated_by"
+                                                className="text-base"
+                                            >
+                                                Update By:
+                                            </label>
+                                            {/* {error && (
+                                            <span className="text-red-500 text-sm">
+                                                {error}
+                                            </span>
+                                        )} */}
+                                        </div>
+                                        <input
+                                            type="text"
+                                            placeholder="Type here"
+                                            className="input w-full"
+                                            name="updated_by"
+                                            id="updated_by"
+                                            defaultValue={editor.name}
+                                            readOnly
+                                        />
+                                    </div>
+
+                                    <fieldset className="fieldset">
+                                        <label
+                                            htmlFor="description"
+                                            className="text-base"
+                                        >
+                                            Description:
+                                        </label>
+                                        <select
+                                            defaultValue=""
+                                            className="select rounded-xl w-full"
+                                            name="description"
+                                            id="description"
+                                        >
+                                            <option value="" disabled>
+                                                Select
+                                            </option>
+                                            <option>
+                                                Invoice remains open pending
+                                                verification of the submitted
+                                                billing documents; awaiting
+                                                confirmation from the hospital's
+                                                finance team
+                                            </option>
+                                            <option>
+                                                Payment is currently under
+                                                review due to discrepancies
+                                                found in the itemized charges;
+                                                vendor has been notified for
+                                                clarification
+                                            </option>
+                                            <option>
+                                                Processing is delayed because
+                                                supporting documents were
+                                                incomplete; waiting for the
+                                                client to provide the missing
+                                                requirements
+                                            </option>
+                                            <option>
+                                                Invoice cannot be closed yet as
+                                                the payment request has not been
+                                                approved by the authorized
+                                                signatory
+                                            </option>
+                                            <option>
+                                                Status remains open while
+                                                coordination with the accounting
+                                                department is ongoing to resolve
+                                                amount differences before final
+                                                closure
+                                            </option>
+                                        </select>
+                                    </fieldset>
+                                    <div className="flex justify-end">
+                                        <button className="btn btn-primary w-5xs rounded-xl">
+                                            Update
+                                        </button>
+                                    </div>
+                                </Form>
                             </div>
 
                             <div className="col-span-3 border rounded-xl border-gray-300 min-h-[300px] overflow-auto">
@@ -112,15 +211,7 @@ export default function EditInvoice({ invoice }) {
                                                 <td className="w-[200px]">
                                                     Dorothy Heaney
                                                 </td>
-                                                <td>
-                                                    Ipsam aspernatur et ratione
-                                                    ullam. Libero consequatur
-                                                    maiores dicta unde.
-                                                    Consequatur perferendis
-                                                    voluptatem omnis ab deleniti
-                                                    quia. Dicta fuga nostrum
-                                                    nisi.
-                                                </td>
+                                                <td>{invoice.description}</td>
                                             </tr>
                                         </tbody>
                                     </table>
