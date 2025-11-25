@@ -14,22 +14,34 @@ class InvoiceFactory extends Factory
 {    
     public function definition(): array
     {
-        $statuses = ["open", "overdue", "closed"];
-        $status = $this->faker->randomElement($statuses);
         $documentDate = $this->faker->dateTimeBetween("-1 year", "now");
         $dueDate = Carbon::instance($documentDate)->addMonth();
 
+        $isClosed = $this->faker->boolean(30);
+        $dateClosed = $isClosed
+            ? $this->faker->dateTimeBetween($documentDate, "now")
+            : null;
+
+        $today = Carbon::today();
+        $dueCarbon = Carbon::instance($dueDate)->startOfDay();
+
+        if (!empty($dateClosed)) {
+            $status = "closed";
+        } else {
+            $status = $today->greaterThan($dueCarbon)
+                ? "overdue"
+                : "open";
+        }
+
         return [
-            "hospital_id" => Hospital::factory(),
+            "hospital_id"   => Hospital::factory(),
             "invoice_number" => "INV-" . $this->faker->unique()->numerify("######"),
             "document_date" => $documentDate,
-            "due_date" => $dueDate,
-            "amount" => $this->faker->randomFloat(2, 100, 50000),
-            "description" => $this->faker->boolean(80) ? $this->faker->paragraph(3) : null,
-            "status" => $status,
-            "date_closed" => $status === "closed" ? $this->faker->dateTimeBetween($documentDate, "now") : null,
-            "created_by" => User::factory(),
-            'updated_by' => fake()->optional()->randomElement(User::pluck('id')->toArray()),
+            "due_date"      => $dueDate,
+            "amount"        => $this->faker->randomFloat(2, 100, 50000),
+            "status"        => $status,
+            "date_closed"   => $dateClosed,
+            "created_by"    => User::factory(),
         ];
     }
 }

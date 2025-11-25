@@ -4,21 +4,19 @@ namespace Database\Seeders;
 
 use App\Models\Hospital;
 use App\Models\Invoice;
+use App\Models\InvoiceHistory;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     public function run(): void
     {
         User::factory()->count(5)->create();
 
         User::firstOrCreate(
-            ['username' => 'jheymarc'],
+            ['username' => 'admin'],
             [
                 'name' => 'Jhey Marc',
                 'role' => 'purchasing',
@@ -26,10 +24,20 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Hospitals with invoices
         Hospital::factory()
             ->count(50)
             ->has(Invoice::factory()->count(15))
             ->create();
+
+        $users = User::pluck('id')->toArray();
+
+        Invoice::all()->each(function ($invoice) use ($users) {
+            InvoiceHistory::factory()
+                ->count(rand(1, 5))
+                ->create([
+                    'invoice_id' => $invoice->id,
+                    'updated_by' => collect($users)->random(),
+                ]);
+        });
     }
 }

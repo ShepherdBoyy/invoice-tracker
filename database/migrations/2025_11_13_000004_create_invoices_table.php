@@ -18,11 +18,9 @@ return new class extends Migration
             $table->date('document_date');
             $table->date('due_date');
             $table->float('amount');
-            $table->longText('description')->nullable();
             $table->string('status');
             $table->dateTime('date_closed')->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
-            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
