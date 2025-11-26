@@ -6,6 +6,7 @@ import useDebounce from "../hooks/useDebounce";
 import Pagination from "../components/Pagination";
 import { Plus, Trash2 } from "lucide-react";
 import CreateInvoiceModal from "./elements/CreateInvoiceModal";
+import DeleteInvoiceModal from "./elements/DeleteInvoiceModal";
 
 export default function Show({
     invoices,
@@ -16,6 +17,7 @@ export default function Show({
     const [search, setSearch] = useState(searchQuery || "");
     const [active, setActive] = useState(processingFilter);
     const [openCreateInvoiceModal, setOpenCreateInvoiceModal] = useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [isDeleteMode, setIsDeleteMode] = useState(false);
@@ -158,10 +160,20 @@ export default function Show({
                                 {invoices.data.map((invoice, index) => (
                                     <tr
                                         key={invoice.id}
-                                        className="hover:bg-base-300 cursor-pointer"
-                                        onClick={() => {
-                                            router.get(`/invoice-history/${invoice.id}`)
-                                        }}
+                                        className={
+                                            isDeleteMode
+                                                ? ""
+                                                : "hover:bg-base-300 cursor-pointer"
+                                        }
+                                        onClick={
+                                            isDeleteMode
+                                                ? undefined
+                                                : () => {
+                                                      router.get(
+                                                          `/hospitals/${invoice.hospital.id}/invoices/${invoice.id}/history`
+                                                      );
+                                                  }
+                                        }
                                     >
                                         <td>
                                             {isDeleteMode ? (
@@ -252,6 +264,19 @@ export default function Show({
                             />
                         )}
 
+                        {openDeleteModal && (
+                            <DeleteInvoiceModal
+                                setOpenDeleteModal={setOpenDeleteModal}
+                                hospital={hospital}
+                                setShowToast={setShowToast}
+                                setSuccessMessage={setSuccessMessage}
+                                selectedIds={selectedIds}
+                                setSelectedIds={setSelectedIds}
+                                setIsDeleteMode={setIsDeleteMode}
+                                setError={setError}
+                            />
+                        )}
+
                         {showToast && (
                             <div className="toast toast-top toast-center">
                                 <div className="alert alert-success">
@@ -269,29 +294,7 @@ export default function Show({
                         <button
                             className="btn btn-error text-white rounded-xl"
                             disabled={selectedIds.length === 0}
-                            onClick={() => {
-                                router.post(
-                                    `/hospitals/${hospital.id}/invoices/delete`,
-                                    { ids: selectedIds },
-                                    {
-                                        onSuccess: () => {
-                                            setIsDeleteMode(false);
-                                            setSelectedIds([]);
-                                            setShowToast(true);
-                                            setSuccessMessage(
-                                                "Successfully Deleted"
-                                            );
-                                            setTimeout(
-                                                () => setShowToast(false),
-                                                3000
-                                            );
-                                        },
-                                        onError: (error) => {
-                                            setError(error);
-                                        },
-                                    }
-                                );
-                            }}
+                            onClick={() => setOpenDeleteModal(true)}
                         >
                             Confirm
                         </button>

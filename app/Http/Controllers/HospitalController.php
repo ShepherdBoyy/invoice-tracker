@@ -137,7 +137,12 @@ class HospitalController extends Controller
                 : "open";
         }
 
-        Invoice::create($validated);
+        $invoice = Invoice::create($validated);
+
+        $invoice->history()->create([
+            "updated_by" => Auth::id(),
+            "description" => "Invoice has been created"
+        ]);
 
         return back()->with("success", true);
     }

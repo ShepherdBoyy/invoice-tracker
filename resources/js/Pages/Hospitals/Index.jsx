@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import Create from "./Create";
 import Edit from "./Edit";
 import Pagination from "../components/Pagination";
-import Destroy from "../components/Destroy";
 import SearchIt from "../components/SearchIt";
 import useDebounce from "../hooks/useDebounce";
+import DeleteHospitalModal from "./elements/DeleteHospitalModal";
 
 export default function Index({ hospitals }) {
     const [openCreateModal, setOpenCreateModal] = useState(false);
@@ -160,7 +160,7 @@ export default function Index({ hospitals }) {
                     )}
 
                     {openDeleteModal && (
-                        <Destroy
+                        <DeleteHospitalModal
                             setOpenDeleteModal={setOpenDeleteModal}
                             hospital={hospital}
                             setShowToast={setShowToast}
