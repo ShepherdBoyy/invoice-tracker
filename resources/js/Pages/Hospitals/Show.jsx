@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import Master from "../components/Master";
 import SearchIt from "../components/SearchIt";
 import { router } from "@inertiajs/react";
-import DetailsModal from "./elements/DetailsModal";
 import useDebounce from "../hooks/useDebounce";
 import Pagination from "../components/Pagination";
-import { Eye, Pencil, Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import CreateInvoiceModal from "./elements/CreateInvoiceModal";
 
 export default function Show({
@@ -14,8 +13,6 @@ export default function Show({
     searchQuery,
     processingFilter,
 }) {
-    const [open, setOpen] = useState(false);
-    const [selectedInvoice, setSelectedInvoice] = useState(null);
     const [search, setSearch] = useState(searchQuery || "");
     const [active, setActive] = useState(processingFilter);
     const [openCreateInvoiceModal, setOpenCreateInvoiceModal] = useState(false);
@@ -154,7 +151,6 @@ export default function Show({
                                     <th className="w-1/4">Processing Days</th>
                                     <th className="w-1/4">Issued By</th>
                                     <th className="w-1/8">Created At</th>
-                                    <th className="w-1/5 text-right">Action</th>
                                 </tr>
                             </thead>
 
@@ -162,7 +158,10 @@ export default function Show({
                                 {invoices.data.map((invoice, index) => (
                                     <tr
                                         key={invoice.id}
-                                        className="hover:bg-base-300"
+                                        className="hover:bg-base-300 cursor-pointer"
+                                        onClick={() => {
+                                            router.get(`/invoice-history/${invoice.id}`)
+                                        }}
                                     >
                                         <td>
                                             {isDeleteMode ? (
@@ -237,59 +236,10 @@ export default function Show({
                                                 invoice.created_at
                                             ).toLocaleDateString()}
                                         </td>
-                                        <td>
-                                            <div className="flex gap-3 items-center justify-end">
-                                                <div
-                                                    className="tooltip"
-                                                    data-tip="View"
-                                                >
-                                                    <Eye
-                                                        size={18}
-                                                        className="cursor-pointer"
-                                                        onClick={() => {
-                                                            setSelectedInvoice(
-                                                                invoice
-                                                            );
-                                                            setOpen(true);
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div
-                                                    className="tooltip"
-                                                    data-tip="Edit"
-                                                >
-                                                    <Pencil
-                                                        size={18}
-                                                        className="cursor-pointer"
-                                                        onClick={() => {
-                                                            router.get(
-                                                                `/hospitals/invoices/${invoice.id}/edit`,
-                                                                {},
-                                                                {
-                                                                    preserveState: true,
-                                                                }
-                                                            );
-                                                        }}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
-
-                        {open && (
-                            <DetailsModal
-                                selectedInvoice={selectedInvoice}
-                                hospitalName={
-                                    hospital?.hospital_name ||
-                                    selectedInvoice?.hospital?.hospital_name
-                                }
-                                setSelectedInvoice={setSelectedInvoice}
-                                setOpen={setOpen}
-                            />
-                        )}
 
                         {openCreateInvoiceModal && (
                             <CreateInvoiceModal

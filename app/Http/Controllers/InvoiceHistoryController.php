@@ -2,18 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Invoice;
 use App\Models\InvoiceHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class InvoiceHistoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index($invoiceId)
     {
-        //
+        $invoice = Invoice::with(["hospital", "creator"])->findOrFail($invoiceId);
+
+        $history = InvoiceHistory::where("invoice_id", $invoiceId)
+            ->with(["updater"])
+            ->orderBy("updated_at", "desc")
+            ->get();
+
+        return Inertia::render("InvoiceHistory/Index", [
+            "invoice" => $invoice,
+            "history" => $history,
+            "editor" => Auth::user()->name
+        ]);
     }
 
     /**
@@ -27,14 +37,14 @@ class InvoiceHistoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, string $id)
+    public function store(Request $request, string $invoiceId)
     {
         $validated = $request->validate([
             "description" => "required|string"
         ]);
 
         InvoiceHistory::create([
-            "invoice_id" => $id,
+            "invoice_id" => $invoiceId,
             "updated_by" => Auth::id(),
             "description" => $validated["description"]
         ]);
