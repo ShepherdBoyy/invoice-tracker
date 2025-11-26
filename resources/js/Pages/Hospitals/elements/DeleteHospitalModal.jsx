@@ -1,7 +1,6 @@
-import { Form, router } from "@inertiajs/react";
-import { useState } from "react";
+import { router } from "@inertiajs/react";
 
-export default function Destroy({
+export default function DeleteHospitalModal({
     setOpenDeleteModal,
     hospital,
     setShowToast,
