@@ -7,6 +7,7 @@ import Pagination from "../components/Pagination";
 import { Plus, Trash2 } from "lucide-react";
 import CreateInvoiceModal from "./elements/CreateInvoiceModal";
 import DeleteInvoiceModal from "./elements/DeleteInvoiceModal";
+import { motion } from "framer-motion";
 
 export default function Show({
     invoices,
@@ -119,32 +120,29 @@ export default function Show({
                         <table className="table table-fixed ">
                             <thead>
                                 <tr>
-                                    <th className="w-[100px]">
-                                        {isDeleteMode ? (
-                                            <input
-                                                type="checkbox"
-                                                className="checkbox"
-                                                checked={
-                                                    selectedIds.length ===
-                                                        invoices.data.length &&
-                                                    invoices.data.length > 0
+                                    <th className="w-15">
+                                        <input
+                                            type="checkbox"
+                                            className="checkbox"
+                                            checked={
+                                                selectedIds.length ===
+                                                    invoices.data.length &&
+                                                invoices.data.length > 0
+                                            }
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setSelectedIds(
+                                                        invoices.data.map(
+                                                            (i) => i.id
+                                                        )
+                                                    );
+                                                } else {
+                                                    setSelectedIds([]);
                                                 }
-                                                onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        setSelectedIds(
-                                                            invoices.data.map(
-                                                                (i) => i.id
-                                                            )
-                                                        );
-                                                    } else {
-                                                        setSelectedIds([]);
-                                                    }
-                                                }}
-                                            />
-                                        ) : (
-                                            "#"
-                                        )}
+                                            }}
+                                        />
                                     </th>
+                                    <th className="w-[50px]"> #</th>
                                     <th className="w-1/4">Invoice No.</th>
                                     <th className="w-1/4">Document Date</th>
                                     <th className="w-1/4">Due Date</th>
@@ -158,7 +156,14 @@ export default function Show({
 
                             <tbody>
                                 {invoices.data.map((invoice, index) => (
-                                    <tr
+                                    <motion.tr
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{
+                                            duration: 0.2,
+                                            delay: index * 0.05,
+                                        }}
                                         key={invoice.id}
                                         className={
                                             isDeleteMode
@@ -176,34 +181,31 @@ export default function Show({
                                         }
                                     >
                                         <td>
-                                            {isDeleteMode ? (
-                                                <input
-                                                    type="checkbox"
-                                                    className="checkbox"
-                                                    checked={selectedIds.includes(
-                                                        invoice.id
-                                                    )}
-                                                    onChange={(e) => {
-                                                        if (e.target.checked) {
-                                                            setSelectedIds([
-                                                                ...selectedIds,
-                                                                invoice.id,
-                                                            ]);
-                                                        } else {
-                                                            setSelectedIds(
-                                                                selectedIds.filter(
-                                                                    (id) =>
-                                                                        id !==
-                                                                        invoice.id
-                                                                )
-                                                            );
-                                                        }
-                                                    }}
-                                                />
-                                            ) : (
-                                                index + 1
-                                            )}
+                                            <input
+                                                type="checkbox"
+                                                className="checkbox"
+                                                checked={selectedIds.includes(
+                                                    invoice.id
+                                                )}
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setSelectedIds([
+                                                            ...selectedIds,
+                                                            invoice.id,
+                                                        ]);
+                                                    } else {
+                                                        setSelectedIds(
+                                                            selectedIds.filter(
+                                                                (id) =>
+                                                                    id !==
+                                                                    invoice.id
+                                                            )
+                                                        );
+                                                    }
+                                                }}
+                                            />
                                         </td>
+                                        <td>{index + 1}</td>
                                         <td>{invoice.invoice_number}</td>
                                         <td>
                                             {new Date(
@@ -248,7 +250,7 @@ export default function Show({
                                                 invoice.created_at
                                             ).toLocaleDateString()}
                                         </td>
-                                    </tr>
+                                    </motion.tr>
                                 ))}
                             </tbody>
                         </table>
