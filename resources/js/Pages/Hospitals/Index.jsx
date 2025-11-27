@@ -8,6 +8,7 @@ import Pagination from "../components/Pagination";
 import SearchIt from "../components/SearchIt";
 import useDebounce from "../hooks/useDebounce";
 import DeleteHospitalModal from "./elements/DeleteHospitalModal";
+import { motion } from "framer-motion";
 
 export default function Index({ hospitals }) {
     const [openCreateModal, setOpenCreateModal] = useState(false);
@@ -22,18 +23,26 @@ export default function Index({ hospitals }) {
 
     useEffect(() => {
         if (debouncedSearch.trim() !== "") {
-            router.get("/hospitals", 
+            router.get(
+                "/hospitals",
                 { search: debouncedSearch },
                 { preserveState: true, preserveScroll: true }
-            )
+            );
         }
-    }, [debouncedSearch])
+    }, [debouncedSearch]);
 
     return (
         <Master>
-            <div className=" bg-base-200 ">
-                <div className="p-6">
+            <div className="bg-base-200  ">
+                <div className="flex items-center justify-between pb-4">
                     <span className="text-2xl">Hospitals</span>
+                    <div className="flex justify-content-end">
+                        <SearchIt
+                            search={search}
+                            setSearch={setSearch}
+                            name="Hospital"
+                        />
+                    </div>
                 </div>
                 <div className="p-6 bg-white rounded-xl shadow-lg ">
                     <div className="flex items-center justify-between mb-4">
@@ -49,13 +58,6 @@ export default function Index({ hospitals }) {
                                 <CirclePlus size={18} />
                                 Add Hospital
                             </button>
-                            <div className="flex justify-content-end">
-                                <SearchIt
-                                    search={search}
-                                    setSearch={setSearch}
-                                    name="Hospital"
-                                />
-                            </div>
                         </div>
                     </div>
 
@@ -74,9 +76,16 @@ export default function Index({ hospitals }) {
                             </thead>
                             <tbody>
                                 {hospitals.data.map((hospital, index) => (
-                                    <tr
+                                    <motion.tr
                                         key={hospital.id}
                                         className="hover:bg-base-300"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{
+                                            duration: 0.2,
+                                            delay: index * 0.05,
+                                        }}
                                     >
                                         <td>{index + 1}</td>
                                         <td>{hospital.hospital_number}</td>
@@ -134,7 +143,7 @@ export default function Index({ hospitals }) {
                                                 </div>
                                             </div>
                                         </td>
-                                    </tr>
+                                    </motion.tr>
                                 ))}
                             </tbody>
                         </table>
