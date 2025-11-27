@@ -1,3 +1,4 @@
+import { Link } from "@inertiajs/react";
 import { ArrowRightLeft } from "lucide-react";
 
 export default function Navbar() {
@@ -31,9 +32,9 @@ export default function Navbar() {
                         <li>
                             <a>Settings</a>
                         </li>
-                        <li>
-                            <a>Logout</a>
-                        </li>
+                        <Link href="/logout" method="post">
+                            Logout
+                        </Link>
                     </ul>
                 </div>
             </div>
