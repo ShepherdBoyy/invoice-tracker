@@ -6,12 +6,14 @@ import { useState } from "react";
 import ViewModal from "./elements/ViewModal";
 import Create from "./Create"
 import Edit from "./Edit";
+import DeleteUserModal from "./elements/DeleteUserModal";
 
 export default function Index({ users }) {
     const [showToast, setShowToast] = useState(false);
     const [openViewModal, setOpenViewModal] = useState(false);
     const [openCreateModal, setOpenCreateModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState({});
     const [successMesage, setSuccessMessage] = useState("");
 
@@ -33,7 +35,7 @@ export default function Index({ users }) {
                                     onClick={() => setOpenCreateModal(true)}
                                 >
                                     <CirclePlus size={18} />
-                                    Add Hospital
+                                    Add User
                                 </button>
                             </div>
                             <div className="flex justify-content-end">
@@ -100,6 +102,11 @@ export default function Index({ users }) {
                                                 <div
                                                     className="tooltip"
                                                     data-tip="Delete"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setOpenDeleteModal(true);
+                                                        setSelectedUser(user);
+                                                    }}
                                                 >
                                                     <Trash2
                                                         size={18}
@@ -132,6 +139,15 @@ export default function Index({ users }) {
                     {openEditModal && (
                         <Edit
                             setOpenEditModal={setOpenEditModal}
+                            selectedUser={selectedUser}
+                            setShowToast={setShowToast}
+                            setSuccessMessage={setSuccessMessage}
+                        />
+                    )}
+
+                    {openDeleteModal && (
+                        <DeleteUserModal
+                            setOpenDeleteModal={setOpenDeleteModal}
                             selectedUser={selectedUser}
                             setShowToast={setShowToast}
                             setSuccessMessage={setSuccessMessage}
