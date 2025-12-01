@@ -30,6 +30,7 @@ Route::middleware(["auth"])->group(function () {
         Route::post("/{hospital_id}/invoices/delete", [HospitalController::class, "deleteInvoice"]);
 
         Route::get("/{hospital_id}/invoices/{invoice_id}/history", [InvoiceHistoryController::class, "index"]);
+        Route::get("/{hospital_id}/invoices/{invoice_id}/history/download", [InvoiceHistoryController::class, "download"]);
         Route::post("/{hospital_id}/invoices/{invoice_id}/history/store", [InvoiceHistoryController::class, "store"]);
         Route::delete("/{hospital_id}/invoices/{invoice_id}/history/delete", [InvoiceHistoryController::class, "destroy"]);
     }); 
