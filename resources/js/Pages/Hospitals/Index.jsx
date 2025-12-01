@@ -1,6 +1,6 @@
 import { router } from "@inertiajs/react";
 import Master from "../components/Master";
-import { Eye, CirclePlus, Trash2, Pencil } from "lucide-react";
+import { CirclePlus, Trash2, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
 import Create from "./Create";
 import Edit from "./Edit";
@@ -78,7 +78,7 @@ export default function Index({ hospitals }) {
                                 {hospitals.data.map((hospital, index) => (
                                     <motion.tr
                                         key={hospital.id}
-                                        className="hover:bg-base-300"
+                                        className="hover:bg-base-300 cursor-pointer"
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
@@ -86,6 +86,11 @@ export default function Index({ hospitals }) {
                                             duration: 0.2,
                                             delay: index * 0.05,
                                         }}
+                                        onClick={() =>
+                                            router.get(
+                                                `/hospitals/${hospital.id}/invoices/Current`
+                                            )
+                                        }
                                     >
                                         <td>{index + 1}</td>
                                         <td>{hospital.hospital_number}</td>
@@ -95,26 +100,13 @@ export default function Index({ hospitals }) {
                                             <div className="flex gap-3 items-center justify-end">
                                                 <div
                                                     className="tooltip"
-                                                    data-tip="View"
-                                                >
-                                                    <Eye
-                                                        size={18}
-                                                        onClick={() =>
-                                                            router.get(
-                                                                `/hospitals/${hospital.id}/invoices/Current`
-                                                            )
-                                                        }
-                                                        className="cursor-pointer"
-                                                    />
-                                                </div>
-                                                <div
-                                                    className="tooltip"
                                                     data-tip="Edit"
                                                 >
                                                     <Pencil
                                                         size={18}
                                                         className="cursor-pointer"
-                                                        onClick={() => {
+                                                        onClick={(e) => {
+                                                            e.stopPropagation()
                                                             setOpenEditModal(
                                                                 true
                                                             );
@@ -131,7 +123,8 @@ export default function Index({ hospitals }) {
                                                     <Trash2
                                                         size={18}
                                                         className="cursor-pointer"
-                                                        onClick={() => {
+                                                        onClick={(e) => {
+                                                            e.stopPropagation()
                                                             setOpenDeleteModal(
                                                                 true
                                                             );

@@ -95,15 +95,17 @@ export default function Show({
                             </div>
                         </div>
                         <div className="flex items-center gap-x-2">
-                            <button
-                                className="btn btn-outline rounded-xl"
-                                onClick={() => {
-                                    setIsDeleteMode(true);
-                                    setSelectedIds([]);
-                                }}
-                            >
-                                <Trash2 size={18} className="cursor-pointer" />
-                            </button>
+                            {isDeleteMode && (
+                                <button
+                                    className="btn btn-outline rounded-xl"
+                                    onClick={() => setOpenDeleteModal(true)}
+                                >
+                                    <Trash2
+                                        size={18}
+                                        className="cursor-pointer"
+                                    />
+                                </button>
+                            )}
                             <button
                                 className="btn btn-primary rounded-xl"
                                 onClick={() => {
@@ -123,7 +125,7 @@ export default function Show({
                                     <th className="w-15">
                                         <input
                                             type="checkbox"
-                                            className="checkbox"
+                                            className="checkbox w-5 h-5"
                                             checked={
                                                 selectedIds.length ===
                                                     invoices.data.length &&
@@ -131,6 +133,7 @@ export default function Show({
                                             }
                                             onChange={(e) => {
                                                 if (e.target.checked) {
+                                                    setIsDeleteMode(true);
                                                     setSelectedIds(
                                                         invoices.data.map(
                                                             (i) => i.id
@@ -138,11 +141,11 @@ export default function Show({
                                                     );
                                                 } else {
                                                     setSelectedIds([]);
+                                                    setIsDeleteMode(false);
                                                 }
                                             }}
                                         />
                                     </th>
-                                    <th className="w-[50px]">#</th>
                                     <th className="w-1/4">Invoice No.</th>
                                     <th className="w-1/4">Document Date</th>
                                     <th className="w-1/4">Due Date</th>
@@ -181,29 +184,26 @@ export default function Show({
                                         <td>
                                             <input
                                                 type="checkbox"
-                                                className="checkbox"
-                                                checked={selectedIds.includes(
-                                                    invoice.id
-                                                )}
+                                                className="checkbox w-5 h-5"
+                                                checked={selectedIds.includes(invoice.id)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                }}
                                                 onChange={(e) => {
                                                     if (e.target.checked) {
                                                         setSelectedIds([
                                                             ...selectedIds,
                                                             invoice.id,
                                                         ]);
+                                                        setIsDeleteMode(true);
                                                     } else {
-                                                        setSelectedIds(
-                                                            selectedIds.filter(
-                                                                (id) =>
-                                                                    id !==
-                                                                    invoice.id
-                                                            )
-                                                        );
+                                                        const newSelected = selectedIds.filter((id) => id !== invoice.id)
+                                                        setSelectedIds(newSelected);
+                                                        setIsDeleteMode(newSelected.length > 0);
                                                     }
                                                 }}
                                             />
                                         </td>
-                                        <td>{index + 1}</td>
                                         <td>{invoice.invoice_number}</td>
                                         <td>
                                             {new Date(
@@ -282,27 +282,6 @@ export default function Show({
 
                     <Pagination data={invoices} />
                 </div>
-
-                {isDeleteMode && (
-                    <div className="flex justify-center gap-3 mt-5">
-                        <button
-                            className="btn btn-error text-white rounded-xl"
-                            disabled={selectedIds.length === 0}
-                            onClick={() => setOpenDeleteModal(true)}
-                        >
-                            Confirm
-                        </button>
-                        <button
-                            className="btn rounded-xl"
-                            onClick={() => {
-                                setIsDeleteMode(false);
-                                setSelectedIds([]);
-                            }}
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                )}
             </div>
         </Master>
     );
