@@ -20,6 +20,7 @@ class HospitalController extends Controller
     public function index(Request $request)
     {
         $searchQuery = $request->query("search");
+        $perPage = $request->query("per_page", 10);
 
         $hospitals = Hospital::withCount("invoices")
             ->when($searchQuery, function ($query) use ($searchQuery) {
@@ -29,7 +30,8 @@ class HospitalController extends Controller
                 });
             })
             ->orderBy("created_at", "desc")
-            ->paginate(10);
+            ->paginate($perPage)
+            ->withQueryString();
 
         return Inertia::render("Hospitals/Index", [
             "hospitals" => $hospitals
@@ -50,6 +52,7 @@ class HospitalController extends Controller
         $hospitalId = $request->hospital_id;
         $searchQuery = $request->query("search");
         $processingFilter = $request->processing_days;
+        $perPage = $request->query("per_page", 10);
 
         $invoices = Invoice::query()
             ->with(["hospital", "creator"])
@@ -82,7 +85,7 @@ class HospitalController extends Controller
                 };
             })
             ->orderBy("due_date", "desc")
-            ->paginate(10)
+            ->paginate($perPage)
             ->withQueryString();
         
         return Inertia::render("Hospitals/Show", [
