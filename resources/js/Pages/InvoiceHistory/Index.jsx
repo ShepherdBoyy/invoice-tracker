@@ -1,10 +1,10 @@
-import { Form } from "@inertiajs/react";
+import { Form, router } from "@inertiajs/react";
 import Master from "../components/Master";
 import { useState } from "react";
+import { FileText } from "lucide-react";
 
 export default function Index({ invoice, history, editor }) {
     const [showToast, setShowToast] = useState(false);
-    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [error, setError] = useState("");
 
     return (
@@ -18,9 +18,20 @@ export default function Index({ invoice, history, editor }) {
                     </div>
                 )}
                 <div className="flex flex-col bg-white p-6 rounded-xl">
-                    <span className="text-2xl mb-4">
-                        {invoice.hospital.hospital_name}
-                    </span>
+                    <div className="flex justify-between cursor-pointer items-center mb-4">
+                        <span className="text-2xl">
+                            {invoice.hospital.hospital_name}
+                        </span>
+                        <a
+                            href={`/hospitals/${invoice.hospital.id}/invoices/${invoice.id}/history/download`}
+                            target="_blank"
+                            className="flex items-center btn gap-1 p-2 tooltip"
+                            data-tip="View PDF"
+                        >
+                            <FileText />
+                            <span>PDF</span>
+                        </a>
+                    </div>
                     <div className="grid grid-cols-3 auto-rows-min gap-4">
                         <div className="row-span-1 border rounded-xl border-gray-300">
                             <div className="p-6 bg-linear-to-br from-primary/10 to-base-200 border-b border-base-300 rounded-t-xl">
