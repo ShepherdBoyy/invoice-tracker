@@ -23,22 +23,31 @@ Route::middleware(["auth"])->group(function () {
         Route::put("/edit/{id}", [HospitalController::class, "update"]);
         Route::delete("/delete/{id}", [HospitalController::class, "destroy"]);
 
-        Route::get("/{hospital_id}/invoices/{processing_days}", [HospitalController::class, "show"]);
-        Route::get("/{hospital_id}/invoices/create", [HospitalController::class, "createInvoice"]);
-        Route::post("/invoices/store", [HospitalController::class, "storeInvoice"]);
-        Route::get("/invoices/{id}/edit", [HospitalController::class, "editInvoice"]);
-        Route::post("/{hospital_id}/invoices/delete", [HospitalController::class, "deleteInvoice"]);
+        Route::prefix("{hospital_id}/invoices")->group(function () {
+            Route::get("/{processing_days}", [InvoiceController::class, "index"]);
+            Route::get("/create", [InvoiceController::class, "create"]);
+            Route::post("/store", [InvoiceController::class, "store"]);
+            Route::put("/{invoice_id}/update", [InvoiceController::class, "update"]);
+            Route::post("/delete", [InvoiceController::class, "destroy"]);
 
-        Route::get("/{hospital_id}/invoices/{invoice_id}/history", [InvoiceHistoryController::class, "index"]);
-        Route::get("/{hospital_id}/invoices/{invoice_id}/history/download", [InvoiceHistoryController::class, "download"]);
-        Route::post("/{hospital_id}/invoices/{invoice_id}/history/store", [InvoiceHistoryController::class, "store"]);
-        Route::delete("/{hospital_id}/invoices/{invoice_id}/history/delete", [InvoiceHistoryController::class, "destroy"]);
+            Route::prefix("{invoice_id}/history")->group(function () {
+                Route::get("/", [InvoiceHistoryController::class, "index"]);
+                Route::get("/download", [InvoiceHistoryController::class, "download"]);
+                Route::post("/store", [InvoiceHistoryController::class, "store"]);
+                Route::delete("/delete", [InvoiceHistoryController::class, "destroy"]);
+            });
+        });
+        // Route::get("/{hospital_id}/invoices/{processing_days}", [HospitalController::class, "show"]);
+        // Route::get("/{hospital_id}/invoices/create", [HospitalController::class, "createInvoice"]);
+        // Route::post("/invoices/store", [HospitalController::class, "storeInvoice"]);
+        // Route::get("/invoices/{id}/edit", [HospitalController::class, "editInvoice"]);
+        // Route::post("/{hospital_id}/invoices/delete", [HospitalController::class, "deleteInvoice"]);
+
+        // Route::get("/{hospital_id}/invoices/{invoice_id}/history", [InvoiceHistoryController::class, "index"]);
+        // Route::get("/{hospital_id}/invoices/{invoice_id}/history/download", [InvoiceHistoryController::class, "download"]);
+        // Route::post("/{hospital_id}/invoices/{invoice_id}/history/store", [InvoiceHistoryController::class, "store"]);
+        // Route::delete("/{hospital_id}/invoices/{invoice_id}/history/delete", [InvoiceHistoryController::class, "destroy"]);
     }); 
-
-    Route::prefix("invoices")->group(function () {
-        Route::get('/', fn() => redirect('/invoices/Current'));
-        Route::get("/{processing_days}", [InvoiceController::class, "index"]);
-    });
 
     Route::prefix("user-management")->group(function () {
         Route::get("/", [UserController::class, "index"]);
