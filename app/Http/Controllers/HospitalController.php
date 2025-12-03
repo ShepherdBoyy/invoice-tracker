@@ -3,17 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreHospitalRequest;
-use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateHospitalRequest;
-use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Hospital;
 use App\Models\Invoice;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-
-use function Symfony\Component\Clock\now;
 
 class HospitalController extends Controller
 {
@@ -88,7 +82,7 @@ class HospitalController extends Controller
             ->paginate($perPage)
             ->withQueryString();
         
-        return Inertia::render("Hospitals/Show", [
+        return Inertia::render("Invoices/Index", [
             "invoices" => $invoices,
             "hospital" => $hospitalId 
                 ? Hospital::withCount("invoices")->find($hospitalId) 
@@ -113,64 +107,6 @@ class HospitalController extends Controller
     {
         $hospital = Hospital::findOrFail($id);
         $hospital->delete();
-
-        return back()->with("success", true);
-    }
-
-    public function createInvoice()
-    {
-        return Inertia::render("Hospitals/elements/CreateInvoice", [
-            "hospitalId" => request("hospital_id")
-        ]);
-    }
-
-    public function storeInvoice(StoreInvoiceRequest $request)
-    {
-        $validated = $request->validated();
-        $validated['created_by'] = Auth::id();
-
-        $today = Carbon::today();
-        $dueDate = Carbon::parse($validated["due_date"])->startOfDay();
-
-        if (!empty($validated["date_closed"])) {
-            $validated["status"] = "closed";
-        } else {
-            $validated["status"] = $today->greaterThan($dueDate)
-                ? "overdue"
-                : "open";
-        }
-
-        $invoice = Invoice::create($validated);
-
-        $invoice->history()->create([
-            "updated_by" => Auth::id(),
-            "description" => "Invoice has been created"
-        ]);
-
-        return back()->with("success", true);
-    }
-
-    public function editInvoice(string $id)
-    {
-        $invoice = Invoice::with(["hospital", "creator"])
-                        ->findOrFail($id);
-
-        return Inertia::render("Hospitals/elements/EditInvoice", [
-            "invoice" => $invoice,
-            "editor" => Auth::user()
-        ]);
-    }
-
-    public function deleteInvoice(Request $request, $hospital_id)
-    {
-        $validated = $request->validate([
-            "ids" => ["required", "array", "min:1"],
-            "ids.*" => ["integer", "exists:invoices,id"]
-        ]);
-
-        Invoice::where("hospital_id", $hospital_id)
-            ->whereIn("id", $validated["ids"])
-            ->delete();
 
         return back()->with("success", true);
     }
