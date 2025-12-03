@@ -27,7 +27,6 @@ class UpdateInvoiceRequest extends FormRequest
             "document_date" => "sometimes|date",
             "due_date" => "sometimes|date",
             "amount" => "sometimes|numeric|min:0.01",
-            "description" => "sometimes|string|max:255",
         ];
     }
 }
