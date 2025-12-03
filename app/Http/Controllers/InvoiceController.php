@@ -2,25 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreInvoiceRequest;
+use App\Http\Requests\UpdateInvoiceRequest;
+use App\Models\Hospital;
 use App\Models\Invoice;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class InvoiceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
+        $hospitalId = $request->hospital_id;
         $searchQuery = $request->query("search");
         $processingFilter = $request->processing_days;
+        $perPage = $request->query("per_page", 10);
 
         $invoices = Invoice::query()
-            ->with(["hospital" => function ($query) {
-                $query->withCount("invoices");
-            }, "creator"])
+            ->with(["hospital", "creator"])
             ->select("invoices.*")
             ->addSelect([
                 "processing_days" => function ($query) {
@@ -32,6 +34,9 @@ class InvoiceController extends Controller
                     ");
                 }
             ])
+            ->when($hospitalId, function ($query) use ($hospitalId) {
+                $query->where("hospital_id", $hospitalId);
+            })
             ->when($searchQuery, function ($query) use ($searchQuery) {
                 $query->where("invoice_number", "like", "%{$searchQuery}%");
             })
@@ -47,66 +52,85 @@ class InvoiceController extends Controller
                 };
             })
             ->orderBy("due_date", "desc")
-            ->paginate(10)
+            ->paginate($perPage)
             ->withQueryString();
-
+        
         return Inertia::render("Invoices/Index", [
             "invoices" => $invoices,
+            "hospital" => $hospitalId 
+                ? Hospital::withCount("invoices")->find($hospitalId) 
+                : null,
             "searchQuery" => $searchQuery,
             "processingFilter" => $processingFilter ?? "30-days",
         ]);
     }
 
-    public function invoicePage()
-    {
-        return Inertia::render('Invoices/InvoicePage'); // include folder name!
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return Inertia::render("Invoices/Create", [
+            "hospitalId" => request("hospital_id")
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreInvoiceRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $validated['created_by'] = Auth::id();
+
+        $today = Carbon::today();
+        $dueDate = Carbon::parse($validated["due_date"])->startOfDay();
+
+        if (!empty($validated["date_closed"])) {
+            $validated["status"] = "closed";
+        } else {
+            $validated["status"] = $today->greaterThan($dueDate)
+                ? "overdue"
+                : "open";
+        }
+
+        $invoice = Invoice::create($validated);
+
+        $invoice->history()->create([
+            "updated_by" => Auth::id(),
+            "description" => "Invoice has been created"
+        ]);
+
+        return back()->with("success", true);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(UpdateInvoiceRequest $request)
     {
-        //
-    }
+        $invoiceId = $request->invoice_id;
+        $invoice = Invoice::findOrFail($invoiceId);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+        $validated = $request->validated();
+
+        $invoice->update($validated);
+
+        return back()->with("success", true);
+    }
+    
+    public function destroy(Request $request, $hospital_id)
     {
-        //
+        $validated = $request->validate([
+            "ids" => ["required", "array", "min:1"],
+            "ids.*" => ["integer", "exists:invoices,id"]
+        ]);
+
+        Invoice::where("hospital_id", $hospital_id)
+            ->whereIn("id", $validated["ids"])
+            ->delete();
+
+        return back()->with("success", true);
     }
 }
