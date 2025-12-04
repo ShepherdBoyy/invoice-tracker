@@ -38,16 +38,6 @@ Route::middleware(["auth"])->group(function () {
                 Route::delete("/delete", [InvoiceHistoryController::class, "destroy"]);
             });
         });
-        // Route::get("/{hospital_id}/invoices/{processing_days}", [HospitalController::class, "show"]);
-        // Route::get("/{hospital_id}/invoices/create", [HospitalController::class, "createInvoice"]);
-        // Route::post("/invoices/store", [HospitalController::class, "storeInvoice"]);
-        // Route::get("/invoices/{id}/edit", [HospitalController::class, "editInvoice"]);
-        // Route::post("/{hospital_id}/invoices/delete", [HospitalController::class, "deleteInvoice"]);
-
-        // Route::get("/{hospital_id}/invoices/{invoice_id}/history", [InvoiceHistoryController::class, "index"]);
-        // Route::get("/{hospital_id}/invoices/{invoice_id}/history/download", [InvoiceHistoryController::class, "download"]);
-        // Route::post("/{hospital_id}/invoices/{invoice_id}/history/store", [InvoiceHistoryController::class, "store"]);
-        // Route::delete("/{hospital_id}/invoices/{invoice_id}/history/delete", [InvoiceHistoryController::class, "destroy"]);
     }); 
 
     Route::prefix("user-management")->group(function () {
@@ -59,6 +49,8 @@ Route::middleware(["auth"])->group(function () {
 
     Route::prefix("import-data")->group(function () {
         Route::get("/", [ImportDataController::class, "index"]);
+        Route::get("/download-template", [ImportDataController::class, "downloadTemplate"]);
+        Route::post("/store", [ImportDataController::class, "store"]);
     });
 
     Route::post("/logout", [AuthController::class, "destroy"]);
