@@ -1,8 +1,8 @@
-import { CloudUpload } from "lucide-react";
+import { CloudUpload, X } from "lucide-react";
 import Master from "../components/Master";
 import { sampleData } from "./elements/SampleData";
 import { router } from "@inertiajs/react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function Index() {
     const [dragActive, setDragActive] = useState(false);
@@ -10,13 +10,29 @@ export default function Index() {
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
+    const dragCounter = useRef(0);
+
+    console.log(dragCounter);
 
     const handleDrag = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (e.type === "dragenter" || e.type === "dragover") {
+    };
+
+    const handleDragIn = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dragCounter.current++;
+        if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
             setDragActive(true);
-        } else if (e.type === "dragleave") {
+        }
+    };
+
+    const handleDragOut = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dragCounter.current--;
+        if (dragCounter.current === 0) {
             setDragActive(false);
         }
     };
@@ -25,11 +41,12 @@ export default function Index() {
         e.preventDefault();
         e.stopPropagation();
         setDragActive(false);
+        dragCounter.current = 0;
 
         const files = e.dataTransfer?.files;
         if (files && files.length > 0) {
             setFileName(files[0].name);
-            setFile(files[0])
+            setFile(files[0]);
         }
     };
 
@@ -75,9 +92,8 @@ export default function Index() {
                     <span className="text-2xl">Import New Data</span>
                 </div>
                 <div className="p-6 bg-white rounded-xl shadow-lg flex flex-col gap-6">
-                    <span className="text-xl text-center">Upload File</span>
                     <div className="flex gap-5">
-                        <div className="w-1/2 flex flex-col justify-between gap-3">
+                        <div className="w-1/2 flex flex-col justify-between">
                             <div>
                                 <span className="text-md block text-center font-semibold mb-3">
                                     Sample Excel Format
@@ -86,25 +102,25 @@ export default function Index() {
                                 <table className="table table-auto w-full border border-base-content/20 rounded-lg">
                                     <thead>
                                         <tr className="bg-base-200 text-base-content">
-                                            <th className="border border-base-content/20 text-center p-2">
+                                            <th className="border border-base-content/20 text-center p-2 font-normal">
                                                 Customer No.
                                             </th>
-                                            <th className="border border-base-content/20 text-center p-2">
+                                            <th className="border border-base-content/20 text-center p-2 font-normal">
                                                 Customer Name
                                             </th>
-                                            <th className="border border-base-content/20 text-center p-2">
+                                            <th className="border border-base-content/20 text-center p-2 font-normal">
                                                 Invoice No.
                                             </th>
-                                            <th className="border border-base-content/20 text-center p-2">
+                                            <th className="border border-base-content/20 text-center p-2 font-normal">
                                                 Document Date
                                             </th>
-                                            <th className="border border-base-content/20 text-center p-2">
+                                            <th className="border border-base-content/20 text-center p-2 font-normal">
                                                 Due Date
                                             </th>
-                                            <th className="border border-base-content/20 text-center p-2">
+                                            <th className="border border-base-content/20 text-center p-2 font-normal">
                                                 Days Overdue
                                             </th>
-                                            <th className="border border-base-content/20 text-center p-2">
+                                            <th className="border border-base-content/20 text-center p-2 font-normal">
                                                 Amount
                                             </th>
                                         </tr>
@@ -138,6 +154,9 @@ export default function Index() {
                                         ))}
                                     </tbody>
                                 </table>
+                                <p className="text-2xl text-gray-500">...</p>
+                                <p className="text-2xl text-gray-500">...</p>
+                                <p className="text-2xl text-gray-500">...</p>
                             </div>
                             <div className="flex items-center justify-center gap-2">
                                 <button
@@ -157,14 +176,17 @@ export default function Index() {
                         </div>
 
                         <div className="w-1/2 mx-auto">
+                            <span className="text-md block text-center font-semibold mb-3">
+                                Upload
+                            </span>
                             <div
-                                className={`bg-white border-2 ${
+                                className={`relative bg-white border-2 ${
                                     dragActive
-                                        ? "border-blue-500 bg-blue-50"
+                                        ? "border-blue-500"
                                         : "border-gray-300"
                                 } border-dashed rounded-md p-4 min-h-[300px] flex flex-col items-center justify-center cursor-pointer transition-colors`}
-                                onDragEnter={handleDrag}
-                                onDragLeave={handleDrag}
+                                onDragEnter={handleDragIn}
+                                onDragLeave={handleDragOut}
                                 onDragOver={handleDrag}
                                 onDrop={handleDrop}
                                 onClick={() =>
@@ -173,6 +195,15 @@ export default function Index() {
                                         .click()
                                 }
                             >
+                                {/* Gray overlay when dragging - appears on top */}
+                                {dragActive && (
+                                    <div className="absolute inset-0 bg-gray-300 bg-opacity-30 rounded-md flex items-center justify-center z-10 pointer-events-none">
+                                        <p className="text-white text-2xl font-bold">
+                                            Drop here
+                                        </p>
+                                    </div>
+                                )}
+
                                 {uploading ? (
                                     <div className="flex flex-col items-center gap-4">
                                         <div
@@ -203,7 +234,7 @@ export default function Index() {
                                         </span>
                                         <label
                                             htmlFor="chooseFile"
-                                            className="text-blue-600 text-base font-semibold cursor-pointer underline"
+                                            className="text-blue-600 text-base font-semibold cursor-pointer"
                                             onClick={(e) => e.stopPropagation()}
                                         >
                                             Choose file
@@ -213,29 +244,40 @@ export default function Index() {
                                             id="chooseFile"
                                             className="hidden"
                                             onChange={handleChange}
-                                            accept=".xlsx,.xls,.csv"
+                                            accept=".xlsx"
                                         />
                                         {fileName && (
-                                            <p className="mt-4 text-sm text-slate-600">
-                                                Selected:{" "}
-                                                <span className="font-semibold">
-                                                    {fileName}
-                                                </span>
-                                            </p>
+                                            <div className="flex items-center gap-2">
+                                                <p className="mt-4 text-sm text-slate-600">
+                                                    Selected:{" "}
+                                                    <span className="font-semibold">
+                                                        {fileName}
+                                                    </span>
+                                                </p>
+                                                <X
+                                                    size={18}
+                                                    className="bg-gray-300 rounded-lg p-0.5 cursor-pointer hover:bg-gray-400"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setFileName("");
+                                                        setFile(null);
+                                                    }}
+                                                />
+                                            </div>
                                         )}
                                     </>
                                 )}
                             </div>
-
-                            {file && !uploading && (
+                            <div className="flex justify-center mt-4">
                                 <button
                                     type="button"
                                     onClick={handleSubmit}
-                                    className="btn btn-primary w-full mt-4"
+                                    disabled={!file && !uploading}
+                                    className="btn btn-primary w-full rounded-xl"
                                 >
-                                    Upload File
+                                    Import
                                 </button>
-                            )}
+                            </div>
                         </div>
                     </div>
                 </div>
