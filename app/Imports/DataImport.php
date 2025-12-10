@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class DataImport implements ToCollection, WithHeadingRow
 {
@@ -25,28 +26,57 @@ class DataImport implements ToCollection, WithHeadingRow
                     ["hospital_name" => $row["customer_name"]]
                 );
 
-                $invoice = Invoice::create([
-                    "hospital_id" => $hospital->id,
-                    "invoice_number" => $row["invoice_number"],
-                    "document_date" => $row["document_date"],
-                    "due_date" => $row["due_date"],
-                    "amount" => $row["amount"],
-                    "status" => $this->determineStatus($row["due_date"], $row["date_closed"] ?? null),
-                    "date_closed" => $row["date_closed"] ?? null,
-                    "created_by" => Auth::id(),
-                ]);
+                $documentDate = $this->transformDate($row["document_date"]);
+                $dueDate = $this->transformDate($row["due_date"]);
+                $dateClosed = !empty($row["date_closed"]) ? $this->transformDate($row["date_closed"]) : null;
 
-                InvoiceHistory::create([
-                    "invoice_id" => $invoice->id,
-                    "updated_by" => Auth::id(),
-                    "description" => "Invoice has been created"
-                ]);
+                $invoice = Invoice::firstOrCreate(
+                    ["invoice_number" => $row["invoice_number"]],
+                    [
+                        "hospital_id" => $hospital->id,
+                        "document_date" => $documentDate,
+                        "due_date" => $dueDate,
+                        "amount" => $row["amount"],
+                        "status" => $this->determineStatus($row["due_date"], $row["date_closed"] ?? null),
+                        "date_closed" => $dateClosed,
+                        "created_by" => Auth::id(),
+                    ]
+                );
+
+                if ($invoice->wasRecentlyCreated) {
+                    InvoiceHistory::create([
+                        "invoice_id" => $invoice->id,
+                        "updated_by" => Auth::id(),
+                        "description" => "Invoice has been created"
+                    ]);
+                }
             }
 
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
+        }
+    }
+
+    private function transformDate($value)
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        try {
+            if ($value instanceof \DateTime) {
+                return Carbon::instance($value)->format("Y-m-d");
+            } elseif (is_numeric($value)) {
+                return Carbon::instance(Date::excelToDateTimeObject($value))->format("Y-m-d");
+            } elseif (is_string($value)) {
+                return Carbon::createFromFormat("n/j/Y", $value)->format("Y-m-d");
+            } else {
+                return Carbon::parse($value)->format('Y-m-d');
+            }
+        } catch (\Exception $e) {
+            return null;
         }
     }
 

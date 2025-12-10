@@ -292,6 +292,7 @@ export default function Index() {
                         </div>
                     </div>
                 </div>
+                <div className="p-6 bg-white rounded-xl shadow-lg flex flex-col gap-6">hello</div>
             </div>
         </Master>
     );

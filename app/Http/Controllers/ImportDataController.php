@@ -23,7 +23,7 @@ class ImportDataController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            "file" => "required|mimes:xlsx"
+            "file" => "required|mimes:xlsx,xls,csv"
         ]);
 
         try {
