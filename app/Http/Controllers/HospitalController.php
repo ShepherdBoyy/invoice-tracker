@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateHospitalRequest;
 use App\Models\Hospital;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class HospitalController extends Controller
@@ -15,8 +16,10 @@ class HospitalController extends Controller
     {
         $searchQuery = $request->query("search");
         $perPage = $request->query("per_page", 10);
+        $userAreaId = Auth::user();
 
         $hospitals = Hospital::withCount("invoices")
+            ->where("area_id", $userAreaId)
             ->when($searchQuery, function ($query) use ($searchQuery) {
                 $query->where(function ($q) use ($searchQuery) {
                     $q->where("hospital_name", "like", "%{$searchQuery}%")

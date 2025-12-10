@@ -43,4 +43,14 @@ class Hospital extends Model
     {
         return $this->hasMany(Invoice::class);
     }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
+
+    public function scopeForUser($query, User $user)
+    {
+        return $query->where("area_id", $user->area_id);
+    }
 }

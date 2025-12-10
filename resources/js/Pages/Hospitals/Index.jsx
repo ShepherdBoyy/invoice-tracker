@@ -92,7 +92,12 @@ export default function Index({ hospitals }) {
                                             )
                                         }
                                     >
-                                        <td>{index + 1}</td>
+                                        <td>
+                                            {(hospitals.current_page - 1) *
+                                                hospitals.per_page +
+                                                index +
+                                                1}
+                                        </td>
                                         <td>{hospital.hospital_number}</td>
                                         <td>{hospital.hospital_name}</td>
                                         <td>{hospital.invoices_count}</td>
@@ -106,7 +111,7 @@ export default function Index({ hospitals }) {
                                                         size={18}
                                                         className="cursor-pointer"
                                                         onClick={(e) => {
-                                                            e.stopPropagation()
+                                                            e.stopPropagation();
                                                             setOpenEditModal(
                                                                 true
                                                             );
@@ -124,7 +129,7 @@ export default function Index({ hospitals }) {
                                                         size={18}
                                                         className="cursor-pointer"
                                                         onClick={(e) => {
-                                                            e.stopPropagation()
+                                                            e.stopPropagation();
                                                             setOpenDeleteModal(
                                                                 true
                                                             );
