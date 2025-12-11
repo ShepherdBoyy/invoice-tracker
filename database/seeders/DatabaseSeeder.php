@@ -23,37 +23,47 @@ class DatabaseSeeder extends Seeder
             ['username' => 'collector', 'name' => 'Collector User', 'role' => 'collector'],
             ['username' => 'agent', 'name' => 'Agent User', 'role' => 'agent'],
             ['username' => 'accounting', 'name' => 'Accounting User', 'role' => 'accounting'],
+            ['username' => 'user1', 'name' => 'User 1', 'role' => 'staff'],
+            ['username' => 'user2', 'name' => 'User 2', 'role' => 'staff'],
+            ['username' => 'user3', 'name' => 'User 3', 'role' => 'staff'],
+            ['username' => 'user4', 'name' => 'User 4', 'role' => 'staff'],
+            ['username' => 'user5', 'name' => 'User 5', 'role' => 'staff'],
         ];
 
-        foreach ($roles as $userData) {
-            User::firstOrCreate(
+        $users = [];
+
+        foreach ($roles as $index => $userData) {
+            $users[] = User::firstOrCreate(
                 ['username' => $userData['username']],
                 [
                     'name' => $userData['name'],
                     'role' => $userData['role'],
                     'password' => Hash::make('password'),
-                    'area_id' => $areas->random()->id,
                     'visible_password' => Crypt::encryptString('password'),
+                    'area_id' => $areas[$index]->id,
                 ]
             );
         }
 
-        Hospital::factory()
-            ->count(50)
-            ->has(Invoice::factory()->count(15))
-            ->create([
-                'area_id' => $areas->random()->id,
-            ]);
-
-        $users = User::pluck('id')->toArray();
+        foreach ($areas as $area) {
+            $hospitals = Hospital::factory()
+                ->count(30)
+                ->has(
+                    Invoice::factory()
+                        ->count(15)
+                        ->state(fn() => ['created_by' => collect($users)->random()->id])
+                )
+                ->create([
+                    'area_id' => $area->id,
+                ]);
+        }
 
         Invoice::all()->each(function ($invoice) use ($users) {
-            InvoiceHistory::factory()
-                ->count(rand(1, 5))
-                ->create([
-                    'invoice_id' => $invoice->id,
-                    'updated_by' => collect($users)->random(),
-                ]);
+            InvoiceHistory::factory()->create([
+                'invoice_id' => $invoice->id,
+                'updated_by' => collect($users)->random()->id,
+            ]);
         });
     }
+
 }
