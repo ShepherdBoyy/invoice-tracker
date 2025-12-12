@@ -5,11 +5,11 @@ export default function Create({
     setOpenCreateModal,
     setShowToast,
     setSuccessMessage,
+    areas,
 }) {
     const [error, setError] = useState("");
     const [hospitalName, setHospitalName] = useState("");
 
-    console.log(error)
 
     return (
         <dialog open className="modal">
@@ -32,7 +32,10 @@ export default function Create({
                 >
                     <div className="flex flex-col gap-1 mt-8">
                         <div className="flex justify-between">
-                            <label htmlFor="hospital_number" className="text-sm">
+                            <label
+                                htmlFor="hospital_number"
+                                className="text-sm"
+                            >
                                 Hospital No.
                             </label>
                             {error.hospital_number && (
@@ -70,7 +73,43 @@ export default function Create({
                         />
                     </div>
 
-                    <div className="flex justify-end mt-6">
+                    <div className="flex flex-col gap-2 mt-8">
+                        <div className="flex justify-between">
+                            <label htmlFor="area_id" className="text-sm">
+                                Area:
+                            </label>
+                            {error.area_id && (
+                                <span className="text-red-500 text-sm">
+                                    {error.area_id}
+                                </span>
+                            )}
+                        </div>
+                        <select
+                            defaultValue=""
+                            className="select w-full"
+                            name="area_id"
+                            id="area_id"
+                        >
+                            <option value="" disabled>
+                                Select
+                            </option>
+                            {areas.map((area) => (
+                                <option key={area.id} value={area.id}>
+                                    {area.area_name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="flex justify-end mt-6 gap-2">
+                        <button
+                            className="btn btn-outline rounded-xl"
+                            onClick={() => {
+                                setOpenCreateModal(false);
+                            }}
+                        >
+                            Cancel
+                        </button>
                         <button
                             type="submit"
                             className="btn bg-gray-800 text-white rounded-xl "
