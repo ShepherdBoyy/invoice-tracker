@@ -253,7 +253,7 @@ export default function Show({
                                         </td>
                                         <td>{invoice.processing_days}</td>
                                         <td>
-                                            <div className="flex justify-center items-center">
+                                            <div className="flex justify-center items-center tooltip" data-tip="Edit">
                                                 <Pencil
                                                     size={18}
                                                     className="cursor-pointer"

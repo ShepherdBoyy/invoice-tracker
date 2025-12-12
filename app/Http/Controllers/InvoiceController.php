@@ -28,8 +28,10 @@ class InvoiceController extends Controller
                 "processing_days" => function ($query) {
                     $query->selectRaw("
                         CASE
-                            WHEN date_closed IS NOT NULL THEN 0
-                            ELSE DATEDIFF(due_date, CURDATE())
+                            WHEN date_closed IS NOT NULL
+                                THEN DATEDIFF(due_date, date_closed)
+                            ELSE
+                                DATEDIFF(due_date, CURDATE())
                         END
                     ");
                 }
@@ -42,12 +44,12 @@ class InvoiceController extends Controller
             })
             ->when(!$searchQuery && $processingFilter, function ($query) use ($processingFilter) {
                 match ($processingFilter) {
-                    "Current" => $query->having("processing_days", ">", 0),
-                    "30-days" => $query->havingBetween("processing_days", [-30, -1]),
-                    "31-60-days" => $query->havingBetween("processing_days", [-60, -31]),
-                    "61-90-days" => $query->havingBetween("processing_days", [-90, -61]),
-                    "91-over" => $query->having("processing_days", "<=", -91),
-                    "Closed" => $query->having("processing_days", "=", 0),
+                    "Current" => $query->having("processing_days", ">", 0)->whereNull("date_closed"),
+                    "30-days" => $query->havingBetween("processing_days", [-30, -1])->whereNull("date_closed"),
+                    "31-60-days" => $query->havingBetween("processing_days", [-60, -31])->whereNull("date_closed"),
+                    "61-90-days" => $query->havingBetween("processing_days", [-90, -61])->whereNull("date_closed"),
+                    "91-over" => $query->having("processing_days", "<=", -91)->whereNull("date_closed"),
+                    "Closed" => $query->whereNotNull("date_closed"),
                     default => null,
                 };
             })
