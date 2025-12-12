@@ -23,10 +23,11 @@ class StoreInvoiceRequest extends FormRequest
     {
         return [
             "hospital_id" => "required|integer",
-            "invoice_number" => "required|string|max:255",
+            "invoice_number" => "required|string|max:255|unique:invoices,invoice_number",
             "document_date" => "required|date",
             "due_date" => "required|date",
             "amount" => "required|numeric|min:0.01",
         ];
     }
 }
+    

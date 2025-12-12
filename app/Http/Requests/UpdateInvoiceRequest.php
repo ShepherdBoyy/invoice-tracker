@@ -23,7 +23,7 @@ class UpdateInvoiceRequest extends FormRequest
     {
         return [
             "hospital_id" => "sometimes|integer",
-            "invoice_number" => "sometimes|string|max:255",
+            "invoice_number" => "sometimes|string|max:255|unique:invoices,invoice_number",
             "document_date" => "sometimes|date",
             "due_date" => "sometimes|date",
             "amount" => "sometimes|numeric|min:0.01",
