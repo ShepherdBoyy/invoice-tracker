@@ -19,8 +19,6 @@ export default function Index() {
         e.stopPropagation();
     };
 
-    console.log(error);
-
     const handleDragIn = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -293,9 +291,9 @@ export default function Index() {
                         </div>
                     </div>
                 </div>
-                <div className="p-6 bg-white rounded-xl shadow-lg flex flex-col gap-6">
+                {/* <div className="p-6 bg-white rounded-xl shadow-lg flex flex-col gap-6">
                     hello
-                </div>
+                </div> */}
             </div>
         </Master>
     );
