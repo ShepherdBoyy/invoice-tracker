@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Area;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -21,12 +22,15 @@ class UserController extends Controller
         $perPage = $request->query("per_page", 10);
 
         $users = User::query()
+            ->with("area")
             ->when($searchQuery, function ($query) use ($searchQuery) {
                 $query->where("name", "like", "%{$searchQuery}%");
             })
             ->orderBy("name")
             ->paginate($perPage)
             ->withQueryString();
+        
+        $areas = Area::all();
 
         $users->getCollection()->transform(function ($user) {
             $user->plain_password = Crypt::decryptString($user->visible_password);
@@ -34,7 +38,8 @@ class UserController extends Controller
         });
 
         return Inertia::render("UserManagement/Index", [
-            "users" => $users
+            "users" => $users,
+            "areas" => $areas
         ]);
     }
 

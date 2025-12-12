@@ -8,9 +8,10 @@ import Create from "./Create"
 import Edit from "./Edit";
 import DeleteUserModal from "./elements/DeleteUserModal";
 import useDebounce from "../hooks/useDebounce";
+import { motion } from "framer-motion";
 import { router } from "@inertiajs/react";
 
-export default function Index({ users }) {
+export default function Index({ users, areas }) {
     const [showToast, setShowToast] = useState(false);
     const [openViewModal, setOpenViewModal] = useState(false);
     const [openCreateModal, setOpenCreateModal] = useState(false);
@@ -67,17 +68,25 @@ export default function Index({ users }) {
                         <table className="table  table-fixed">
                             <thead>
                                 <tr>
-                                    <th className="w-[100px]">#</th>
-                                    <th className="w-1/4">Name</th>
-                                    <th className="w-1/3">Role</th>
-                                    <th className="w-1/4">Created At</th>
+                                    <th className="w-1/20">#</th>
+                                    <th className="w-1/5">Name</th>
+                                    <th className="w-1/5">Role</th>
+                                    <th className="w-1/4">Area</th>
+                                    <th className="w-1/5">Created At</th>
                                     <th className="text-right">Action</th>
                                 </tr>
                             </thead>
 
                             <tbody>
                                 {users.data.map((user, index) => (
-                                    <tr
+                                    <motion.tr
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{
+                                            duration: 0.2,
+                                            delay: index * 0.05,
+                                        }}
                                         key={user.id}
                                         className="hover:bg-base-300 cursor-pointer"
                                         onClick={() => {
@@ -93,6 +102,7 @@ export default function Index({ users }) {
                                         </td>
                                         <td>{user.name}</td>
                                         <td>{user.role}</td>
+                                        <td>{user.area.area_name}</td>
                                         <td>
                                             {new Date(
                                                 user.created_at
@@ -130,7 +140,7 @@ export default function Index({ users }) {
                                                 </div>
                                             </div>
                                         </td>
-                                    </tr>
+                                    </motion.tr>
                                 ))}
                             </tbody>
                         </table>
@@ -148,6 +158,7 @@ export default function Index({ users }) {
                             setOpenCreateModal={setOpenCreateModal}
                             setShowToast={setShowToast}
                             setSuccessMessage={setSuccessMessage}
+                            areas={areas}
                         />
                     )}
 
@@ -157,6 +168,7 @@ export default function Index({ users }) {
                             selectedUser={selectedUser}
                             setShowToast={setShowToast}
                             setSuccessMessage={setSuccessMessage}
+                            areas={areas}
                         />
                     )}
 
