@@ -1,6 +1,6 @@
 import { router } from "@inertiajs/react";
 import Master from "../components/Master";
-import { CirclePlus, Trash2, Pencil } from "lucide-react";
+import { CirclePlus, Trash2, Pencil, ArrowUp, ArrowDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import Create from "./Create";
 import Edit from "./Edit";
@@ -8,9 +8,9 @@ import Pagination from "../components/Pagination";
 import SearchIt from "../components/SearchIt";
 import useDebounce from "../hooks/useDebounce";
 import DeleteHospitalModal from "./elements/DeleteHospitalModal";
-import { motion } from "framer-motion";
+import { filterProps, motion } from "framer-motion";
 
-export default function Index({ hospitals, areas }) {
+export default function Index({ hospitals, areas, filters }) {
     const [openCreateModal, setOpenCreateModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -18,6 +18,8 @@ export default function Index({ hospitals, areas }) {
     const [showToast, setShowToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [search, setSearch] = useState("");
+    const [sortBy, setSortBy] = useState(filters.sort_by || "created_at");
+    const [sortOrder, setSortOrder] = useState(filters.sort_order || "desc");
 
     const debouncedSearch = useDebounce(search, 300);
 
@@ -30,6 +32,37 @@ export default function Index({ hospitals, areas }) {
             );
         }
     }, [debouncedSearch]);
+
+    const handleSort = (column) => {
+        let newSortOrder = "asc";
+
+        if (sortBy === column) {
+            newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+        }
+
+        setSortBy(column);
+        setSortOrder(newSortOrder);
+
+        router.get(
+            "/hospitals",
+            {
+                sort_by: column,
+                sort_order: newSortOrder,
+            },
+            { preserveScroll: true, preserveState: true }
+        );
+    };
+
+    const SortIcon = ({ column }) => {
+        if (sortBy !== column) {
+            return null;
+        }
+        return sortOrder === "asc" ? (
+            <ArrowUp size={16} className="mb-1" />
+        ) : (
+            <ArrowDown size={16} className="mb-1" />
+        );
+    };
 
     return (
         <Master>
@@ -66,13 +99,43 @@ export default function Index({ hospitals, areas }) {
                             <thead>
                                 <tr>
                                     <th className="w-[100px]">#</th>
-                                    <th className="w-1/5">Hospital No.</th>
-                                    <th className="w-1/5">Hospital Name</th>
                                     <th className="w-1/5">Area</th>
-                                    <th className="w-1/20">
-                                        Number of Invoices
+                                    <th
+                                        className="w-1/5 cursor-pointer hover:bg-base-200"
+                                        onClick={() =>
+                                            handleSort("hospital_number")
+                                        }
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            Hospital No.
+                                            <SortIcon column="hospital_number" />
+                                        </div>
                                     </th>
-                                    <th className="w-1/4 text-right">Action</th>
+                                    <th
+                                        className="w-1/5 cursor-pointer hover:bg-base-200"
+                                        onClick={() =>
+                                            handleSort("hospital_name")
+                                        }
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            Hospital Name
+                                            <SortIcon column="hospital_name" />
+                                        </div>
+                                    </th>
+                                    <th
+                                        className="w-1/5 cursor-pointer hover:bg-base-200"
+                                        onClick={() =>
+                                            handleSort("invoices_count")
+                                        }
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            Number of Invoices
+                                            <SortIcon column="invoices_count" />
+                                        </div>
+                                    </th>
+                                    <th className="w-[100px] text-right">
+                                        Action
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -99,9 +162,9 @@ export default function Index({ hospitals, areas }) {
                                                 index +
                                                 1}
                                         </td>
+                                        <td>{hospital.area.area_name}</td>
                                         <td>{hospital.hospital_number}</td>
                                         <td>{hospital.hospital_name}</td>
-                                        <td>{hospital.area.area_name}</td>
                                         <td>{hospital.invoices_count}</td>
                                         <td>
                                             <div className="flex gap-3 items-center justify-end">

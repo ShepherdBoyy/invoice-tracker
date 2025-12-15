@@ -17,6 +17,8 @@ class HospitalController extends Controller
     {
         $searchQuery = $request->query("search");
         $perPage = $request->query("per_page", 10);
+        $sortBy = $request->query("sort_by", "created_at");
+        $sortOrder = $request->query("sort_order", "asc");
         $userAreaId = Auth::user()->area_id;
         $areas = Area::all();
 
@@ -29,13 +31,17 @@ class HospitalController extends Controller
                         ->orWhere("hospital_number", "like", "%{$searchQuery}%");
                 });
             })
-            ->orderBy("created_at", "desc")
+            ->orderBy($sortBy, $sortOrder)
             ->paginate($perPage)
             ->withQueryString();
 
         return Inertia::render("Hospitals/Index", [
             "hospitals" => $hospitals,
-            "areas" => $areas
+            "areas" => $areas,
+            "filters" => [
+                "sort_by" => $sortBy,
+                "sort_order" => $sortOrder
+            ]
         ]);
     }
 
