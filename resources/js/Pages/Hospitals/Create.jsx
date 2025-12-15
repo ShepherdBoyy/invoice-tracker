@@ -10,7 +10,6 @@ export default function Create({
     const [error, setError] = useState("");
     const [hospitalName, setHospitalName] = useState("");
 
-
     return (
         <dialog open className="modal">
             <div className="modal-box">
@@ -30,6 +29,34 @@ export default function Create({
                         setTimeout(() => setShowToast(false), 3000);
                     }}
                 >
+                    <div className="flex flex-col gap-2 mt-3">
+                        <div className="flex justify-between">
+                            <label htmlFor="area_id" className="text-sm">
+                                Area:
+                            </label>
+                            {error.area_id && (
+                                <span className="text-red-500 text-sm">
+                                    {error.area_id}
+                                </span>
+                            )}
+                        </div>
+                        <select
+                            defaultValue=""
+                            className="select w-full"
+                            name="area_id"
+                            id="area_id"
+                        >
+                            <option value="" disabled>
+                                Select
+                            </option>
+                            {areas.map((area) => (
+                                <option key={area.id} value={area.id}>
+                                    {area.area_name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                     <div className="flex flex-col gap-1 mt-8">
                         <div className="flex justify-between">
                             <label
@@ -71,34 +98,6 @@ export default function Create({
                             value={hospitalName}
                             onChange={(e) => setHospitalName(e.target.value)}
                         />
-                    </div>
-
-                    <div className="flex flex-col gap-2 mt-8">
-                        <div className="flex justify-between">
-                            <label htmlFor="area_id" className="text-sm">
-                                Area:
-                            </label>
-                            {error.area_id && (
-                                <span className="text-red-500 text-sm">
-                                    {error.area_id}
-                                </span>
-                            )}
-                        </div>
-                        <select
-                            defaultValue=""
-                            className="select w-full"
-                            name="area_id"
-                            id="area_id"
-                        >
-                            <option value="" disabled>
-                                Select
-                            </option>
-                            {areas.map((area) => (
-                                <option key={area.id} value={area.id}>
-                                    {area.area_name}
-                                </option>
-                            ))}
-                        </select>
                     </div>
 
                     <div className="flex justify-end mt-6 gap-2">
