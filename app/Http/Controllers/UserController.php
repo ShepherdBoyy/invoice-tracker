@@ -28,7 +28,16 @@ class UserController extends Controller
             ->when($searchQuery, function ($query) use ($searchQuery) {
                 $query->where("name", "like", "%{$searchQuery}%");
             })
-            ->orderBy("name")
+            ->when($sortBy === "area_name", 
+                function ($query) use ($sortOrder) {
+                    $query->join("areas", "users.area_id", "=", "areas.id")
+                        ->orderBy("areas.area_name", $sortOrder)
+                        ->select("users.*");
+                },
+                function ($query) use ($sortBy, $sortOrder) {
+                    $query->orderBy($sortBy, $sortOrder);
+                }
+            )
             ->paginate($perPage)
             ->withQueryString();
         
