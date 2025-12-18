@@ -1,11 +1,10 @@
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import {
     FolderUp,
     Hospital,
     ArrowRightLeft,
     CircleUserRound,
 } from "lucide-react";
-import { usePage } from "@inertiajs/react";
 
 export default function Sidebar() {
     const { url } = usePage();

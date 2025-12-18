@@ -191,6 +191,9 @@ export default function Index({ invoice, history, editor }) {
                                             amount differences before final
                                             closure
                                         </option>
+                                        <option value="Invoice has been closed">
+                                            Close Invoice
+                                        </option>
                                     </select>
                                 </fieldset>
                                 <div className="flex justify-end">
@@ -207,7 +210,7 @@ export default function Index({ invoice, history, editor }) {
                             </div>
                             <div className="p-4">
                                 <table className="table table-md">
-                                    <thead className="">
+                                    <thead>
                                         <tr>
                                             <th>Updated At</th>
                                             <th>Updated By</th>
