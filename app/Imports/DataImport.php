@@ -52,7 +52,7 @@ class DataImport implements ToCollection, WithHeadingRow
                 InvoiceHistory::create([
                     "invoice_id" => $invoice->id,
                     "updated_by" => Auth::id(),
-                    "description" => "Invoice has been created"
+                    "description" => "Invoice has been created from the imported Excel file"
                 ]);
             }
 
