@@ -6,23 +6,22 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreInvoiceRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
+    public function prepareForValidation()
+    {
+        $this->merge([
+            "hospital_id" => $this->route("hospital_id")
+        ]);
+    }
+
     public function rules(): array
     {
         return [
-            "hospital_id" => "required|integer",
+            "hospital_id" => "required|integer|exists:hospitals,id",
             "invoice_number" => "required|string|max:255|unique:invoices,invoice_number",
             "document_date" => "required|date",
             "due_date" => "required|date",
