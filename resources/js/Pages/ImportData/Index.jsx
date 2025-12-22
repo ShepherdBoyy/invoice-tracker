@@ -170,9 +170,6 @@ export default function Index() {
                                         ))}
                                     </tbody>
                                 </table>
-                                <p className="text-2xl text-gray-500">...</p>
-                                <p className="text-2xl text-gray-500">...</p>
-                                <p className="text-2xl text-gray-500">...</p>
                             </div>
                             <div className="flex items-center justify-center gap-2">
                                 <button

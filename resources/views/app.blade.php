@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html data-theme="light">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    @viteReactRefresh
-    @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
+      <title>Invoice Tracker</title>
 
-    @inertiaHead
+      @viteReactRefresh
+      @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
+
+      @inertiaHead
   </head>
+
   <body>
-    @inertia
+      @inertia
   </body>
+
+  <script src="http://localhost:8097"></script>
 </html>
