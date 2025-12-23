@@ -20,7 +20,7 @@ class UserController extends Controller
     {
         $searchQuery = $request->query("search");
         $perPage = $request->query("per_page", 10);
-        $sortBy = $request->query("sort_by", "created_at");
+        $sortBy = $request->query("sort_by");
         $sortOrder = $request->query("sort_order", "asc");
 
         $users = User::query()
@@ -28,15 +28,16 @@ class UserController extends Controller
             ->when($searchQuery, function ($query) use ($searchQuery) {
                 $query->where("name", "like", "%{$searchQuery}%");
             })
-            ->when($sortBy === "area_name", 
-                function ($query) use ($sortOrder) {
-                    $query->join("areas", "users.area_id", "=", "areas.id")
-                        ->orderBy("areas.area_name", $sortOrder)
-                        ->select("users.*");
+            ->when($sortBy, function ($query) use ($sortBy, $sortOrder) {
+                    if ($sortBy === "area_name") {
+                        $query->join("areas", "users.area_id", "=", "areas.id")
+                            ->orderBy("areas.area_name", $sortOrder)
+                            ->select("users.*");
+                    } else {
+                        $query->orderBy($sortBy, $sortOrder);
+                    }
+                            
                 },
-                function ($query) use ($sortBy, $sortOrder) {
-                    $query->orderBy($sortBy, $sortOrder);
-                }
             )
             ->paginate($perPage)
             ->withQueryString();
