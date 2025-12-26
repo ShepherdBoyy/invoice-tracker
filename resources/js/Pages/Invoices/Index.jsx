@@ -129,7 +129,7 @@ export default function Show({
                                                 invoices.data.length > 0
                                             }
                                             onChange={(e) => {
-                                                if (e.target.checked) {
+                                                if (e.target.checked && invoices.data.length > 0) {
                                                     setIsDeleteMode(true);
                                                     setSelectedIds(
                                                         invoices.data.map(
