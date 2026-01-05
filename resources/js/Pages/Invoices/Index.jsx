@@ -35,7 +35,7 @@ export default function Show({
             router.get(
                 `/hospitals/${hospital.id}/invoices/${processingFilter}`,
                 { search: debouncedSearch },
-                { preserveState: true, replace: true }
+                { preserveState: true, replace: true, only: ["invoices"] }
             );
         }
     }, [debouncedSearch]);
@@ -51,30 +51,13 @@ export default function Show({
 
     return (
         <Master>
-            <div className=" bg-base-200 ">
+            <div className="bg-base-200">
                 <div className="flex items-center gap-2 justify-between pb-4">
-                    <fieldset className="fieldset w-36">
-                        <select
-                            className="select rounded-xl"
-                            value={active}
-                            onChange={(e) => {
-                                const selectedDay = e.target.value;
-                                setActive(selectedDay);
-                                router.get(
-                                    `/hospitals/${
-                                        hospital.id
-                                    }/invoices/${selectedDay.replace(/ /g, "-")}`,
-                                    {},
-                                    { preserveState: true }
-                                );
-                            }}
-                        >
-                            <option disabled={true}>Filter By Days</option>
-                            {processingDays.map((day, index) => (
-                                <option key={index} value={day.label}>{day.label}</option>
-                            ))}
-                        </select>
-                    </fieldset>
+                    <div className="flex items-center gap-x-3">
+                        <h1 className="flex-1 text-3xl">
+                            {hospital.hospital_name}
+                        </h1>
+                    </div>
                     <SearchIt
                         search={search}
                         setSearch={setSearch}
@@ -82,16 +65,46 @@ export default function Show({
                     />
                 </div>
                 <div className="p-6 bg-white rounded-xl shadow-lg">
-                    <div className="flex items-center justify-between mb-4 gap-2 ">
-                        <div className="flex items-center gap-x-3">
-                            <h1 className="flex-1 text-3xl">
-                                {hospital.hospital_name}
-                            </h1>
-                            <div className="badge badge-sm badge-primary">
-                                {hospital.invoices_count} invoices
-                            </div>
+                    <div className="flex justify-between items-center mb-3">
+                        <div className="tabs tabs-box">
+                            {processingDays.map((day, index) => (
+                                <button
+                                    key={index}
+                                    type="button"
+                                    className={`px-4 border-b-0 rounded-2xl tab gap-2 ${
+                                        active === day.label
+                                            ? "tab-active text-black"
+                                            : ""
+                                    }`}
+                                    onClick={() => {
+                                        setActive(day.label);
+                                        router.get(
+                                            `/hospitals/${
+                                                hospital.id
+                                            }/invoices/${day.label.replace(
+                                                / /g,
+                                                "-"
+                                            )}`,
+                                            {},
+                                            {
+                                                preserveScroll: true,
+                                                preserveState: true,
+                                                only: [
+                                                    "invoices",
+                                                    "processingFilter",
+                                                ],
+                                            }
+                                        );
+                                    }}
+                                >
+                                    {day.label}
+                                    <div className="badge badge-sm bg-blue-200 border-none">
+                                        {hospital.invoices_count}
+                                    </div>
+                                </button>
+                            ))}
                         </div>
-                        <div className="flex items-center gap-x-2">
+                        <div className="flex gap-2">
                             {isDeleteMode && (
                                 <button
                                     className="btn btn-outline rounded-xl"
@@ -116,7 +129,7 @@ export default function Show({
                     </div>
 
                     <div className="rounded-box border border-base-content/5 bg-base-100 pt-5 ">
-                        <table className="table table-fixed ">
+                        <table className="table table-fixed">
                             <thead>
                                 <tr>
                                     <th className="w-15">
@@ -129,7 +142,10 @@ export default function Show({
                                                 invoices.data.length > 0
                                             }
                                             onChange={(e) => {
-                                                if (e.target.checked && invoices.data.length > 0) {
+                                                if (
+                                                    e.target.checked &&
+                                                    invoices.data.length > 0
+                                                ) {
                                                     setIsDeleteMode(true);
                                                     setSelectedIds(
                                                         invoices.data.map(
@@ -253,7 +269,10 @@ export default function Show({
                                         </td>
                                         <td>{invoice.processing_days}</td>
                                         <td>
-                                            <div className="flex justify-center items-center tooltip" data-tip="Edit">
+                                            <div
+                                                className="flex justify-center items-center tooltip"
+                                                data-tip="Edit"
+                                            >
                                                 <Pencil
                                                     size={18}
                                                     className="cursor-pointer"
