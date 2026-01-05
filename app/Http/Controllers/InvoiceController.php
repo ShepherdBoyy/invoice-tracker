@@ -63,7 +63,7 @@ class InvoiceController extends Controller
                 ? Hospital::withCount("invoices")->find($hospitalId) 
                 : null,
             "searchQuery" => $searchQuery,
-            "processingFilter" => $processingFilter ?? "30-days",
+            "processingFilter" => str_replace("-days", " days", $processingFilter),
         ]);
     }
 
