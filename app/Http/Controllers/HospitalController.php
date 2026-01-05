@@ -54,57 +54,6 @@ class HospitalController extends Controller
         return back()->with("success", true);
     }
 
-    public function show(Request $request)
-    {
-        $hospitalId = $request->hospital_id;
-        $searchQuery = $request->query("search");
-        $processingFilter = $request->processing_days;
-        $perPage = $request->query("per_page", 10);
-
-        $invoices = Invoice::query()
-            ->with(["hospital", "creator"])
-            ->select("invoices.*")
-            ->addSelect([
-                "processing_days" => function ($query) {
-                    $query->selectRaw("
-                        CASE
-                            WHEN date_closed IS NOT NULL THEN 0
-                            ELSE DATEDIFF(due_date, CURDATE())
-                        END
-                    ");
-                }
-            ])
-            ->when($hospitalId, function ($query) use ($hospitalId) {
-                $query->where("hospital_id", $hospitalId);
-            })
-            ->when($searchQuery, function ($query) use ($searchQuery) {
-                $query->where("invoice_number", "like", "%{$searchQuery}%");
-            })
-            ->when(!$searchQuery && $processingFilter, function ($query) use ($processingFilter) {
-                match ($processingFilter) {
-                    "Current" => $query->having("processing_days", ">", 0),
-                    "30-days" => $query->havingBetween("processing_days", [-30, -1]),
-                    "31-60-days" => $query->havingBetween("processing_days", [-60, -31]),
-                    "61-90-days" => $query->havingBetween("processing_days", [-90, -61]),
-                    "91-over" => $query->having("processing_days", "<=", -91),
-                    "Closed" => $query->having("processing_days", "=", 0),
-                    default => null,
-                };
-            })
-            ->orderBy("due_date", "desc")
-            ->paginate($perPage)
-            ->withQueryString();
-        
-        return Inertia::render("Invoices/Index", [
-            "invoices" => $invoices,
-            "hospital" => $hospitalId 
-                ? Hospital::withCount("invoices")->find($hospitalId) 
-                : null,
-            "searchQuery" => $searchQuery,
-            "processingFilter" => $processingFilter ?? "30-days",
-        ]);
-    }
-
     public function update(UpdateHospitalRequest $request, string $id)
     {
         $hospital = Hospital::findOrFail($id);
