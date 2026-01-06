@@ -13,8 +13,8 @@ export default function Create({
     return (
         <dialog open className="modal">
             <div className="modal-box">
-                <h3 className="font-bold text-lg">Add Hospital</h3>
-                <p className="text-sm text-gray-500">
+                <h3 className="font-bold text-lg text-center">Add Hospital</h3>
+                <p className="text-sm text-gray-500 text-center">
                     Input a new hospital to register it to our server
                 </p>
 

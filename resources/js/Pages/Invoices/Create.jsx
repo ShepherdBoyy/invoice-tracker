@@ -13,7 +13,7 @@ export default function Create({
     return (
         <dialog open className="modal">
             <div className="modal-box">
-                <p className="text-2xl font-bold">Add Invoice</p>
+                <p className="text-lg font-bold text-center">Add Invoice</p>
 
                 <Form
                     action={`/hospitals/${hospitalId}/invoices/store`}
@@ -30,7 +30,7 @@ export default function Create({
                         setError(error);
                     }}
                 >
-                    <div className="flex flex-col gap-1 mt-8">
+                    <div className="flex flex-col gap-1 mt-3">
                         <div className="flex justify-between">
                             <label htmlFor="invoice_number" className="text-md">
                                 Invoice No.
