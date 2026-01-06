@@ -10,11 +10,12 @@ import DeleteInvoiceModal from "./elements/DeleteInvoiceModal";
 import { motion } from "framer-motion";
 import Edit from "./Edit";
 
-export default function Show({
+export default function Index({
     invoices,
     hospital,
     searchQuery,
     processingFilter,
+    filterCounts,
 }) {
     const [search, setSearch] = useState(searchQuery || "");
     const [active, setActive] = useState(processingFilter);
@@ -33,20 +34,24 @@ export default function Show({
     useEffect(() => {
         if (debouncedSearch.trim() !== "") {
             router.get(
-                `/hospitals/${hospital.id}/invoices/${processingFilter}`,
+                `/hospitals/${hospital.id}/invoices/${active}`,
                 { search: debouncedSearch },
-                { preserveState: true, replace: true, only: ["invoices"] }
+                {
+                    preserveState: true,
+                    replace: true,
+                    only: ["invoices"],
+                }
             );
         }
     }, [debouncedSearch]);
 
     const processingDays = [
-        { label: "Current" },
-        { label: "30 days" },
-        { label: "31-60 days" },
-        { label: "61-90 days" },
-        { label: "91-over" },
-        { label: "Closed" },
+        { label: "Current", invoices_count: filterCounts.current },
+        { label: "30 days", invoices_count: filterCounts.thirty_days },
+        { label: "31-60 days", invoices_count: filterCounts.sixty_days },
+        { label: "61-90 days", invoices_count: filterCounts.ninety_days },
+        { label: "91-over", invoices_count: filterCounts.over_ninety },
+        { label: "Closed", invoices_count: filterCounts.closed },
     ];
 
     return (
@@ -54,7 +59,7 @@ export default function Show({
             <div className="bg-base-200">
                 <div className="flex items-center gap-2 justify-between pb-4">
                     <div className="flex items-center gap-x-3">
-                        <h1 className="flex-1 text-3xl">
+                        <h1 className="flex-1 text-2xl">
                             {hospital.hospital_name}
                         </h1>
                     </div>
@@ -71,35 +76,28 @@ export default function Show({
                                 <button
                                     key={index}
                                     type="button"
-                                    className={`px-4 border-b-0 rounded-2xl tab gap-2 ${
-                                        active === day.label
-                                            ? "tab-active text-black"
-                                            : ""
+                                    className={`px-4 border-b-0 rounded-2xl text-gray-500 tab gap-2 ${
+                                        active === day.label ? "tab-active text-gray-950" : ""
                                     }`}
+                                    disabled={day.invoices_count == 0}
                                     onClick={() => {
                                         setActive(day.label);
-                                        router.get(
-                                            `/hospitals/${
-                                                hospital.id
-                                            }/invoices/${day.label.replace(
-                                                / /g,
-                                                "-"
-                                            )}`,
+                                        setSelectedIds([]);
+                                        setIsDeleteMode(false);
+                                        router.visit(
+                                            `/hospitals/${hospital.id}/invoices/${day.label.replace(/ /g, "-")}`,
                                             {},
                                             {
                                                 preserveScroll: true,
                                                 preserveState: true,
-                                                only: [
-                                                    "invoices",
-                                                    "processingFilter",
-                                                ],
+                                                only: ["invoices"],
                                             }
                                         );
                                     }}
                                 >
                                     {day.label}
                                     <div className="badge badge-sm bg-blue-200 border-none">
-                                        {hospital.invoices_count}
+                                        {day.invoices_count}
                                     </div>
                                 </button>
                             ))}
@@ -128,7 +126,7 @@ export default function Show({
                         </div>
                     </div>
 
-                    <div className="rounded-box border border-base-content/5 bg-base-100 pt-5 ">
+                    <div className="rounded-box border border-base-content/5 bg-base-100 pt-5">
                         <table className="table table-fixed">
                             <thead>
                                 <tr>
@@ -163,7 +161,6 @@ export default function Show({
                                     <th className="w-1/4">Document Date</th>
                                     <th className="w-1/4">Due Date</th>
                                     <th className="w-1/4">Amount</th>
-                                    <th className="w-1/4">Status</th>
                                     <th className="w-1/4">Processing Days</th>
                                     <th className="w-20 text-right">Action</th>
                                 </tr>
@@ -248,24 +245,6 @@ export default function Show({
                                             ).toLocaleString("en-PH", {
                                                 minimumFractionDigits: 2,
                                             })}
-                                        </td>
-                                        <td className="text-left">
-                                            <span
-                                                className={`badge badge-md text-sm rounded-full ${
-                                                    invoice.status.toLowerCase() ===
-                                                    "closed"
-                                                        ? "bg-emerald-100 text-emerald-700 border-green-600"
-                                                        : invoice.status.toLowerCase() ===
-                                                          "open"
-                                                        ? "bg-yellow-100 text-yellow-700 border-yellow-600"
-                                                        : invoice.status.toLowerCase() ===
-                                                          "overdue"
-                                                        ? "bg-red-100 text-red-700 border-red-600"
-                                                        : "bg-gray-100 text-gray-700"
-                                                }`}
-                                            >
-                                                {invoice.status}
-                                            </span>
                                         </td>
                                         <td>{invoice.processing_days}</td>
                                         <td>
