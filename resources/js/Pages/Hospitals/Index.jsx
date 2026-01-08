@@ -153,7 +153,7 @@ export default function Index({ hospitals, areas, filters, breadcrumbs }) {
                                         }}
                                         onClick={() =>
                                             router.get(
-                                                `/hospitals/${hospital.id}/invoices/Current`
+                                                `/hospitals/${hospital.id}/invoices`
                                             )
                                         }
                                     >
