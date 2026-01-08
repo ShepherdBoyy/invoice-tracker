@@ -29,7 +29,7 @@ class InvoiceHistoryController extends Controller
             "editor" => Auth::user()->name,
             "breadcrumbs" => [
                 ["label" => "Hospitals", "url" => "/hospitals"],
-                ["label" => $invoice->hospital->hospital_name, "url" => "/hospitals/{$invoice->hospital_id}/invoices/Current"],
+                ["label" => $invoice->hospital->hospital_name, "url" => "/hospitals/{$invoice->hospital_id}/invoices"],
                 ["label" => $invoice->invoice_number, "url" => null]
             ]
         ]);
