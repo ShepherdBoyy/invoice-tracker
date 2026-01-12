@@ -12,9 +12,9 @@ export default function Breadcrumbs({ items }) {
                     return (
                         <li key={index}>
                             {isLast || !item.url ? (
-                                <span className="text-2xl no-underline cursor-default text-gray-500">{item.label}</span>
+                                <span className="text-2xl no-underline cursor-default">{item.label}</span>
                             ) : (
-                                <Link href={item.url} className="text-2xl">{item.label}</Link>
+                                <Link href={item.url} className="text-2xl text-gray-600">{item.label}</Link>
                             )}
                         </li>
                     );
