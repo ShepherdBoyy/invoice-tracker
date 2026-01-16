@@ -25,7 +25,7 @@ class DataImport implements ToCollection, WithHeadingRow
                 $area = Area::firstOrCreate(["area_name" => $row["area"]]);
 
                 $hospital = Hospital::firstOrCreate(
-                    ["hospital_number" => $row["customer_number"]],
+                    ["hospital_number" => $row["customer_no"]],
                     [
                         "hospital_name" => $row["customer_name"],
                         "area_id" => $area->id
@@ -38,7 +38,7 @@ class DataImport implements ToCollection, WithHeadingRow
 
                 $invoice = Invoice::create(
                     [
-                        "invoice_number" => $row["invoice_number"],
+                        "invoice_number" => $row["invoice_no"],
                         "hospital_id" => $hospital->id,
                         "document_date" => $documentDate,
                         "due_date" => $dueDate,
