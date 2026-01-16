@@ -25,10 +25,10 @@ export default function Index({ invoice, history, editor, breadcrumbs }) {
                     <Breadcrumbs items={breadcrumbs} />
                 </div>
                 <div className="flex flex-col bg-white p-6 rounded-xl shadow-lg">
-                    <div className="flex justify-between cursor-pointer items-center mb-4">
-                        <span className="text-2xl">
+                    <div className="flex justify-end cursor-pointer items-center mb-4">
+                        {/* <span className="text-2xl">
                             {invoice.hospital.hospital_name}
-                        </span>
+                        </span> */}
                         <a
                             href={`/hospitals/${invoice.hospital.id}/invoices/${invoice.id}/history/download`}
                             target="_blank"
