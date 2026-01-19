@@ -15,6 +15,8 @@ class HospitalController extends Controller
 {
     public function index(Request $request)
     {
+        Gate::authorize("viewAny", Hospital::class);
+
         $searchQuery = $request->query("search");
         $perPage = $request->query("per_page", 10);
         $sortBy = $request->query("sort_by", "created_at");
@@ -24,8 +26,9 @@ class HospitalController extends Controller
 
         $query = Hospital::withCount("invoices")->with("area");
 
-        if (Gate::denies("viewAny", Hospital::class)) {
-            $query->where("area_id", $user->area_id);
+        if (!Gate::allows("viewAll", Hospital::class)) {
+            $userAreaIds = $user->areas->pluck("id");
+            $query->whereIn("area_id", $userAreaIds);
         }
             
         $hospitals = $query
@@ -54,8 +57,9 @@ class HospitalController extends Controller
 
     public function store(StoreHospitalRequest $request)
     {
-        $validated = $request->validated();
+        Gate::authorize("create", Hospital::class);
 
+        $validated = $request->validated();
         Hospital::create($validated);
 
         return back()->with("success", true);
@@ -64,6 +68,8 @@ class HospitalController extends Controller
     public function update(UpdateHospitalRequest $request, string $id)
     {
         $hospital = Hospital::findOrFail($id);
+
+        Gate::authorize("update", $hospital);
 
         $validated = $request->validated();
 
@@ -75,6 +81,9 @@ class HospitalController extends Controller
     public function destroy(string $id)
     {
         $hospital = Hospital::findOrFail($id);
+
+        Gate::authorize("delete", $hospital);
+
         $hospital->delete();
 
         return back()->with("success", true);

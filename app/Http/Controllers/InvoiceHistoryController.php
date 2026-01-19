@@ -8,12 +8,15 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class InvoiceHistoryController extends Controller
 {
     public function index(Request $request)
     {
+        Gate::authorize("viewAny", InvoiceHistory::class);
+
         $invoiceId = $request->invoice_id;
 
         $invoice = Invoice::with(["hospital", "creator"])->findOrFail($invoiceId);
@@ -37,6 +40,8 @@ class InvoiceHistoryController extends Controller
 
     public function download(Request $request)
     {
+        Gate::authorize("viewAny", InvoiceHistory::class);
+
         $invoiceId = $request->invoice_id;
 
         $invoice = Invoice::with(["hospital", "creator"])->findOrFail($invoiceId);
@@ -80,6 +85,8 @@ class InvoiceHistoryController extends Controller
 
     public function store(Request $request)
     {
+        Gate::authorize("create", InvoiceHistory::class);
+
         $invoiceId = $request->invoice_id;
 
         $validated = $request->validate([

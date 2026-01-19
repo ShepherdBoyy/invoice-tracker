@@ -8,6 +8,7 @@ use App\Models\Area;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
@@ -15,6 +16,8 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        Gate::authorize("viewAny", User::class);
+
         $searchQuery = $request->query("search");
         $perPage = $request->query("per_page", 10);
         $sortBy = $request->query("sort_by");
@@ -58,6 +61,8 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
+        Gate::authorize("create", User::class);
+
         $validated = $request->validated();
 
         if (!empty($validated["password"])) {
@@ -79,6 +84,8 @@ class UserController extends Controller
     {
         $user = User::findOrfail($id);
 
+        Gate::authorize("update", $user);
+
         $validated = $request->validated();
 
         if (!empty($validated["password"])) {
@@ -99,6 +106,9 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         $user = User::findOrFail($id);
+
+        Gate::authorize("delete");
+
         $user->delete();
 
         return back()->with("success", true);

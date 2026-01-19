@@ -9,12 +9,15 @@ use App\Models\Invoice;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class InvoiceController extends Controller
 {
     public function index(Request $request)
     {
+        Gate::authorize("viewAny", Invoice::class);
+
         $hospitalId = $request->hospital_id;
         $searchQuery = $request->query("search");
         $processingFilter = $request->query("processing_days");
@@ -120,15 +123,10 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function create()
-    {
-        return Inertia::render("Invoices/Create", [
-            "hospitalId" => request("hospital_id")
-        ]);
-    }
-
     public function store(StoreInvoiceRequest $request)
     {
+        Gate::authorize("create", Invoice::class);
+
         $validated = $request->validated();
         $validated['created_by'] = Auth::id();
 
@@ -153,20 +151,12 @@ class InvoiceController extends Controller
         return back()->with("success", true);
     }
 
-    public function show(string $id)
-    {
-        //
-    }
-
-    public function edit(string $id)
-    {
-        //
-    }
-
     public function update(UpdateInvoiceRequest $request)
     {
         $invoiceId = $request->invoice_id;
         $invoice = Invoice::findOrFail($invoiceId);
+
+        Gate::authorize("update", $invoice);
 
         $validated = $request->validated();
 
@@ -177,6 +167,8 @@ class InvoiceController extends Controller
     
     public function destroy(Request $request, $hospital_id)
     {
+        Gate::authorize("delete", Invoice::class);
+
         $validated = $request->validate([
             "ids" => ["required", "array", "min:1"],
             "ids.*" => ["integer", "exists:invoices,id"]

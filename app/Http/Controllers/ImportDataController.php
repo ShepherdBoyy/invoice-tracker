@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\TemplateExport;
 use App\Imports\DataImport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -12,16 +13,22 @@ class ImportDataController extends Controller
 {
     public function index()
     {
+        Gate::authorize("viewAny");
+
         return Inertia::render("ImportData/Index");
     }
 
     public function downloadTemplate()
     {
+        Gate::authorize("viewAny");
+
         return Excel::download(new TemplateExport, "Invoice_Tracker_Template.xlsx");
     }
 
     public function store(Request $request)
     {
+        Gate::authorize("create");
+
         $request->validate([
             "file" => "required|mimes:xlsx,xls,csv"
         ]);
