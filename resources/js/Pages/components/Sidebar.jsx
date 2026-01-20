@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 
 export default function Sidebar() {
-    const { url } = usePage();
+    const { url, props } = usePage();
 
     const navItems = [
         {
@@ -15,20 +15,25 @@ export default function Sidebar() {
             label: "Hospital",
             href: "/hospitals",
             icon: Hospital,
+            canView: props.permissions.canAccessHospitals
         },
         {
             id: "import-data",
             label: "Import Data",
             href: "/import-data",
             icon: FolderUp,
+            canView: props.permissions.canViewImportData
         },
         {
             id: "user-management",
             label: "User Management",
             href: "/user-management",
             icon: CircleUserRound,
+            canView: props.permissions.canViewUsers
         },
     ];
+
+    const visibleNavItems = navItems.filter((item) => item.canView);
 
     return (
         <div className="drawer-side is-drawer-close:overflow-visible">
@@ -49,29 +54,36 @@ export default function Sidebar() {
                         </label>
                     </div>
 
-                    {navItems.map((item) => {
-                        const isActive = url.startsWith(item.href);
-                        const Icon = item.icon;
-                        return (
-                            <li key={item.id}>
-                                <Link
-                                    href={item.href}
-                                    className={`is-drawer-close:tooltip is-drawer-close:tooltip-right rounded-lg transition-colors duration-300 ease-in-out 
-                                        ${
-                                            isActive
-                                                ? "bg-linear-to-br from-primary/40 to-primary/20 text-black"
-                                                : "hover:bg-gray-100 hover:text-gray-900 text-gray-400"
-                                        }`}
-                                    data-tip={item.label}
-                                >
-                                    <Icon className="my-1.5 inline-block size-4" />
-                                    <span className="is-drawer-close:hidden">
-                                        {item.label}
-                                    </span>
-                                </Link>
-                            </li>
-                        );
-                    })}
+                    {visibleNavItems.length > 0 ? (
+                        visibleNavItems.map((item) => {
+                            const isActive = url.startsWith(item.href);
+                            const Icon = item.icon;
+
+                            return (
+                                <li key={item.id}>
+                                    <Link
+                                        href={item.href}
+                                        className={`is-drawer-close:tooltip is-drawer-close:tooltip-right rounded-lg transition-colors duration-300 ease-in-out 
+                                            ${
+                                                isActive
+                                                    ? "bg-linear-to-br from-primary/40 to-primary/20 text-black"
+                                                    : "hover:bg-gray-100 hover:text-gray-900 text-gray-400"
+                                            }`}
+                                        data-tip={item.label}
+                                    >
+                                        <Icon className="my-1.5 inline-block size-4" />
+                                        <span className="is-drawer-close:hidden">
+                                            {item.label}
+                                        </span>
+                                    </Link>
+                                </li>
+                            );
+                        })
+                    ) : (
+                        <li className="text-center text-gray-400 py-4">
+                            No pages available
+                        </li>
+                    )}
                 </ul>
             </div>
         </div>

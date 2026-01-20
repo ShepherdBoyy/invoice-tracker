@@ -11,7 +11,7 @@ import useDebounce from "../hooks/useDebounce";
 import { motion } from "framer-motion";
 import { router } from "@inertiajs/react";
 
-export default function Index({ users, areas, filters }) {
+export default function Index({ users, areas, filters, permissionList }) {
     const [showToast, setShowToast] = useState(false);
     const [openViewModal, setOpenViewModal] = useState(false);
     const [openCreateModal, setOpenCreateModal] = useState(false);
@@ -230,6 +230,7 @@ export default function Index({ users, areas, filters }) {
                             setShowToast={setShowToast}
                             setSuccessMessage={setSuccessMessage}
                             areas={areas}
+                            permissionList={permissionList}
                         />
                     )}
 
