@@ -12,57 +12,57 @@ class PermissionSeeder extends Seeder
         $permissions = [
             [
                 'name' => 'view_all_hospitals',
-                'display_name' => 'View All Hospitals',
+                'display_name' => 'View All Areas',
                 'category' => 'hospitals',
             ],
             [
                 'name' => 'view_area_hospitals',
-                'display_name' => 'View Area Hospitals',
+                'display_name' => 'View Specific Area',
                 'category' => 'hospitals',
             ],
             [
                 'name' => 'manage_hospitals',
-                'display_name' => 'Manage Hospitals',
+                'display_name' => 'Manage',
                 'category' => 'hospitals',
             ],
             [
                 'name' => 'view_invoices',
-                'display_name' => 'View Invoices',
+                'display_name' => 'View',
                 'category' => 'invoices',
             ],
             [
                 'name' => 'manage_invoices',
-                'display_name' => 'Manage Invoices',
+                'display_name' => 'Manage',
                 'category' => 'invoices',
             ],
             [
                 'name' => 'view_invoice_history',
-                'display_name' => 'View Invoice History',
+                'display_name' => 'View',
                 'category' => 'invoice_history',
             ],
             [
-                'name' => 'create_invoice_history',
-                'display_name' => 'Create Invoice History',
+                'name' => 'manage_invoice_history',
+                'display_name' => 'Manage',
                 'category' => 'invoice_history',
             ],
             [
                 'name' => 'view_import_data',
-                'display_name' => 'View Import Data Page',
+                'display_name' => 'View',
                 'category' => 'import_data',
             ],
             [
-                'name' => 'import_data',
-                'display_name' => 'Import Data',
+                'name' => 'manage_import_data',
+                'display_name' => 'Manage',
                 'category' => 'import_data',
             ],
             [
                 'name' => 'view_users',
-                'display_name' => 'View Users',
+                'display_name' => 'View',
                 'category' => 'users',
             ],
             [
                 'name' => 'manage_users',
-                'display_name' => 'Manage Users',
+                'display_name' => 'Manage',
                 'category' => 'users',
             ],
         ];
