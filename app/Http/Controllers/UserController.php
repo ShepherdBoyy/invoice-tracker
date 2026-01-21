@@ -97,17 +97,22 @@ class UserController extends Controller
 
         $validated = $request->validated();
 
-        if (!empty($validated["password"])) {
-            $plainPassword = $validated["password"];
+        $plainPassword = $validated["password"];
+        $validated["password"] = Hash::make($plainPassword);
+        $validated["visible_password"] = Crypt::encryptString($plainPassword);
 
-            $validated["password"] = Hash::make($plainPassword);
-            $validated["visible_password"] = Crypt::encryptString($plainPassword);
-        } else {
-            unset($validated["password"]);
-            unset($validated["visible_password"]);
+        $user->update([
+            "name" => $validated["name"],
+            "username" => $validated["username"],
+            "password" => $validated["password"],
+            "visible_password" => $validated["visible_password"] ?? $user->visible_password
+        ]);
+
+        $user->permissions()->sync($validated["permissions"]);
+
+        if(!empty($validated["areas"])) {
+            $user->areas()->sync($validated["areas"]);
         }
-
-        $user->update($validated);
 
         return back()->with("success", true);
     }
@@ -117,6 +122,9 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         Gate::authorize("delete", $user);
+
+        $user->permissions()->detach();
+        $user->areas()->detach();
 
         $user->delete();
 
