@@ -7,27 +7,30 @@ use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            "name" => "sometimes|string|min:2|max:50",
-            "role" => "sometimes|in:Purchasing,Agent,Collector,Accounting",
-            "area_id" => "sometimes|integer",
-            'username' => "sometimes|string|min:4|max:30|regex:/^[A-za-z0-9.]+$/",
-            "password" => "sometimes|string|min:8"
+            "name" => ["required", "string", "max:50",],
+            'username' => ["required", "string", "max:30", "regex:/^[A-za-z0-9.]+$/"],
+            "password" => ["required", "string", "min:8"],
+            "permissions" => ["required", "array", "min:1"],
+            "permissions.*" => ["integer", "exists:permissions,id"],
+            "areas" => ["nullable", "array"],
+            "areas.*" => ["integer", "exists:areas,id"]
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            "permissions.required" => "Please select at least one permissions",
+            "permissions.min" => "Please select at least one permissions",
+            "areas.*.exists" => "Selected area is invalid",
         ];
     }
 }

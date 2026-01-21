@@ -1,8 +1,8 @@
-import { CloudUpload, X } from "lucide-react";
+import { AlertCircle, CloudUpload, X } from "lucide-react";
 import Master from "../components/Master";
 import { sampleData } from "./elements/SampleData";
-import { router } from "@inertiajs/react";
-import { useState, useRef } from "react";
+import { router, usePage } from "@inertiajs/react";
+import { useState, useRef, useEffect } from "react";
 
 export default function Index() {
     const [dragActive, setDragActive] = useState(false);
@@ -10,11 +10,11 @@ export default function Index() {
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
-    const [error, setError] = useState("");
     const [showToast, setShowToast] = useState(false);
     const dragCounter = useRef(0);
+    const { import_errors, success } = usePage().props;
 
-    console.log(error)
+    console.log(import_errors);
 
     const handleDrag = (e) => {
         e.preventDefault();
@@ -72,16 +72,7 @@ export default function Index() {
                     onProgress: (progressEvent) => {
                         setProgress(progressEvent.percentage);
                     },
-                    onSuccess: (page) => {
-                        setUploading(false);
-                        setProgress(0);
-                        setFile(null);
-                        setFileName("");
-                        setShowToast(true);
-                        setTimeout(() => setShowToast(false), 3000);
-                    },
-                    onError: (errors) => {
-                        setError(errors.error);
+                    onError: () => {
                         setUploading(false);
                         setProgress(0);
                     },
@@ -89,6 +80,30 @@ export default function Index() {
             );
         }
     };
+
+    useEffect(() => {
+        if (success) {
+            setUploading(false);
+            setProgress(0);
+            setFile(null);
+            setFileName("");
+            setShowToast(true);
+            setTimeout(() => setShowToast(false), 3000);
+        }
+    }, [success]);
+
+    const getAttributeLabel = (attribute) =>{
+        const labels = {
+            area: "Area",
+            customer_no: "Customer No",
+            customer_name: "Customer Name",
+            invoice_no: "Invoice No",
+            document_date: "Document Date",
+            due_date: "Due Date",
+            amount: "Amount"
+        }
+        return labels[attribute] || attribute;
+    }
 
     return (
         <Master>
@@ -204,13 +219,7 @@ export default function Index() {
                                 onDragLeave={handleDragOut}
                                 onDragOver={handleDrag}
                                 onDrop={handleDrop}
-                                // onClick={() =>
-                                //     document
-                                //         .getElementById("chooseFile")
-                                //         .click()
-                                // }
                             >
-                                {/* Gray overlay when dragging - appears on top */}
                                 {dragActive && (
                                     <div className="absolute inset-0 bg-gray-300 bg-opacity-30 rounded-md flex items-center justify-center z-10 pointer-events-none">
                                         <p className="text-white text-2xl font-bold">
@@ -294,6 +303,35 @@ export default function Index() {
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div className="p-6 bg-white rounded-xl shadow-lg flex flex-col gap-6 mt-4">
+                    <div>
+                        <AlertCircle />
+                        <div>
+                            <p>Import Errors Found</p>
+                            <p>Please fix the following errors in your file and try again:</p>
+                        </div>
+                    </div>
+                    <div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Row</th>
+                                    <th>Field</th>
+                                    <th>Error</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {import_errors?.map((error, index) => (
+                                    <tr key={index}>
+                                        <td>{error.row}</td>
+                                        <td>{getAttributeLabel(error.header)}</td>
+                                        <td>{error.errors}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
