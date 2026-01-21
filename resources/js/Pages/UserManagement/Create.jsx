@@ -13,9 +13,6 @@ export default function Create({
     const [selectedPermissions, setSelectedPermissions] = useState([]);
     const [selectedAreas, setSelectedAreas] = useState([]);
 
-    console.log(error);
-    console.log(selectedPermissions);
-
     const handlePermissionChange = (permissionId) => {
         setSelectedPermissions((prev) => {
             if (prev.includes(permissionId)) {

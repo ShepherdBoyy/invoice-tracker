@@ -248,6 +248,7 @@ export default function Index({ users, areas, filters, permissionList }) {
                             setShowToast={setShowToast}
                             setSuccessMessage={setSuccessMessage}
                             areas={areas}
+                            permissionList={permissionList}
                         />
                     )}
 

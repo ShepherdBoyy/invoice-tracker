@@ -7,12 +7,46 @@ export default function Edit({
     setShowToast,
     setSuccessMessage,
     areas,
+    permissionList,
 }) {
     const [error, setError] = useState("");
+    const [selectedPermissions, setSelectedPermissions] = useState(
+        selectedUser.permission_ids || [],
+    );
+    const [selectedAreas, setSelectedAreas] = useState(
+        selectedUser.area_ids || [],
+    );
+
+    const handlePermissionChange = (permissionId) => {
+        setSelectedPermissions((prev) => {
+            if (prev.includes(permissionId)) {
+                return prev.filter((id) => id !== permissionId);
+            } else {
+                return [...prev, permissionId];
+            }
+        });
+    };
+
+    const handleAreaChange = (areaId) => {
+        setSelectedAreas((prev) => {
+            if (prev.includes(areaId)) {
+                return prev.filter((id) => id !== areaId);
+            } else {
+                return [...prev, areaId];
+            }
+        });
+    };
+
+    const hasAreaRestriction = selectedPermissions.some((permissionId) => {
+        const permission = Object.values(permissionList)
+            .flat()
+            .find((p) => p.id === permissionId);
+        return permission.name === "view_area_hospitals";
+    });
 
     return (
         <dialog open className="modal">
-            <div className="modal-box">
+            <div className="modal-box max-w-3xl">
                 <h3 className="font-bold text-lg text-center">Edit User</h3>
 
                 <Form
@@ -25,7 +59,7 @@ export default function Edit({
                         setShowToast(true);
                         setTimeout(() => setShowToast(false), 3000);
                         setSuccessMessage(
-                            `${selectedUser.name} updated successfully`
+                            `${selectedUser.name} updated successfully`,
                         );
                     }}
                 >
@@ -47,59 +81,6 @@ export default function Edit({
                             name="name"
                             defaultValue={selectedUser.name}
                         />
-                    </div>
-
-                    <div className="flex flex-col gap-2 mt-3">
-                        <div className="flex justify-between">
-                            <label htmlFor="role" className="text-sm">
-                                Role:
-                            </label>
-                            {error.role && (
-                                <span className="text-red-500 text-sm">
-                                    {error.role}
-                                </span>
-                            )}
-                        </div>
-                        <select
-                            defaultValue={selectedUser.role}
-                            className="select w-full"
-                            name="role"
-                            id="role"
-                        >
-                            <option value="" disabled>
-                                Select
-                            </option>
-                            <option>Purchasing</option>
-                            <option>Collector</option>
-                            <option>Agent</option>
-                            <option>Accounting</option>
-                        </select>
-                    </div>
-
-                    <div className="flex flex-col gap-2 mt-3">
-                        <div className="flex justify-between">
-                            <label htmlFor="area_id" className="text-sm">
-                                Area:
-                            </label>
-                            {error.area_id && (
-                                <span className="text-red-500 text-sm">
-                                    {error.area_id}
-                                </span>
-                            )}
-                        </div>
-                        <select
-                            defaultValue={selectedUser.area.area_name}
-                            className="select w-full"
-                            name="area_id"
-                            id="area_id"
-                        >
-                            <option value="" disabled>
-                                Select
-                            </option>
-                            {areas.map((area) => (
-                                <option key={area.id} value={area.id}>{area.area_name}</option>
-                            ))}
-                        </select>
                     </div>
 
                     <div className="flex flex-col gap-2 mt-3">
@@ -141,6 +122,113 @@ export default function Edit({
                             defaultValue={selectedUser.plain_password}
                         />
                     </div>
+
+                    <div className="flex flex-col gap-2 mt-3">
+                        <div className="flex justify-between">
+                            <label htmlFor="permissions" className="text-sm">
+                                Permissions:
+                            </label>
+                            {error.permissions && (
+                                <span className="text-red-500 text-sm">
+                                    {error.permissions}
+                                </span>
+                            )}
+                        </div>
+                        <div className="rounded-lg max-h-74 px-4">
+                            <div className="grid grid-cols-3 grid-rows-2 gap-6">
+                                {Object.entries(permissionList).map(
+                                    ([category, permissions]) => (
+                                        <div key={category}>
+                                            <h4 className="capitalize mb-2 text-sm">
+                                                {category.replace("_", " ")}
+                                            </h4>
+                                            <div className="space-y-2">
+                                                {permissions.map(
+                                                    (permission) => (
+                                                        <label
+                                                            key={permission.id}
+                                                            className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-base-200"
+                                                        >
+                                                            <input
+                                                                type="checkbox"
+                                                                className="checkbox checkbox-xs"
+                                                                onChange={() =>
+                                                                    handlePermissionChange(
+                                                                        permission.id,
+                                                                    )
+                                                                }
+                                                                checked={selectedPermissions.includes(
+                                                                    permission.id,
+                                                                )}
+                                                            />
+                                                            {selectedPermissions.includes(
+                                                                permission.id,
+                                                            ) && (
+                                                                <input
+                                                                    type="hidden"
+                                                                    name="permissions[]"
+                                                                    value={
+                                                                        permission.id
+                                                                    }
+                                                                />
+                                                            )}
+                                                            <span className="text-sm">
+                                                                {
+                                                                    permission.display_name
+                                                                }
+                                                            </span>
+                                                        </label>
+                                                    ),
+                                                )}
+                                            </div>
+                                        </div>
+                                    ),
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {hasAreaRestriction && (
+                        <div className="flex flex-col gap-2">
+                            <div className="flex justify-between">
+                                <label htmlFor="areas" className="text-sm">
+                                    Assigned Areas:
+                                </label>
+                                {error.areas && (
+                                    <span className="text-red-500 text-sm">
+                                        {error.areas}
+                                    </span>
+                                )}
+                            </div>
+                            <div className="rounded-lg px-4 max-h-96 overflow-y-auto">
+                                <div className="grid grid-cols-3">
+                                    {areas.map((area) => (
+                                        <label
+                                            key={area.id}
+                                            className="flex items-center gap-2 cursor-pointer hover:bg-base-200 p-2 rounded"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                className="checkbox checkbox-xs"
+                                                checked={selectedAreas.includes(area.id)}
+                                                onChange={() => handleAreaChange(area.id)}
+                                            />
+                                            {selectedAreas.includes(area.id) && (
+                                                <input
+                                                    type="hidden"
+                                                    name="areas[]"
+                                                    value={area.id}
+                                                />
+                                            )}
+                                            <span className="text-sm">
+                                                {area.area_name}
+                                            </span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="flex justify-end mt-6 gap-2">
                         <button
