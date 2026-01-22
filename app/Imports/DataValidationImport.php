@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class DataValidationImport implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFailure
 {
@@ -18,6 +19,19 @@ class DataValidationImport implements ToCollection, WithHeadingRow, WithValidati
 
     }
 
+    public function prepareForValidation($data, $index)
+    {
+        if (isset($data["document_date"]) && is_numeric($data["document_date"])) {
+            $data["document_date"] = Date::excelToDateTimeObject($data["document_date"])->format("m/d/Y");
+        }
+
+        if (isset($data["due_date"]) && is_numeric($data["due_date"])) {
+            $data["due_date"] = Date::excelToDateTimeObject($data["due_date"])->format("m/d/Y");
+        }
+
+        return $data;
+    }
+
     public function rules(): array
     {
         return [
@@ -25,9 +39,9 @@ class DataValidationImport implements ToCollection, WithHeadingRow, WithValidati
             "*.customer_no" => ["required", "string", "unique:hospitals,hospital_number"],
             "*.customer_name" => ["required", "string"],
             "*.invoice_no" => ["required", "string", "unique:invoices,invoice_number"],
-            "*.document_date" => ["required", "date"],
-            "*.due_date" => ["required", "date"],
-            "*.amount" => ["required", "numeric", "min:0.01"],
+            "*.document_date" => ["required", "date_format:m/d/Y"],
+            "*.due_date" => ["required", "date_format:m/d/Y"],
+            "*.amount" => ["required", "numeric"],
         ];
     }
 }
