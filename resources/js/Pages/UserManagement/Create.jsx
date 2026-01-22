@@ -144,7 +144,7 @@ export default function Create({
                                                         >
                                                             <input
                                                                 type="checkbox"
-                                                                className="checkbox checkbox-xs"
+                                                                className="toggle toggle-xs"
                                                                 onChange={() =>
                                                                     handlePermissionChange(
                                                                         permission.id,
@@ -196,7 +196,7 @@ export default function Create({
                                         >
                                             <input
                                                 type="checkbox"
-                                                className="checkbox checkbox-xs"
+                                                className="toggle toggle-xs"
                                                 checked={selectedAreas.includes(
                                                     area.id,
                                                 )}
