@@ -1,6 +1,6 @@
 import React from "react";
 import HistoryTable from "./historyTable";
-import { Form } from "@inertiajs/react";
+import { Form, usePage } from "@inertiajs/react";
 
 export default function OpenInvoice({
     invoice,
@@ -10,6 +10,8 @@ export default function OpenInvoice({
     setError,
     setShowToast,
 }) {
+    const { permissions } = usePage().props;
+
     return (
         <div className="grid grid-cols-3 auto-rows-min gap-4">
             <div className="row-span-1 border rounded-xl border-gray-300">
@@ -100,6 +102,7 @@ export default function OpenInvoice({
                             name="updated_by"
                             id="updated_by"
                             defaultValue={editor}
+                            disabled={!permissions.canManageInvoiceHistory}
                             readOnly
                         />
                     </div>
@@ -120,6 +123,7 @@ export default function OpenInvoice({
                             className="select rounded-xl w-full"
                             name="description"
                             id="description"
+                            disabled={!permissions.canManageInvoiceHistory}
                         >
                             <option value="" disabled>
                                 Select
@@ -153,7 +157,7 @@ export default function OpenInvoice({
                         </select>
                     </fieldset>
                     <div className="flex justify-end">
-                        <button className="btn btn-primary w-5xs rounded-xl">
+                        <button className="btn btn-primary w-5xs rounded-xl" disabled={!permissions.canManageInvoiceHistory}>
                             Update
                         </button>
                     </div>
