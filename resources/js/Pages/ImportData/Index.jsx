@@ -70,7 +70,6 @@ export default function Index() {
                 {
                     forceFormData: true,
                     onProgress: (progressEvent) => {
-                        console.log(progressEvent);
                         setProgress(progressEvent.percentage);
                     },
                     onError: () => {
@@ -152,6 +151,9 @@ export default function Index() {
                                                 Due Date
                                             </th>
                                             <th className="border border-base-content/20 text-center p-2 font-normal">
+                                                Closed Date
+                                            </th>
+                                            <th className="border border-base-content/20 text-center p-2 font-normal">
                                                 Days Overdue
                                             </th>
                                             <th className="border border-base-content/20 text-center p-2 font-normal">
@@ -182,6 +184,9 @@ export default function Index() {
                                                     {item.due_date}
                                                 </td>
                                                 <td className="border border-base-content/20 text-center p-2 whitespace-normal">
+                                                    {item.closed_date}
+                                                </td>
+                                                <td className="border border-base-content/20 text-center p-2 whitespace-normal">
                                                     {item.days_overdue}
                                                 </td>
                                                 <td className="border border-base-content/20 text-center p-2 whitespace-normal">
@@ -192,7 +197,7 @@ export default function Index() {
                                     </tbody>
                                 </table>
                             </div>
-                            <div className="flex items-center justify-center gap-2">
+                            <div className="flex items-center justify-center gap-2 mt-4">
                                 <button
                                     className="btn shadow-md rounded-xl"
                                     onClick={() =>
@@ -300,7 +305,7 @@ export default function Index() {
                                     </>
                                 )}
                             </div>
-                            <div className="flex justify-center mt-4">
+                            <div className="flex justify-center mt-6">
                                 <button
                                     type="button"
                                     onClick={handleSubmit}
