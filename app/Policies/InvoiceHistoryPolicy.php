@@ -13,6 +13,6 @@ class InvoiceHistoryPolicy
 
     public function create(User $user): bool
     {
-        return $user->hasPermission("create_invoice_history");
+        return $user->hasPermission("manage_invoice_history");
     }
 }
