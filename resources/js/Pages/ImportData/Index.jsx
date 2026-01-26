@@ -129,7 +129,7 @@ export default function Index() {
                                     Sample Excel Format
                                 </span>
 
-                                <table className="table table-auto w-full border border-base-content/20 rounded-lg">
+                                <table className="table table-auto w-full border border-base-content/20">
                                     <thead>
                                         <tr className="bg-base-200 text-base-content">
                                             <th className="border border-base-content/20 text-center p-2 font-normal">
