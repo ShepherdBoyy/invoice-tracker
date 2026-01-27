@@ -1,9 +1,22 @@
-import { Link } from "@inertiajs/react";
-import { ArrowRightLeft } from "lucide-react";
+import { Link, usePage } from "@inertiajs/react";
+import Profile from "./Profile";
+import { useState } from "react";
 
 export default function Navbar() {
+    const { user } = usePage().props.auth;
+
+    const [openProfile, setOpenProfile] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+
     return (
-        <div className="navbar bg-base-100 ">
+        <div className="navbar bg-base-100">
+            {showToast && (
+                <div className="toast toast-top toast-center">
+                    <div className="alert alert-info">
+                        <span>Profile Updated Successfully</span>
+                    </div>
+                </div>
+            )}
             <div className="flex-1"></div>
             <div className="flex-none">
                 <div className="dropdown dropdown-end">
@@ -24,6 +37,9 @@ export default function Navbar() {
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
                     >
                         <li>
+                            <a onClick={() => setOpenProfile(true)}>Profile</a>
+                        </li>
+                        <li>
                             <Link
                                 className="cursor-pointer text-md"
                                 href="/logout"
@@ -35,6 +51,14 @@ export default function Navbar() {
                     </ul>
                 </div>
             </div>
+
+            {openProfile && (
+                <Profile
+                    setOpenProfile={setOpenProfile}
+                    user={user}
+                    setShowToast={setShowToast}
+                />
+            )}
         </div>
     );
 }
