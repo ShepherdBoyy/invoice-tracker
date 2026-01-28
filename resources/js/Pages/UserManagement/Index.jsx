@@ -33,6 +33,12 @@ export default function Index({ users, areas, filters, permissionList }) {
                 { search: debouncedSearch },
                 { preserveState: true, preserveScroll: true },
             );
+        } else {
+            router.get(
+                "/user-management",
+                {},
+                { preserveState: true, preserveScroll: true },
+            );
         }
     }, [debouncedSearch]);
 
@@ -81,7 +87,7 @@ export default function Index({ users, areas, filters, permissionList }) {
                 <div className="p-6 bg-white rounded-xl shadow-lg">
                     <div className="flex items-center justify-between mb-4 gap-2">
                         <div className="flex items-center gap-x-3">
-                            <span className="text-2xl">All Users</span>
+                            <span className="text-xl">All Users</span>
                         </div>
 
                         <div className="flex gap-2">
@@ -98,7 +104,7 @@ export default function Index({ users, areas, filters, permissionList }) {
                     </div>
 
                     <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 pt-5">
-                        <table className="table  table-fixed">
+                        <table className="table table-fixed">
                             <thead>
                                 <tr>
                                     <th className="w-[100px]">#</th>
@@ -113,7 +119,9 @@ export default function Index({ users, areas, filters, permissionList }) {
                                             <SortIcon column={"name"} />
                                         </div>
                                     </th>
-                                    <th className={`${permissions.canManageUsers ? "1/4" : "1/3"}`}>
+                                    <th
+                                        className={`${permissions.canManageUsers ? "1/4" : "1/3"}`}
+                                    >
                                         <div className="flex items-center gap-2">
                                             Area
                                         </div>
@@ -130,7 +138,9 @@ export default function Index({ users, areas, filters, permissionList }) {
                                         </div>
                                     </th>
                                     {permissions.canManageUsers && (
-                                        <th className="w-[100px] text-right">Action</th>
+                                        <th className="w-[100px] text-right">
+                                            Action
+                                        </th>
                                     )}
                                 </tr>
                             </thead>
@@ -138,18 +148,23 @@ export default function Index({ users, areas, filters, permissionList }) {
                             <tbody>
                                 {users.data.map((user, index) => {
                                     const getArea = () => {
-                                        const canViewAllHospitals = user.permissions.some(
-                                            (permission) => permission.name === "view_all_hospitals"
-                                        );
+                                        const canViewAllHospitals =
+                                            user.permissions.some(
+                                                (permission) =>
+                                                    permission.name ===
+                                                    "view_all_hospitals",
+                                            );
 
                                         if (canViewAllHospitals) {
                                             return "All Areas";
                                         } else if (user.areas) {
-                                            return user.areas.map((area) => area.area_name).join(", ");
+                                            return user.areas
+                                                .map((area) => area.area_name)
+                                                .join(", ");
                                         } else {
                                             return "No Access";
                                         }
-                                    }
+                                    };
 
                                     const area = getArea();
 

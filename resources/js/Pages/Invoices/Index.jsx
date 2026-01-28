@@ -46,7 +46,19 @@ export default function Index({
                     preserveState: true,
                     replace: true,
                     only: ["invoices"],
-                }
+                },
+            );
+        } else {
+            router.get(
+                `/hospitals/${hospital.id}/invoices`,
+                {
+                    processing_days: active.replace(/ /g, "-"),
+                },
+                {
+                    preserveState: true,
+                    replace: true,
+                    only: ["invoices"],
+                },
             );
         }
     }, [debouncedSearch]);
@@ -93,14 +105,14 @@ export default function Index({
                                                 processing_days:
                                                     day.label.replace(
                                                         / /g,
-                                                        "-"
+                                                        "-",
                                                     ),
                                             },
                                             {
                                                 preserveScroll: true,
                                                 preserveState: true,
                                                 only: ["invoices"],
-                                            }
+                                            },
                                         );
                                     }}
                                 >
@@ -159,8 +171,8 @@ export default function Index({
                                                         setIsDeleteMode(true);
                                                         setSelectedIds(
                                                             invoices.data.map(
-                                                                (i) => i.id
-                                                            )
+                                                                (i) => i.id,
+                                                            ),
                                                         );
                                                     } else {
                                                         setSelectedIds([]);
@@ -176,7 +188,9 @@ export default function Index({
                                     <th className="w-1/4">Amount</th>
                                     <th className="w-1/4">Processing Days</th>
                                     {permissions.canManageInvoices && (
-                                        <th className="w-20 text-right">Action</th>
+                                        <th className="w-20 text-right">
+                                            Action
+                                        </th>
                                     )}
                                 </tr>
                             </thead>
@@ -202,7 +216,7 @@ export default function Index({
                                                 ? undefined
                                                 : () => {
                                                       router.get(
-                                                          `/hospitals/${invoice.hospital.id}/invoices/${invoice.id}/history`
+                                                          `/hospitals/${invoice.hospital.id}/invoices/${invoice.id}/history`,
                                                       );
                                                   }
                                         }
@@ -213,7 +227,7 @@ export default function Index({
                                                     type="checkbox"
                                                     className="checkbox w-5 h-5"
                                                     checked={selectedIds.includes(
-                                                        invoice.id
+                                                        invoice.id,
                                                     )}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
@@ -224,20 +238,22 @@ export default function Index({
                                                                 ...selectedIds,
                                                                 invoice.id,
                                                             ]);
-                                                            setIsDeleteMode(true);
+                                                            setIsDeleteMode(
+                                                                true,
+                                                            );
                                                         } else {
                                                             const newSelected =
                                                                 selectedIds.filter(
                                                                     (id) =>
                                                                         id !==
-                                                                        invoice.id
+                                                                        invoice.id,
                                                                 );
                                                             setSelectedIds(
-                                                                newSelected
+                                                                newSelected,
                                                             );
                                                             setIsDeleteMode(
                                                                 newSelected.length >
-                                                                    0
+                                                                    0,
                                                             );
                                                         }
                                                     }}
@@ -247,18 +263,18 @@ export default function Index({
                                         <td>{invoice.invoice_number}</td>
                                         <td>
                                             {new Date(
-                                                invoice.document_date
+                                                invoice.document_date,
                                             ).toLocaleDateString()}
                                         </td>
                                         <td>
                                             {new Date(
-                                                invoice.due_date
+                                                invoice.due_date,
                                             ).toLocaleDateString()}
                                         </td>
                                         <td>
                                             ₱
                                             {parseFloat(
-                                                invoice.amount
+                                                invoice.amount,
                                             ).toLocaleString("en-PH", {
                                                 minimumFractionDigits: 2,
                                             })}
@@ -276,10 +292,10 @@ export default function Index({
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             setOpenEditInvoiceModal(
-                                                                true
+                                                                true,
                                                             );
                                                             setSelectedInvoice(
-                                                                invoice
+                                                                invoice,
                                                             );
                                                         }}
                                                     />

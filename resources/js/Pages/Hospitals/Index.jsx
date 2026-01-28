@@ -32,6 +32,12 @@ export default function Index({ hospitals, areas, filters, breadcrumbs }) {
                 { search: debouncedSearch },
                 { preserveState: true, preserveScroll: true },
             );
+        } else {
+            router.get(
+                "/hospitals",
+                {},
+                { preserveState: true, preserveScroll: true },
+            );
         }
     }, [debouncedSearch]);
 
