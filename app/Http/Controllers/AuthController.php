@@ -29,7 +29,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended("/hospitals");
+        return redirect()->intended("/home");
     }
 
     public function show(string $id)
