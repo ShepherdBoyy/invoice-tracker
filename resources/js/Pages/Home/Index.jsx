@@ -6,8 +6,9 @@ import useDebounce from "../hooks/useDebounce";
 import { router } from "@inertiajs/react";
 import Pagination from "../components/Pagination";
 import { ListFilter, X } from "lucide-react";
+import SortIcon from "../components/SortIcon";
 
-export default function Index({ latestUpdates, filters, userAreas }) {
+export default function Index({ latestUpdates, filters, userAreas, users }) {
     const [search, setSearch] = useState(filters.search || "");
     const [showFilters, setShowFilters] = useState(false);
     const [dateRange, setDateRange] = useState(filters.date_range || "");
@@ -15,6 +16,9 @@ export default function Index({ latestUpdates, filters, userAreas }) {
     const [customDateTo, setCustomDateTo] = useState(filters.custom_date_to || "");
     const [selectedArea, setSelectedArea] = useState(filters.area || "");
     const [selectedStatus, setSelectedStatus] = useState(filters.status || "");
+    const [selectedUser, setSelectedUser] = useState("");
+    const [sortOrder, setSortOrder] = useState(filters.sort_order || "updated_at");
+    const [sortBy, setSortBy] = useState(filters.sort_by || "desc");
 
     const debouncedSearch = useDebounce(search, 300);
 
@@ -40,6 +44,7 @@ export default function Index({ latestUpdates, filters, userAreas }) {
         setCustomDateTo("");
         setSelectedArea("");
         setSelectedStatus("");
+        setSelectedUser("");
 
         router.get(
             "/home",
@@ -60,11 +65,33 @@ export default function Index({ latestUpdates, filters, userAreas }) {
                     dateRange === "custom" ? customDateFrom : null,
                 custom_date_to: dateRange === "custom" ? customDateTo : null,
                 selected_area: selectedArea,
-                selected_status: selectedStatus
+                selected_status: selectedStatus,
+                selected_user: selectedUser
             },
             { preserveState: true, preserveScroll: true },
         );
+        setShowFilters(false);
     };
+
+    const handleSort = (column) => {
+        let newSortOrder = "asc";
+
+        if (sortBy === column) {
+            newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+        }
+
+        setSortBy(column);
+        setSortOrder(newSortOrder);
+
+        router.get(
+            "/home",
+            {
+                sort_by: column,
+                sort_order: newSortOrder,
+            },
+            { preserveState: true, preserveScroll: true },
+        )
+    }
 
     return (
         <Master>
@@ -93,120 +120,175 @@ export default function Index({ latestUpdates, filters, userAreas }) {
                     </div>
 
                     {showFilters && (
-                        <div className="rounded-xl shadow-lg mb-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <div>
-                                    <label className="label text-md">
-                                        Date Range
-                                    </label>
-                                    <select
-                                        className="select w-full rounded-xl"
-                                        value={dateRange}
-                                        onChange={(e) => setDateRange(e.target.value)}
-                                    >
-                                        <option value="" disabled>Select</option>
-                                        <option value="today">Today</option>
-                                        <option value="7days">Last 7 days</option>
-                                        <option value="30days">Last 30 days</option>
-                                        <option value="custom">Custom Range</option>
-                                    </select>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{
+                                duration: 0.2,
+                                delay: 0.05,
+                            }}
+                            className="fixed top-0 right-0 h-full w-90 bg-base-100 shadow-lg pt-6 pb-18 px-6 z-50 transition-transform duration-300"
+                        >
+                            <div className="flex justify-between mb-6">
+                                <p className="text-xl">Filter Options</p>
+                                <X size={20} onClick={() => setShowFilters(false)} className="cursor-pointer" />
+                            </div>
+                            <div className="flex flex-col justify-between h-full">
+                                <div className="flex flex-col justify-center gap-6">
+                                    <div>
+                                        <label className="label text-md">
+                                            By Date Range
+                                        </label>
+                                        <select
+                                            className="select w-full rounded-xl"
+                                            value={dateRange}
+                                            onChange={(e) => setDateRange(e.target.value)}
+                                        >
+                                            <option value="">Select</option>
+                                            <option value="today">Today</option>
+                                            <option value="7days">Last 7 days</option>
+                                            <option value="30days">Last 30 days</option>
+                                            <option value="custom">Custom Range</option>
+                                        </select>
+                                    </div>
+
+                                    {dateRange === "custom" && (
+                                        <>
+                                            <div>
+                                                <label className="label text-md">
+                                                    From Date
+                                                </label>
+                                                <input
+                                                    type="date"
+                                                    className="input w-full rounded-xl"
+                                                    value={customDateFrom}
+                                                    onChange={(e) => setCustomDateFrom(e.target.value)}
+                                                    disabled={dateRange !== "custom"}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="label text-md">
+                                                    To Date
+                                                </label>
+                                                <input
+                                                    type="date"
+                                                    className="input w-full rounded-xl"
+                                                    value={customDateTo}
+                                                    onChange={(e) => setCustomDateTo(e.target.value)}
+                                                    disabled={dateRange !== "custom"}
+                                                />
+                                            </div>
+                                        </>
+                                    )}
+
+                                    <div>
+                                        <label className="label text-md">
+                                            By Area
+                                        </label>
+                                        <select
+                                            className="select w-full rounded-xl"
+                                            value={selectedArea}
+                                            onChange={(e) => setSelectedArea(e.target.value)}
+                                        >
+                                            <option value="">Select</option>
+                                            {userAreas.map((area) => (
+                                                <option key={area.id} value={area.id}>{area.area_name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="label text-md">
+                                            By Status
+                                        </label>
+                                        <select
+                                            className="select w-full rounded-xl"
+                                            value={selectedStatus}
+                                            onChange={(e) => setSelectedStatus(e.target.value)}
+                                        >
+                                            <option value="">Select</option>
+                                            <option value="open">Open</option>
+                                            <option value="overdue">Overdue</option>
+                                            <option value="closed">Closed</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="label text-md">
+                                            By Users
+                                        </label>
+                                        <select
+                                            className="select w-full rounded-xl"
+                                            value={selectedUser}
+                                            onChange={(e) => setSelectedUser(e.target.value)}
+                                        >
+                                            <option value="">Select</option>
+                                            {users.map((user) => (
+                                                <option key={user.id} value={user.id}>{user.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
                                 </div>
 
-                                {dateRange === "custom" && (
-                                    <>
-                                        <div>
-                                            <label className="label text-md">
-                                                From Date
-                                            </label>
-                                            <input
-                                                type="date"
-                                                className="input w-full rounded-xl"
-                                                value={customDateFrom}
-                                                onChange={(e) =>
-                                                    setCustomDateFrom(
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="label text-md">
-                                                To Date
-                                            </label>
-                                            <input
-                                                type="date"
-                                                className="input w-full rounded-xl"
-                                                value={customDateTo}
-                                                onChange={(e) =>
-                                                    setCustomDateTo(
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                    </>
-                                )}
-
-                                <div>
-                                    <label className="label text-md">
-                                        Area
-                                    </label>
-                                    <select
-                                        className="select w-full rounded-xl"
-                                        value={selectedArea}
-                                        onChange={(e) => setSelectedArea(e.target.value)}
+                                <div className="flex justify-center gap-2">
+                                    <button
+                                        className="btn btn-outline rounded-3xl"
+                                        onClick={handleClearFilters}
                                     >
-                                        <option value="" disabled>Select</option>
-                                        {userAreas.map((area) => (
-                                            <option key={area.id} value={area.id}>{area.area_name}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="label text-md">
-                                        Status
-                                    </label>
-                                    <select
-                                        className="select w-full rounded-xl"
-                                        value={selectedStatus}
-                                        onChange={(e) => setSelectedStatus(e.target.value)}
+                                        Clear All
+                                    </button>
+                                    <button
+                                        className="btn btn-primary rounded-3xl"
+                                        onClick={handleApplyFilters}
                                     >
-                                        <option value="" disabled>Select</option>
-                                        <option value="open">Open</option>
-                                        <option value="overdue">Overdue</option>
-                                        <option value="closed">Closed</option>
-                                    </select>
+                                        Apply Filters
+                                    </button>
                                 </div>
                             </div>
-
-                            <div>
-                                <button
-                                    className="btn btn-outline rounded-3xl"
-                                    onClick={handleClearFilters}
-                                >
-                                    Clear All
-                                </button>
-                                <button
-                                    className="btn btn-primary rounded-3xl"
-                                    onClick={handleApplyFilters}
-                                >
-                                    Apply Filters
-                                </button>
-                            </div>
-                        </div>
+                        </motion.div>
                     )}
 
                     <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 pt-5">
                         <table className="table table-fixed">
                             <thead>
                                 <tr>
-                                    <th className="w-[350px]">Hospital Name</th>
-                                    <th className="w-[100px]">Invoice No.</th>
+                                    <th
+                                        className="w-[300px] cursor-pointer hover:bg-base-200"
+                                        onClick={() => handleSort("hospital_name")}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            Hospital Name
+                                            <SortIcon column="hospital_name" sortOrder={sortOrder} sortBy={sortBy} />
+                                        </div>
+                                    </th>
+                                    <th
+                                        className="w-[100px] cursor-pointer hover:bg-base-200"
+                                        onClick={() => handleSort("invoice_number")}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            Invoice No.
+                                            <SortIcon column="invoice_number" sortOrder={sortOrder} sortBy={sortBy} />
+                                        </div>
+                                    </th>
                                     <th className="w-2/6">Description</th>
-                                    <th className="w-[140px]">Updated by</th>
-                                    <th className="w-[120px]">
-                                        Processing Days
+                                    <th
+                                        className="w-[140px] cursor-pointer hover:bg-base-200"
+                                        onClick={() => handleSort("updated_by")}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            Updated by
+                                            <SortIcon column="updated_by" sortOrder={sortOrder} sortBy={sortBy} />
+                                        </div>
+                                    </th>
+                                    <th
+                                        className="w-[130px] cursor-pointer hover:bg-base-200"
+                                        onClick={() => handleSort("processing_days")}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            Processing Days
+                                            <SortIcon column="processing_days" sortOrder={sortOrder} sortBy={sortBy} />
+                                        </div>
                                     </th>
                                     <th className="w-[100px]">Status</th>
                                 </tr>
@@ -223,15 +305,27 @@ export default function Index({ latestUpdates, filters, userAreas }) {
                                             delay: index * 0.05,
                                         }}
                                         key={update.id}
-                                        // className="hover:bg-base-300 cursor-pointer"
                                     >
                                         <td>
-                                            {
-                                                update.invoice.hospital
-                                                    .hospital_name
-                                            }
+                                            <span
+                                                className="hover:underline hover:cursor-pointer hover:text-blue-800"
+                                                onClick={() => {
+                                                    router.get(`/hospitals/${update.invoice.hospital.id}/invoices`)
+                                                }}
+                                            >
+                                                {update.invoice.hospital.hospital_name}
+                                            </span>
                                         </td>
-                                        <td>{update.invoice.invoice_number}</td>
+                                        <td>
+                                            <span
+                                                className="hover:underline hover:cursor-pointer hover:text-blue-800"
+                                                onClick={() => {
+                                                    router.get(`/hospitals/${update.invoice.hospital.id}/invoices/${update.invoice.id}/history`)
+                                                }}
+                                            >
+                                                {update.invoice.invoice_number}
+                                            </span>
+                                        </td>
                                         <td className="truncate">
                                             {update.description}
                                         </td>

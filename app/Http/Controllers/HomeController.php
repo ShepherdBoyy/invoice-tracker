@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use App\Models\Hospital;
+use App\Models\Invoice;
 use App\Models\InvoiceHistory;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -21,10 +23,23 @@ class HomeController extends Controller
         $customDateTo = $request->query("custom_date_to");
         $filterArea = $request->query("selected_area");
         $filterStatus = $request->query("selected_status");
+        $filterUser = $request->query("selected_user");
         $perPage = $request->query("per_page", 10);
+        $sortBy = $request->query("sort_by", "updated_at");
+        $sortOrder = $request->query("sort_order", "desc");
 
         $userAreas = Gate::allows("viewAll", Hospital::class) ? Area::all() : $user->areas;
 
+        $users = User::query()
+            ->when(!Gate::allows("viewAll", Hospital::class), function ($query) use ($user) {
+                $userAreaIds = $user->areas->pluck("id");
+                $query->whereHas("areas", function ($q) use ($userAreaIds) {
+                    $q->whereIn("areas.id", $userAreaIds);
+                });
+            })
+            ->orderBy("name")
+            ->get(["id", "name"]);
+        
         $latestUpdates = InvoiceHistory::query()
             ->with([
                 "invoice" => function ($query) {
@@ -45,25 +60,25 @@ class HomeController extends Controller
                 "invoice.hospital.area",
                 "updater"
             ])
-            ->whereHas("invoice.hospital", function ($query) use ($user, $searchQuery, $filterArea) {
+            ->when($searchQuery, function ($query) use ($searchQuery) {
+                $query->whereHas("invoice", function ($q) use($searchQuery) {
+                    $q->where("invoice_number", "like", "%{$searchQuery}%");
+                })
+                ->orWhereHas("invoice.hospital", function ($q) use ($searchQuery) {
+                    $q->where("hospital_name", "like", "%{$searchQuery}%");
+                });
+            })
+            ->whereHas("invoice.hospital", function ($query) use ($user, $filterArea) {
                 if (!Gate::allows("viewAll", Hospital::class)) {
                     $userAreaIds = $user->areas->pluck("id");
                     $query->whereIn("area_id", $userAreaIds);
-                }
-
-                if ($searchQuery) {
-                    $query->where("hospital_name", "like", "%{$searchQuery}%");
                 }
 
                 if ($filterArea) {
                     $query->where("area_id", $filterArea);
                 }
             })
-            ->whereHas("invoice", function ($query) use ($searchQuery, $filterStatus) {
-                if ($searchQuery) {
-                    $query->where("invoice_number", "like", "%{$searchQuery}%");
-                }
-
+            ->whereHas("invoice", function ($query) use ($filterStatus) {
                 if ($filterStatus) {
                     $query->where("status", $filterStatus);
                 }
@@ -80,13 +95,66 @@ class HomeController extends Controller
             ->when($dateRange === "custom" && $customDateFrom && $customDateTo, function ($query) use ($customDateFrom, $customDateTo) {
                 $query->whereBetween("invoice_histories.created_at", [$customDateFrom, $customDateTo]);
             })
-            ->orderBy("updated_at", "desc")
+            ->when($filterUser, function ($query) use ($filterUser) {
+                $query->where("updated_by", $filterUser);
+            })
+            ->when($sortBy, function ($query) use ($sortBy, $sortOrder) {
+                switch ($sortBy) {
+                    case "hospital_name":
+                        $query->orderBy(
+                            Hospital::select("hospital_name")
+                                ->join("invoices", "hospitals.id", "=", "invoices.hospital_id")
+                                ->whereColumn("invoices.id", "invoice_histories.invoice_id")
+                                ->limit(1),
+                            $sortOrder
+                        );
+                        break;
+                    
+                    case "invoice_number":
+                        $query->orderBy(
+                            Invoice::select("invoice_number")
+                                ->whereColumn("invoices.id", "invoice_histories.invoice_id")
+                                ->limit(1),
+                            $sortOrder
+                        );
+                        break;
+                    
+                    case "processing_days":
+                        $query->orderByRaw("
+                            (
+                                SELECT CASE
+                                    WHEN date_closed IS NOT NULL
+                                        THEN DATEDIFF(due_date, date_closed)
+                                    ELSE
+                                        DATEDIFF(due_date, CURDATE())
+                                END
+                                FROM invoices
+                                WHERE invoices.id = invoice_histories.invoice_id
+                                LIMIT 1     
+                            ) $sortOrder
+                        ");
+                        break;
+                    
+                    case "updated_by":
+                        $query->orderBy(
+                            User::select("name")
+                                ->whereColumn("id", "invoice_histories.updated_by")
+                                ->limit(1),
+                            $sortOrder
+                        );
+                        break;
+
+                    default:
+                        $query->orderBy("invoice_histories.updated_at", $sortOrder);
+                }
+            })
             ->paginate($perPage)
             ->withQueryString();
         
         return Inertia::render("Home/Index", [
             "latestUpdates" => $latestUpdates,
             "userAreas" => $userAreas,
+            "users" => $users,
             "filters" => [
                 "search" => $searchQuery,
                 "date_range" => $dateRange,
@@ -94,6 +162,8 @@ class HomeController extends Controller
                 "custom_date_to" => $customDateTo,
                 "area" => $filterArea,
                 "status" => $filterStatus,
+                "sort_order" => $sortOrder,
+                "sort_by" => $sortBy,
             ]
         ]);
     }
