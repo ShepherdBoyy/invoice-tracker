@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import HistoryTable from "./historyTable";
+import HistoryTable from "./HistoryTable";
 import { Form, usePage } from "@inertiajs/react";
 
 export default function OpenInvoice({

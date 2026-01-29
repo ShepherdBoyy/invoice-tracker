@@ -1,5 +1,4 @@
 import { FileText } from "lucide-react";
-import React from "react";
 
 export default function HistoryTable({ history, invoice }) {
     return (

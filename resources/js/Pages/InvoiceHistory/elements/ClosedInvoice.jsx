@@ -1,7 +1,8 @@
-import HistoryTable from "./historyTable";
+import HistoryTable from "./HistoryTable";
 import ClosedInvoiceBanner from "./ClosedInvoiceBanner";
 
 export default function ClosedInvoice({ invoice, history }) {
+
     return (
         <div className="grid grid-cols-3 gap-4">
             <div className="rounded-xl bg-linear-to-br from-primary/10 to-base-200 border border-gray-300">
@@ -52,7 +53,7 @@ export default function ClosedInvoice({ invoice, history }) {
                 </div>
             </div>
 
-            <HistoryTable history={history} />
+            <HistoryTable history={history} invoice={invoice} />
         </div>
     );
 }
