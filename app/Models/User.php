@@ -36,6 +36,11 @@ class User extends Authenticatable
         return $this->hasMany(Invoice::class, 'created_by');
     }
 
+    public function invoiceHistories()
+    {
+        return $this->hasMany(InvoiceHistory::class, "updated_by");
+    }
+
     public function permissions()
     {
         return $this->belongsToMany(Permission::class, "user_permissions");
