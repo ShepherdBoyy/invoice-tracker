@@ -22,6 +22,8 @@ export default function Index({ latestUpdates, filters, userAreas, users }) {
 
     const debouncedSearch = useDebounce(search, 300);
 
+    console.log(latestUpdates);
+
     useEffect(() => {
         if (debouncedSearch.trim() !== "") {
             router.get(
@@ -326,22 +328,20 @@ export default function Index({ latestUpdates, filters, userAreas, users }) {
                                         </td>
                                         <td>
                                             <span
-                                                className={`badge badge-md text-sm rounded-full   ${
-                                                    update.invoice.status ===
+                                                className={`badge badge-md text-sm rounded-full ${
+                                                    update.status ===
                                                     "closed"
                                                         ? "bg-emerald-100 text-emerald-700 border-green-600"
-                                                        : update.invoice
-                                                                .status ===
+                                                        : update.status ===
                                                             "open"
                                                           ? "bg-yellow-100 text-yellow-700 border-yellow-600"
-                                                          : update.invoice
-                                                                  .status ===
+                                                          : update.status ===
                                                               "overdue"
                                                             ? "bg-red-100 text-red-700 border-red-600"
                                                             : "badge-neutral"
                                                 }`}
                                             >
-                                                {update.invoice.status}
+                                                {update.status}
                                             </span>
                                         </td>
                                     </motion.tr>

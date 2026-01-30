@@ -78,11 +78,6 @@ class HomeController extends Controller
                     $query->where("area_id", $filterArea);
                 }
             })
-            ->whereHas("invoice", function ($query) use ($filterStatus) {
-                if ($filterStatus) {
-                    $query->where("status", $filterStatus);
-                }
-            })
             ->when($dateRange === "today", function ($query) {
                 $query->whereDate("invoice_histories.created_at", today());
             })
@@ -97,6 +92,9 @@ class HomeController extends Controller
             })
             ->when($filterUser, function ($query) use ($filterUser) {
                 $query->where("updated_by", $filterUser);
+            })
+            ->when($filterStatus, function ($query) use ($filterStatus) {
+                $query->where("status", $filterStatus);
             })
             ->when($sortBy, function ($query) use ($sortBy, $sortOrder) {
                 switch ($sortBy) {
