@@ -134,9 +134,9 @@ class InvoiceController extends Controller
         $dueDate = Carbon::parse($validated["due_date"])->startOfDay();
 
         if (!empty($validated["date_closed"])) {
-            $validated["status"] = "closed";
+            $status = "closed";
         } else {
-            $validated["status"] = $today->greaterThan($dueDate)
+            $status = $today->greaterThan($dueDate)
                 ? "overdue"
                 : "open";
         }
@@ -145,7 +145,8 @@ class InvoiceController extends Controller
 
         $invoice->history()->create([
             "updated_by" => Auth::id(),
-            "description" => "Invoice has been created manually"
+            "description" => "Invoice has been created manually",
+            "status" => $status
         ]);
 
         return back()->with("success", true);
