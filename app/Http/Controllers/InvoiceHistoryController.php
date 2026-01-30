@@ -87,25 +87,28 @@ class InvoiceHistoryController extends Controller
     {
         Gate::authorize("create", InvoiceHistory::class);
 
-        $invoiceId = $request->invoice_id;
-
         $validated = $request->validate([
-            "description" => "required|string"
+            "invoice_id" => "required|exists:invoices,id",
+            "description" => "required|string",
+            "status" => "required|string|in:open,overdue,closed"
         ]);
 
-        $description = $validated['description'] === 'closed'
-            ? 'Invoice has been closed'
-            : $validated['description'];
+        if ($validated["description"] === "closed") {
+            $validated["status"] = "closed";
+            $description = 'Invoice has been closed';
+        } else {
+            $description = $validated["description"];
+        }
 
         InvoiceHistory::create([
-            "invoice_id" => $invoiceId,
+            "invoice_id" => $validated["invoice_id"],
             "updated_by" => Auth::id(),
+            "status" => $validated["status"],
             "description" => $description
         ]);
 
         if ($validated["description"] === "closed") {
-            Invoice::where("id", $invoiceId)->update([
-                "status" => "closed",
+            Invoice::where("id", $validated["invoice_id"])->update([
                 "date_closed" => now()
             ]);
         }

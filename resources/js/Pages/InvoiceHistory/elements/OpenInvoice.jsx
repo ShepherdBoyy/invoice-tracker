@@ -1,19 +1,20 @@
-import React, { useState } from "react";
-import HistoryTable from "./HistoryTable";
+import { useState } from "react";
 import { Form, usePage } from "@inertiajs/react";
+import HistoryTable from "./HistoryTable";
 
 export default function OpenInvoice({
     invoice,
     history,
     editor,
-    error,
-    setError,
     setShowToast,
 }) {
     const { permissions } = usePage().props;
 
     const [showCustomDescription, setShowCustomDescription] = useState(false);
     const [customDescription, setCustomDescription] = useState("");
+    const [error, setError] = useState("");
+
+    console.log(error);
 
     return (
         <div className="grid grid-cols-3 auto-rows-min gap-4">
@@ -77,6 +78,7 @@ export default function OpenInvoice({
                 <Form
                     className="flex flex-col gap-6 p-6"
                     action={`/hospitals/${invoice.hospital.id}/invoices/${invoice.id}/history/store`}
+                    transform={data => ({ ...data, status: invoice.status, invoice_id: invoice.id })}
                     method="post"
                     resetOnSuccess
                     options={{

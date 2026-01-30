@@ -13,7 +13,8 @@ class InvoiceHistory extends Model
     protected $fillable = [
         "invoice_id",
         "updated_by",
-        "description"
+        "description",
+        'status',
     ];
 
     public function invoice()

@@ -1,6 +1,7 @@
 import { FileText } from "lucide-react";
 
 export default function HistoryTable({ history, invoice }) {
+
     return (
         <div className="col-span-3 border rounded-xl border-gray-300 min-h-[300px] overflow-auto">
             <div className="p-6 bg-linear-to-br from-primary/10 to-base-200 border-b border-base-300 rounded-t-xl flex justify-between items-center">
@@ -21,6 +22,7 @@ export default function HistoryTable({ history, invoice }) {
                             <th>Updated At</th>
                             <th>Updated By</th>
                             <th>Description</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -35,6 +37,21 @@ export default function HistoryTable({ history, invoice }) {
                                     {item.updater.name}
                                 </td>
                                 <td>{item.description}</td>
+                                <td>
+                                    <span
+                                        className={`badge badge-md text-sm rounded-full ${
+                                            item.status === "closed"
+                                                ? "bg-emerald-100 text-emerald-700 border-green-600"
+                                                : item.status === "open"
+                                                    ? "bg-yellow-100 text-yellow-700 border-yellow-600"
+                                                    : item.status === "overdue"
+                                                    ? "bg-red-100 text-red-700 border-red-600"
+                                                    : "badge-neutral"
+                                        }`}
+                                    >
+                                        {item.status}
+                                    </span>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

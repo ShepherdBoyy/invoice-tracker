@@ -7,7 +7,6 @@ import Breadcrumbs from "../components/Breadcrumbs";
 
 export default function Index({ invoice, history, editor, breadcrumbs }) {
     const [showToast, setShowToast] = useState(false);
-    const [error, setError] = useState("");
 
     const isClosed = invoice.status === "closed";
 
@@ -32,8 +31,6 @@ export default function Index({ invoice, history, editor, breadcrumbs }) {
                             invoice={invoice}
                             history={history}
                             editor={editor}
-                            error={error}
-                            setError={setError}
                             setShowToast={setShowToast}
                         />
                     )}
