@@ -31,6 +31,9 @@ class DataImport implements ToCollection, WithHeadingRow
         $invoicesToCreate = [];
         $historiesToCreate = [];
 
+        $documentDate = null;
+        $dueDate = null;
+
         DB::beginTransaction();
 
         try {
@@ -73,7 +76,6 @@ class DataImport implements ToCollection, WithHeadingRow
                     "document_date" => $documentDate,
                     "due_date" => $dueDate,
                     "amount" => floatval(str_replace(",", "", $row["amount"])),
-                    "status" => $this->determineStatus($dueDate, $dateClosed),
                     "date_closed" => $dateClosed,
                     "created_by" => Auth::id(),
                     "created_at" => now(),
@@ -94,6 +96,7 @@ class DataImport implements ToCollection, WithHeadingRow
                         "invoice_id" => $createdInvoices[$invoice["invoice_number"]]->id,
                         "updated_by" => Auth::id(),
                         "description" => "Invoice has been created from the imported Excel file",
+                        "status" => $this->determineStatus($dueDate, $dateClosed),
                         "created_at" => now(),
                         "updated_at" => now(),
                     ];
