@@ -38,6 +38,11 @@ class Invoice extends Model
         return $this->hasMany(InvoiceHistory::class);
     }
 
+    public function latestHistory()
+    {
+        return $this->hasOne(InvoiceHistory::class)->latestOfMany();
+    }
+
     public function getStatusAttribute()
     {
         $today = Carbon::today();

@@ -52,7 +52,31 @@ class InvoiceController extends Controller
                 SUM(CASE
                     WHEN date_closed is NOT NULL
                     THEN 1 ELSE 0
-                END) as closed_count
+                END) as closed_count,
+                SUM(CASE
+                    WHEN date_closed is NULL AND DATEDIFF(due_date, CURDATE()) > 0
+                    THEN amount ELSE 0
+                END) as current_total,
+                SUM(CASE
+                    WHEN date_closed is NULL AND DATEDIFF(due_date, CURDATE()) BETWEEN -30 and -1
+                    THEN amount ELSE 0
+                END) as thirty_days_total,
+                SUM(CASE
+                    WHEN date_closed is NULL AND DATEDIFF(due_date, CURDATE()) BETWEEN -60 and -31
+                    THEN amount ELSE 0
+                END) as sixty_days_total,
+                SUM(CASE
+                    WHEN date_closed is NULL AND DATEDIFF(due_date, CURDATE()) BETWEEN -90 and -61
+                    THEN amount ELSE 0
+                END) as ninety_days_total,
+                SUM(CASE
+                    WHEN date_closed is NULL AND DATEDIFF(due_date, CURDATE()) <= -91
+                    THEN amount ELSE 0
+                END) as over_ninety_total,
+                SUM(CASE
+                    WHEN date_closed is NOT NULL
+                    THEN amount ELSE 0
+                END) as closed_total
             ")
             ->first();
         
@@ -65,8 +89,17 @@ class InvoiceController extends Controller
             "closed" => $countsQuery->closed_count ?? 0
         ];
 
+        $filterTotals = [
+            "current" => $countsQuery->current_total ?? 0,
+            "thirty_days" => $countsQuery->thirty_days_total ?? 0,
+            "sixty_days" => $countsQuery->sixty_days_total ?? 0,
+            "ninety_days" => $countsQuery->ninety_days_total ?? 0,
+            "over_ninety" => $countsQuery->over_ninety_total ?? 0,
+            "closed" => $countsQuery->closed_total ?? 0
+        ];
+
         $invoices = Invoice::query()
-            ->with(["hospital", "creator"])
+            ->with(["hospital", "creator", "latestHistory", "history.updater"])
             ->select("invoices.*")
             ->addSelect([
                 "processing_days" => function ($query) {
@@ -114,8 +147,10 @@ class InvoiceController extends Controller
             "invoices" => $invoices,
             "hospital" => $hospital,
             "searchQuery" => $searchQuery,
+            "editor" => Auth::user()->name,
             "processingFilter" => $processingLabelMap[$processingFilter] ?? "Current",
             "filterCounts" => $filterCounts,
+            "filterTotals" => $filterTotals,
             "breadcrumbs" => [
                 ["label" => "Hospitals", "url" => "/hospitals"],
                 ["label" => $hospital->hospital_name, "url" => null]
@@ -178,6 +213,45 @@ class InvoiceController extends Controller
         Invoice::where("hospital_id", $hospital_id)
             ->whereIn("id", $validated["ids"])
             ->delete();
+
+        return back()->with("success", true);
+    }
+
+    public function bulkUpdateHistory(Request $request, $hospital_id)
+    {
+        $validated = $request->validate([
+            "ids" => ["required", "array", "min:1"],
+            "ids.*" => ["integer", "exists:invoices,id"],
+            "description" => ["required", "string"],
+        ]);
+
+        $invoices = Invoice::where("hospital_id", $hospital_id)
+            ->whereIn("id", $validated["ids"])
+            ->get();
+        
+        $today = Carbon::today();
+
+        foreach ($invoices as $invoice) {
+            if ($validated["description"] === "closed") {
+                $description = "Invoice has been closed";
+                $status = "closed";
+            } else {
+                $dueDate = Carbon::parse($invoice->due_date)->startOfDay();
+                $status = $today->greaterThan($dueDate) ? "overdue" : "open";
+            }
+
+            $invoice->history()->create([
+                "updated_by" => Auth::id(),
+                "description" => $description,
+                "status" => $status,
+            ]);
+
+            if ($status === "closed") {
+                $invoice->update([
+                    "date_closed" => Carbon::now(),
+                ]);
+            }
+        }
 
         return back()->with("success", true);
     }
