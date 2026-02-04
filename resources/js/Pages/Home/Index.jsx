@@ -22,8 +22,6 @@ export default function Index({ latestUpdates, filters, userAreas, users }) {
 
     const debouncedSearch = useDebounce(search, 300);
 
-    console.log(latestUpdates);
-
     useEffect(() => {
         if (debouncedSearch.trim() !== "") {
             router.get(
@@ -103,7 +101,6 @@ export default function Index({ latestUpdates, filters, userAreas, users }) {
                     <SearchIt
                         search={search}
                         setSearch={setSearch}
-                        name="Hospital or Invoice No."
                     />
                 </div>
                 <div className="p-6 bg-white rounded-xl shadow-lg">

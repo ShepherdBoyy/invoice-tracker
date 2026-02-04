@@ -35,13 +35,16 @@ Route::middleware(["auth"])->group(function () {
                         Route::put("/{invoice_id}/update", [InvoiceController::class, "update"]);
                         Route::post("/delete", [InvoiceController::class, "destroy"]);
 
-                        Route::prefix("{invoice_id}/history")
-                            ->middleware(["permission:view_invoice_history"])
-                            ->group(function () {
-                                Route::get("/", [InvoiceHistoryController::class, "index"]);
-                                Route::get("/download", [InvoiceHistoryController::class, "download"]);
-                                Route::post("/store", [InvoiceHistoryController::class, "store"]);
-                        });
+                        Route::get("/{invoice_id}/history", [InvoiceController::class, "history"]);
+                        Route::post("/update-history", [InvoiceController::class, "bulkUpdateHistory"]);
+
+                        // Route::prefix("{invoice_id}/history")
+                        //     ->middleware(["permission:view_invoice_history"])
+                        //     ->group(function () {
+                        //         Route::get("/", [InvoiceHistoryController::class, "index"]);
+                        //         Route::get("/download", [InvoiceHistoryController::class, "download"]);
+                        //         Route::post("/store", [InvoiceHistoryController::class, "store"]);
+                        // });
                 });
     }); 
 
