@@ -2,10 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Area;
-use App\Models\Hospital;
-use App\Models\Invoice;
-use App\Models\InvoiceHistory;
 use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -22,8 +18,6 @@ class DatabaseSeeder extends Seeder
             ['name' => 'manage_hospitals', 'display_name' => 'Manage', 'category' => 'hospitals'],
             ['name' => 'view_invoices', 'display_name' => 'View', 'category' => 'invoices'],
             ['name' => 'manage_invoices', 'display_name' => 'Manage', 'category' => 'invoices'],
-            ['name' => 'view_invoice_history', 'display_name' => 'View', 'category' => 'invoice_history'],
-            ['name' => 'manage_invoice_history', 'display_name' => 'Manage', 'category' => 'invoice_history'],
             ['name' => 'view_import_data', 'display_name' => 'View', 'category' => 'import_data'],
             ['name' => 'manage_import_data', 'display_name' => 'Manage', 'category' => 'import_data'],
             ['name' => 'view_users', 'display_name' => 'View', 'category' => 'users'],
