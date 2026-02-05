@@ -128,7 +128,7 @@ export default function Create({
                             )}
                         </div>
                         <div className="rounded-lg max-h-74 px-4">
-                            <div className="grid grid-cols-3 grid-rows-2 gap-6">
+                            <div className="grid grid-cols-2 grid-rows-2 gap-6">
                                 {Object.entries(permissionList).map(
                                     ([category, permissions]) => (
                                         <div key={category}>
