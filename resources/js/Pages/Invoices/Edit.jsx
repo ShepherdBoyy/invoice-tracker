@@ -15,7 +15,7 @@ export default function Edit({
     return (
         <dialog open className="modal">
             <div className="modal-box">
-                <p className="text-2xl font-bold">Edit Invoice</p>
+                <p className="text-lg font-bold text-center">Edit Invoice</p>
 
                 <Form
                     action={`/hospitals/${invoice.hospital.id}/invoices/${invoice.id}/update`}

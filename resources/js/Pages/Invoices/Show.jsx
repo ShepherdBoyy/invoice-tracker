@@ -1,14 +1,14 @@
 import { FileText } from 'lucide-react'
 
-export default function Show({ history, invoice, setSelectedInvoice, setOpenHistoryModal }) {
+export default function Show({ invoice, setSelectedInvoice, setOpenHistoryModal }) {
 
   return (
     <dialog open className="modal">
-        <div className="modal-box">
+        <div className="modal-box max-w-5xl">
             <div className="p-6 bg-linear-to-br from-primary/10 to-base-200 border-b border-base-300 rounded-t-xl flex justify-between items-center">
                 <span>History</span>
                 <a
-                    href={`/hospitals/${invoice.hospital.id}/invoices/${invoice.id}/history/download`}
+                    href={`/hospitals/${invoice.hospital.id}/invoices/${invoice.id}/view-history`}
                     target="_blank"
                     className="flex items-center tooltip tooltip-left flex gap-1 z-50"
                     data-tip="View PDF"
@@ -20,21 +20,21 @@ export default function Show({ history, invoice, setSelectedInvoice, setOpenHist
                 <table className="table table-md">
                     <thead>
                         <tr>
-                            <th>Updated At</th>
-                            <th>Updated By</th>
-                            <th>Description</th>
+                            <th className='w-[120px]'>Updated At</th>
+                            <th className='w-[250px]'>Updated By</th>
+                            <th className='w-[700px]'>Description</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {history.map((item, index) => (
+                        {invoice.history.map((item, index) => (
                             <tr key={index}>
-                                <td className="w-[150px]">
+                                <td>
                                     {new Date(
                                         item.created_at,
                                     ).toLocaleDateString()}
                                 </td>
-                                <td className="w-[250px]">
+                                <td>
                                     {item.updater.name}
                                 </td>
                                 <td>{item.description}</td>

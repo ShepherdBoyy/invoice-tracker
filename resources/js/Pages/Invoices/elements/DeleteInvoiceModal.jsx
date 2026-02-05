@@ -7,7 +7,7 @@ export default function DeleteInvoiceModal({
     setSuccessMessage,
     selectedIds,
     setSelectedIds,
-    setIsDeleteMode,
+    setIsSelectMode,
     setError
 }) {
     return (
@@ -37,7 +37,7 @@ export default function DeleteInvoiceModal({
                                 { ids: selectedIds },
                                 {
                                     onSuccess: () => {
-                                        setIsDeleteMode(false);
+                                        setIsSelectMode(false);
                                         setSelectedIds([]);
                                         setOpenDeleteModal(false)
                                         setShowToast(true);

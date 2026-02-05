@@ -17,7 +17,7 @@ export default function UpdateInvoiceModal({
 
   return (
     <dialog open className="modal">
-        <div className="modal-box">
+        <div className="modal-box max-w-2xl">
             <p className="text-lg font-bold text-center">Update Invoice</p>
             <Form
                 className="flex flex-col gap-6"
