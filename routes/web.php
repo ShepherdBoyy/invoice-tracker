@@ -1,15 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UpdatesController;
 use App\Http\Controllers\HospitalController;
 use App\Http\Controllers\ImportDataController;
 use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\InvoiceHistoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/home');
+Route::redirect('/', '/updates');
 
 Route::middleware(["guest"])->group(function () {
     Route::get("/login", [AuthController::class, "index"])->name("login");
@@ -17,7 +16,7 @@ Route::middleware(["guest"])->group(function () {
 });
 
 Route::middleware(["auth"])->group(function () {
-    Route::get("/home", [HomeController::class, "index"]);
+    Route::get("/updates", [UpdatesController::class, "index"]);
 
     Route::prefix("hospitals")
         ->middleware(["permission:view_all_hospitals,view_area_hospitals"])
@@ -35,16 +34,8 @@ Route::middleware(["auth"])->group(function () {
                         Route::put("/{invoice_id}/update", [InvoiceController::class, "update"]);
                         Route::post("/delete", [InvoiceController::class, "destroy"]);
 
-                        Route::get("/{invoice_id}/history", [InvoiceController::class, "history"]);
                         Route::post("/update-history", [InvoiceController::class, "bulkUpdateHistory"]);
-
-                        // Route::prefix("{invoice_id}/history")
-                        //     ->middleware(["permission:view_invoice_history"])
-                        //     ->group(function () {
-                        //         Route::get("/", [InvoiceHistoryController::class, "index"]);
-                        //         Route::get("/download", [InvoiceHistoryController::class, "download"]);
-                        //         Route::post("/store", [InvoiceHistoryController::class, "store"]);
-                        // });
+                        Route::get("/{invoice_id}/view-history", [InvoiceController::class, "viewHistory"]);
                 });
     }); 
 

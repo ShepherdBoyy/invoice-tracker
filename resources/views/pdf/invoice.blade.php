@@ -6,7 +6,7 @@
     <title>{{ $invoice->invoice_number }}</title>
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: DejaVu Sans, Arial, Helvetica, sans-serif;
             font-size: 14px;
             line-height: 20px;
             margin: 2rem;
@@ -32,7 +32,7 @@
         table.data-table td {
             border: 1px solid #000;
             padding: 6px;
-            vertical-align: top;
+            vertical-align: middle;
         }
 
         table.data-table th:nth-child(1),
@@ -70,6 +70,41 @@
             color: #555;
             border-top: 1px solid #ccc;
         }
+
+        .status-badge {
+            padding: 4px 6px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid transparent;
+            display: inline-block;
+            line-height: 16px;
+        }
+
+        .status-closed {
+            background-color: #d1fae5;
+            color: #047857;
+            border-color: #16a34a;
+        }
+
+        .status-open {
+            background-color: #fef3c7;
+            color: #92400e;
+            border-color: #ca8a04;
+        }
+
+        .status-overdue {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #dc2626;
+        }
+
+        .status-default {
+            background-color: #f3f4f6;
+            color: #374151;
+            border-color: #9ca3af;
+        }
+
     </style>
 </head>
 
@@ -98,19 +133,14 @@
                 <td><strong>Invoice No:</strong></td>
                 <td>{{ $invoice->invoice_number }}</td>
 
-                <td><strong>Status:</strong></td>
-                <td>{{ $invoice->status }}</td>
+                <td><strong>Amount:</strong></td>
+                <td>&#8369; {{ number_format($invoice->amount, 2) }}</td>
             </tr>
 
             <tr>
                 <td><strong>Doc. Date:</strong></td>
                 <td>{{ date('m/d/Y', strtotime($invoice->document_date)) }}</td>
-
-                <td><strong>Amount:</strong></td>
-                <td>{{ number_format($invoice->amount, 2) }}</td>
-            </tr>
-
-            <tr>
+                
                 <td><strong>Due Date:</strong></td>
                 <td>{{ date('m/d/Y', strtotime($invoice->due_date)) }}</td>
             </tr>
@@ -122,6 +152,7 @@
                     <th>Updated At</th>
                     <th>Updated By</th>
                     <th>Description</th>
+                    <th>Status</th>
                 </tr>
             </thead>
 
@@ -131,6 +162,19 @@
                         <td>{{ $item->updated_at->format('m/d/Y') }}</td>
                         <td>{{ $item->updater->name }}</td>
                         <td>{{ $item->description }}</td>
+                        <td>
+                            @php
+                                $statusClass = match(strtolower($item->status)) {
+                                    'closed' => 'status-closed',
+                                    'open' => 'status-open',
+                                    'overdue' => 'status-overdue',
+                                    default => 'status-default',
+                                };
+                            @endphp
+                            <span class="status-badge {{ $statusClass }}">
+                                {{ ucfirst($item->status) }}
+                            </span>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
