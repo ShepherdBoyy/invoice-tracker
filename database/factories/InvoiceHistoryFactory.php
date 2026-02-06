@@ -13,7 +13,7 @@ class InvoiceHistoryFactory extends Factory
         return [
             'invoice_id' => null,
             'updated_by' => null,
-            'description' => $this->faker->sentence(),
+            'remarks' => $this->faker->sentence(),
         ];
     }
 }

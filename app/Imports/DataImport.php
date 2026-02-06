@@ -95,7 +95,7 @@ class DataImport implements ToCollection, WithHeadingRow
                     $historiesToCreate[] = [
                         "invoice_id" => $createdInvoices[$invoice["invoice_number"]]->id,
                         "updated_by" => Auth::id(),
-                        "description" => "Invoice has been created from the imported Excel file",
+                        "remarks" => "Invoice has been created from the imported Excel file",
                         "status" => $this->determineStatus($invoice["due_date"], $invoice["date_closed"]),
                         "created_at" => now(),
                         "updated_at" => now(),

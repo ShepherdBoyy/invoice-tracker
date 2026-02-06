@@ -264,7 +264,7 @@ export default function Index({ latestUpdates, filters, userAreas, users }) {
                                             <SortIcon column="hospital_name" sortOrder={sortOrder} sortBy={sortBy} />
                                         </div>
                                     </th>
-                                    <th className="w-2/6">Description</th>
+                                    <th className="w-2/6">Remarks</th>
                                     <th
                                         className="w-[140px] cursor-pointer hover:bg-base-200"
                                         onClick={() => handleSort("updated_by")}
@@ -321,7 +321,7 @@ export default function Index({ latestUpdates, filters, userAreas, users }) {
                                             </span>
                                         </td>
                                         <td className="truncate">
-                                            {update.description}
+                                            {update.remarks}
                                         </td>
                                         <td>{update.updater.name}</td>
                                         <td>

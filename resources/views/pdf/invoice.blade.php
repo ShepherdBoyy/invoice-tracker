@@ -151,7 +151,7 @@
                 <tr>
                     <th>Updated At</th>
                     <th>Updated By</th>
-                    <th>Description</th>
+                    <th>Remarks</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -161,7 +161,7 @@
                     <tr>
                         <td>{{ $item->updated_at->format('m/d/Y') }}</td>
                         <td>{{ $item->updater->name }}</td>
-                        <td>{{ $item->description }}</td>
+                        <td>{{ $item->remarks }}</td>
                         <td>
                             @php
                                 $statusClass = match(strtolower($item->status)) {

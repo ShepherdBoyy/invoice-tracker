@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId("invoice_id")->constrained("invoices")->onDelete("cascade");
             $table->foreignId("updated_by")->constrained("users")->onDelete("cascade");
-            $table->longText("description");
+            $table->longText("remarks");
             $table->string("status");
             $table->timestamps();
             $table->softDeletes();

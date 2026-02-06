@@ -61,20 +61,20 @@ export default function UpdateInvoiceModal({
 
                 <fieldset className="fieldset">
                     <div className="flex justify-between">
-                        <label htmlFor="description" className="text-base">
-                            Description:
+                        <label htmlFor="remarks" className="text-base">
+                            Remarks:
                         </label>
-                        {error.description && (
+                        {error.remarks && (
                             <span className="text-red-500 text-sm">
-                                {error.description}
+                                {error.remarks}
                             </span>
                         )}
                     </div>
                     <select
                         defaultValue=""
                         className="select rounded-xl w-full"
-                        name="description"
-                        id="description"
+                        name="remarks"
+                        id="remarks"
                         onChange={(e) => {
                             setShowCustomDescription(e.target.value === "others");
                             if (e.target.value !== "others") {
@@ -117,7 +117,7 @@ export default function UpdateInvoiceModal({
                     {showCustomDescription && (
                         <input
                             placeholder="Type here"
-                            name="description"
+                            name="remarks"
                             className="input rounded-xl w-full mt-2"
                             value={customDescription}
                             onChange={(e) =>

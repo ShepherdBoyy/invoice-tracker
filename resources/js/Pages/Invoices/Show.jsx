@@ -22,7 +22,7 @@ export default function Show({ invoice, setSelectedInvoice, setOpenHistoryModal 
                         <tr>
                             <th className='w-[120px]'>Updated At</th>
                             <th className='w-[250px]'>Updated By</th>
-                            <th className='w-[700px]'>Description</th>
+                            <th className='w-[700px]'>Remarks</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -37,7 +37,7 @@ export default function Show({ invoice, setSelectedInvoice, setOpenHistoryModal 
                                 <td>
                                     {item.updater.name}
                                 </td>
-                                <td>{item.description}</td>
+                                <td>{item.remarks}</td>
                                 <td>
                                     <span
                                         className={`badge badge-md text-sm rounded-full ${
