@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'manage_hospitals', 'display_name' => 'Manage', 'category' => 'hospitals'],
             ['name' => 'view_invoices', 'display_name' => 'View', 'category' => 'invoices'],
             ['name' => 'manage_invoices', 'display_name' => 'Manage', 'category' => 'invoices'],
+            ['name' => 'update_invoices', 'display_name' => 'Update', 'category' => 'invoices'],
             ['name' => 'view_import_data', 'display_name' => 'View', 'category' => 'import_data'],
             ['name' => 'manage_import_data', 'display_name' => 'Manage', 'category' => 'import_data'],
             ['name' => 'view_users', 'display_name' => 'View', 'category' => 'users'],
@@ -32,11 +33,11 @@ class DatabaseSeeder extends Seeder
         }
 
         $admin = User::firstOrCreate(
-            ['username' => 'admin'],
+            ['username' => 'developer'],
             [
-                'name' => 'Admin User',
-                'password' => Hash::make('password'),
-                'visible_password' => Crypt::encryptString('password'),
+                'name' => 'Web Developer',
+                'password' => Hash::make('developer'),
+                'visible_password' => Crypt::encryptString('developer'),
             ]
         );
 
