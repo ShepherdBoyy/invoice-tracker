@@ -151,9 +151,6 @@ export default function Index() {
                                                 Due Date
                                             </th>
                                             <th className="border border-base-content/20 text-center p-2 font-normal">
-                                                Closed Date
-                                            </th>
-                                            <th className="border border-base-content/20 text-center p-2 font-normal">
                                                 Days Overdue
                                             </th>
                                             <th className="border border-base-content/20 text-center p-2 font-normal">
@@ -182,9 +179,6 @@ export default function Index() {
                                                 </td>
                                                 <td className="border border-base-content/20 text-center p-2 whitespace-normal">
                                                     {item.due_date}
-                                                </td>
-                                                <td className="border border-base-content/20 text-center p-2 whitespace-normal">
-                                                    {item.closed_date}
                                                 </td>
                                                 <td className="border border-base-content/20 text-center p-2 whitespace-normal">
                                                     {item.days_overdue}
