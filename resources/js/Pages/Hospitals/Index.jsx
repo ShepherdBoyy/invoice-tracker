@@ -45,6 +45,7 @@ export default function Index({ hospitals, userAreas, filters, breadcrumbs }) {
         router.get("/hospitals", cleanParams, {
             preserveScroll: true,
             preserveState: true,
+            replace: true
         })
     }, [debouncedSearch, sortBy, sortOrder]);
 
@@ -291,13 +292,11 @@ export default function Index({ hospitals, userAreas, filters, breadcrumbs }) {
                                         }}
                                         onClick={() => router.get(`/hospitals/${hospital.id}/invoices`,
                                             {
-                                                processing_days: "Current",
                                                 hospital_search: filters.search || undefined,
                                                 per_page: filters.per_page || undefined,
                                                 sort_by: filters.sort_by || undefined,
                                                 sort_order: filters.sort_order || undefined,
                                                 selected_areas: filters.areas || undefined,
-                                                page: filters.page || undefined
                                             },
                                             { 
                                                 preserveState: true,

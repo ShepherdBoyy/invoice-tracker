@@ -4,14 +4,13 @@ import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 export default function Pagination({ data }) {
     const handlePerPageChange = (perPage) => {
         const searchParams = new URLSearchParams(window.location.search);
-        const currentPage = parseInt(searchParams.get("page") || 1);
 
         router.get(
             window.location.pathname,
             { 
                 ...Object.fromEntries(searchParams),
                 per_page: perPage,
-                page: currentPage,
+                page: 1,
             },
             { 
                 preserveState: true, 
