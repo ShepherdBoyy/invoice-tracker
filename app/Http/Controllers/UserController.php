@@ -26,6 +26,7 @@ class UserController extends Controller
 
         $users = User::query()
             ->with(["permissions", "areas"])
+            ->where("username", "!=", "developer")
             ->when($searchQuery, function ($query) use ($searchQuery) {
                 $query->where("name", "like", "%{$searchQuery}%");
             })
