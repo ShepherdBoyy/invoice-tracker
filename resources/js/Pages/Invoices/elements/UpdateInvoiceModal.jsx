@@ -12,8 +12,6 @@ export default function UpdateInvoiceModal({
     setSelectedIds
 }) {
     const [error, setError] = useState("");
-    const [showCustomDescription, setShowCustomDescription] = useState(false);
-    const [customDescription, setCustomDescription] = useState("");
 
   return (
     <dialog open className="modal">
@@ -59,7 +57,7 @@ export default function UpdateInvoiceModal({
                     />
                 </div>
 
-                <fieldset className="fieldset">
+                <div>
                     <div className="flex justify-between">
                         <label htmlFor="remarks" className="text-base">
                             Remarks:
@@ -70,62 +68,15 @@ export default function UpdateInvoiceModal({
                             </span>
                         )}
                     </div>
-                    <select
-                        defaultValue=""
-                        className="select rounded-xl w-full"
+                    <input
+                        type="text"
+                        placeholder="Type here"
+                        className="input w-full rounded-lg"
                         name="remarks"
                         id="remarks"
-                        onChange={(e) => {
-                            setShowCustomDescription(e.target.value === "others");
-                            if (e.target.value !== "others") {
-                                setCustomDescription("");
-                            }
-                        }}
-                    >
-                        <option value="" disabled>
-                            Select
-                        </option>
-                        <option>
-                            Invoice remains open pending verification of the
-                            submitted billing documents; awaiting
-                            confirmation from the hospital's finance team
-                        </option>
-                        <option>
-                            Payment is currently under review due to
-                            discrepancies found in the itemized charges;
-                            vendor has been notified for clarification
-                        </option>
-                        <option>
-                            Processing is delayed because supporting
-                            documents were incomplete; waiting for the
-                            client to provide the missing requirements
-                        </option>
-                        <option>
-                            Invoice cannot be closed yet as the payment
-                            request has not been approved by the authorized
-                            signatory
-                        </option>
-                        <option>
-                            Status remains open while coordination with the
-                            accounting department is ongoing to resolve
-                            amount differences before final closure
-                        </option>
-                        <option value="others">Others</option>
-                        <option value="closed">Close Invoice</option>
-                    </select>
+                    />
+                </div>
 
-                    {showCustomDescription && (
-                        <input
-                            placeholder="Type here"
-                            name="remarks"
-                            className="input rounded-xl w-full mt-2"
-                            value={customDescription}
-                            onChange={(e) =>
-                                setCustomDescription(e.target.value)
-                            }
-                        />
-                    )}
-                </fieldset>
                 <div className="flex justify-end gap-2">
                     <button
                         className="btn btn-outline rounded-xl"

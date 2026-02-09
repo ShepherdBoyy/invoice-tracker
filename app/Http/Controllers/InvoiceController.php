@@ -158,6 +158,8 @@ class InvoiceController extends Controller
 
     public function bulkUpdateHistory(Request $request, $hospital_id)
     {
+        Gate::authorize("update", Invoice::class);
+
         $validated = $request->validate([
             "ids" => ["required", "array", "min:1"],
             "ids.*" => ["integer", "exists:invoices,id"],
