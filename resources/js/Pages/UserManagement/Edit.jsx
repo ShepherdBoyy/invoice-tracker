@@ -209,7 +209,7 @@ export default function Edit({
                                         >
                                             <input
                                                 type="checkbox"
-                                                className="toggle toggle-xs"
+                                                className="checkbox checkbox-xs"
                                                 checked={selectedAreas.includes(area.id)}
                                                 onChange={() => handleAreaChange(area.id)}
                                             />
