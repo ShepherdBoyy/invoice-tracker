@@ -1,4 +1,5 @@
 import { Form } from "@inertiajs/react";
+import { AudioWaveform } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 export default function Login() {
@@ -42,12 +43,9 @@ export default function Login() {
                         >
                             <div className="flex items-center gap-2 font-medium">
                                 <div className=" flex size-6 items-center justify-center rounded-md">
-                                    {/* <WalletCards
-                                        className="size-4"
-                                        color="black"
-                                    /> */}
+                                    <AudioWaveform className="size-4" color="black" />
                                 </div>
-                                Invoice Tracker
+                                Track Wise
                             </div>
                         </motion.div>
                     </div>
@@ -69,20 +67,16 @@ export default function Login() {
                                         }}
                                     >
                                         <div className="flex flex-col items-center gap-2 text-center ">
-                                            <div className="flex  items-center justify-center rounded-md">
-                                                {/* <img src="images/pmcLogo.jpg" className="w-20" /> */}
-                                            </div>
-                                            <h1 className="text-2xl font-bold">
-                                                Welcome Back
-                                            </h1>
+                                            {/* <div className="flex items-center justify-center rounded-md">
+                                                <img src="images/pmc-logo.jpg" className="w-30" />
+                                            </div> */}
+                                            <h1 className="text-2xl font-bold">Welcome Back</h1>
                                             <span>Login your credentials</span>
 
                                             <div className="flex flex-col gap-y-4 w-full ">
                                                 <fieldset className="fieldset">
                                                     <div className="flex justify-between">
-                                                        <legend className="fieldset-legend text-left">
-                                                            Username
-                                                        </legend>
+                                                        <legend className="fieldset-legend text-left">Username</legend>
                                                         {error.username && (
                                                             <span className="text-red-500 text-xs mt-2.5">
                                                                 {error.username}
@@ -99,9 +93,7 @@ export default function Login() {
                                                 </fieldset>
                                                 <fieldset className="fieldset w-full">
                                                     <div className="flex justify-between">
-                                                        <legend className="fieldset-legend text-left">
-                                                            Password
-                                                        </legend>
+                                                        <legend className="fieldset-legend text-left">Password</legend>
                                                         {error.password && (
                                                             <span className="text-red-500 text-xs mt-2.5">
                                                                 {error.password}
@@ -120,7 +112,6 @@ export default function Login() {
 
                                             <div className="w-96 pt-8">
                                                 <button className="cursor-pointer w-full btn btn-neutral" disabled={countdown > 0}>
-                                                    {" "}
                                                     Login
                                                 </button>
                                             </div>
@@ -128,12 +119,8 @@ export default function Login() {
                                         {error.loginError && (
                                             <div className="mt-4 text-red-600 text-sm max-w-sm text-center">
                                                 {countdown > 0
-                                                    ? `${
-                                                          error.loginError
-                                                      } Please wait ${countdown} second${
-                                                          countdown !== 1
-                                                              ? "s"
-                                                              : ""
+                                                    ? `${error.loginError} Please wait ${countdown} second${countdown !== 1
+                                                        ? "s" : ""
                                                       } before trying again`
                                                     : error.loginError}
                                             </div>
@@ -145,11 +132,7 @@ export default function Login() {
                     </div>
                 </div>
                 <div className="bg-muted relative hidden lg:block">
-                    <img
-                        src="/images/LoginImage.png"
-                        alt="Image"
-                        className="absolute inset-0 h-full w-full object-cover "
-                    />
+                    <img src="/images/LoginImage.png" alt="Image" className="absolute inset-0 h-full w-full object-cover" />
                 </div>
             </div>
         </>
