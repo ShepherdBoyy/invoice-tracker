@@ -23,10 +23,7 @@ export default function UpdateInvoiceModal({
                 transform={data => ({ ...data, ids: selectedIds })}
                 method="post"
                 resetOnSuccess
-                options={{
-                    preserveScroll: true,
-                    preserveState: true,
-                }}
+                options={{ preserveScroll: true, preserveState: true }}
                 onSuccess={() => {
                     setSelectedIds([]);
                     setOpenUpdateModal(false);
@@ -36,15 +33,11 @@ export default function UpdateInvoiceModal({
                     setTimeout(() => setShowToast(false), 3000);
                     setError("");
                 }}
-                onError={(error) => {
-                    setError(error);
-                }}
+                onError={(error) => setError(error)}
             >
                 <div>
                     <div className="flex justify-between">
-                        <label htmlFor="updated_by" className="text-base">
-                            Update By:
-                        </label>
+                        <label htmlFor="updated_by" className="text-base">Update By:</label>
                     </div>
                     <input
                         type="text"
@@ -59,9 +52,7 @@ export default function UpdateInvoiceModal({
 
                 <div>
                     <div className="flex justify-between">
-                        <label htmlFor="remarks" className="text-base">
-                            Remarks:
-                        </label>
+                        <label htmlFor="remarks" className="text-base">Remarks:</label>
                         {error.remarks && (
                             <span className="text-red-500 text-sm">
                                 {error.remarks}
@@ -78,10 +69,7 @@ export default function UpdateInvoiceModal({
                 </div>
 
                 <div className="flex justify-end gap-2">
-                    <button
-                        className="btn btn-outline rounded-xl"
-                        onClick={() => setOpenUpdateModal(false)}
-                    >
+                    <button className="btn btn-outline rounded-xl" onClick={() => setOpenUpdateModal(false)}>
                         Cancel
                     </button>
                     <button className="btn bg-gray-800 text-white rounded-xl">

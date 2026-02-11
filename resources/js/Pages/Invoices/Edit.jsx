@@ -1,42 +1,28 @@
 import { Form } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Edit({
-    setShowToast,
-    setSuccessMessage,
-    setOpenEditInvoiceModal,
-    invoice,
-}) {
+export default function Edit({ setShowToast, setSuccessMessage, setOpenEditInvoiceModal, invoice }) {
     const [error, setError] = useState("");
-    const [invoiceNumber, setInvoiceNumber] = useState(
-        invoice.invoice_number || ""
-    );
+    const [invoiceNumber, setInvoiceNumber] = useState(invoice.invoice_number || "");
 
     return (
         <dialog open className="modal">
             <div className="modal-box">
                 <p className="text-lg font-bold text-center">Edit Invoice</p>
-
                 <Form
                     action={`/hospitals/${invoice.hospital.id}/invoices/${invoice.id}/update`}
                     method="put"
                     onSuccess={() => {
                         setOpenEditInvoiceModal(false);
                         setShowToast(true);
-                        setSuccessMessage(
-                            `${invoiceNumber} updated successfully`
-                        );
+                        setSuccessMessage(`${invoiceNumber} updated successfully`);
                         setTimeout(() => setShowToast(false), 3000);
                     }}
-                    onError={(error) => {
-                        setError(error);
-                    }}
+                    onError={(error) => setError(error)}
                 >
                     <div className="flex flex-col gap-1 mt-8">
                         <div className="flex justify-between">
-                            <label htmlFor="invoice_number" className="text-md">
-                                Invoice No.
-                            </label>
+                            <label htmlFor="invoice_number" className="text-md">Invoice No.</label>
                             {error.invoice_number && (
                                 <span className="text-red-500 text-sm">
                                     {error.invoice_number}
@@ -56,9 +42,7 @@ export default function Edit({
 
                     <div className="flex flex-col gap-1 mt-8">
                         <div className="flex justify-between">
-                            <label htmlFor="document_date" className="text-md">
-                                Document Date
-                            </label>
+                            <label htmlFor="document_date" className="text-md">Document Date</label>
                             {error.document_date && (
                                 <span className="text-red-500 text-sm">
                                     {error.document_date}
@@ -76,9 +60,7 @@ export default function Edit({
 
                     <div className="flex flex-col gap-1 mt-8">
                         <div className="flex justify-between">
-                            <label htmlFor="due_date" className="text-md">
-                                Due Date
-                            </label>
+                            <label htmlFor="due_date" className="text-md">Due Date</label>
                             {error.due_date && (
                                 <span className="text-red-500 text-sm">
                                     {error.due_date}
@@ -96,9 +78,7 @@ export default function Edit({
 
                     <div className="flex flex-col gap-1 mt-8">
                         <div className="flex justify-between">
-                            <label htmlFor="amount" className="text-md">
-                                Amount
-                            </label>
+                            <label htmlFor="amount" className="text-md">Amount</label>
                             {error.amount && (
                                 <span className="text-red-500 text-sm">
                                     {error.amount}
@@ -117,18 +97,10 @@ export default function Edit({
                     </div>
 
                     <div className="flex justify-end mt-6 gap-2">
-                        <button
-                            className="btn btn-outline rounded-xl"
-                            onClick={() => {
-                                setOpenEditInvoiceModal(false);
-                            }}
-                        >
+                        <button className="btn btn-outline rounded-xl" onClick={() => setOpenEditInvoiceModal(false)}>
                             Cancel
                         </button>
-                        <button
-                            type="submit"
-                            className="btn bg-gray-800 text-white rounded-xl "
-                        >
+                        <button type="submit" className="btn bg-gray-800 text-white rounded-xl">
                             Confirm
                         </button>
                     </div>

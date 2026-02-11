@@ -29,14 +29,8 @@ export default function Show({ invoice, setSelectedInvoice, setOpenHistoryModal 
                     <tbody>
                         {invoice.history.map((item, index) => (
                             <tr key={index}>
-                                <td>
-                                    {new Date(
-                                        item.created_at,
-                                    ).toLocaleDateString()}
-                                </td>
-                                <td>
-                                    {item.updater.name}
-                                </td>
+                                <td>{new Date(item.created_at).toLocaleDateString()}</td>
+                                <td>{item.updater.name}</td>
                                 <td>{item.remarks}</td>
                                 <td>
                                     <span
