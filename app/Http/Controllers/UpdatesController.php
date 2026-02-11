@@ -19,9 +19,6 @@ class UpdatesController extends Controller
     {
         $user = Auth::user();
         $searchQuery = $request->query("search");
-        $dateRange = $request->query("date_range");
-        $customDateFrom = $request->query("custom_date_from");
-        $customDateTo = $request->query("custom_date_to");
         $filterArea = $request->query("selected_area");
         $filterStatus = $request->query("selected_status");
         $filterUser = $request->query("selected_user");
@@ -92,18 +89,6 @@ class UpdatesController extends Controller
                     $query->where("area_id", $filterArea);
                 }
             })
-            ->when($dateRange === "today", function ($query) {
-                $query->whereDate("invoice_histories.created_at", today());
-            })
-            ->when($dateRange === "7days", function ($query) {
-                $query->whereDate("invoice_histories.created_at", ">=", now()->subDays(7));
-            })
-            ->when($dateRange === "30days", function ($query) {
-                $query->whereDate("invoice_histories.created_at", ">=", now()->subDays(30));
-            })
-            ->when($dateRange === "custom" && $customDateFrom && $customDateTo, function ($query) use ($customDateFrom, $customDateTo) {
-                $query->whereBetween("invoice_histories.created_at", [$customDateFrom, $customDateTo]);
-            })
             ->when($filterUser, function ($query) use ($filterUser) {
                 $query->where("updated_by", $filterUser);
             })
@@ -169,9 +154,6 @@ class UpdatesController extends Controller
             "users" => $users,
             "filters" => [
                 "search" => $searchQuery,
-                "date_range" => $dateRange,
-                "custom_date_from" => $customDateFrom,
-                "custom_date_to" => $customDateTo,
                 "area" => $filterArea,
                 "status" => $filterStatus,
                 "sort_order" => $sortOrder,

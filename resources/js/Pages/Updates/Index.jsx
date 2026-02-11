@@ -12,9 +12,6 @@ import Show from "../Invoices/Show";
 export default function Index({ latestUpdates, filters, userAreas, users }) {
     const [search, setSearch] = useState(filters.search || "");
     const [showFilters, setShowFilters] = useState(false);
-    const [dateRange, setDateRange] = useState(filters.date_range || "");
-    const [customDateFrom, setCustomDateFrom] = useState(filters.custom_date_from || "");
-    const [customDateTo, setCustomDateTo] = useState(filters.custom_date_to || "");
     const [selectedArea, setSelectedArea] = useState(filters.area || "");
     const [selectedStatus, setSelectedStatus] = useState(filters.status || "");
     const [selectedUser, setSelectedUser] = useState("");
@@ -42,9 +39,6 @@ export default function Index({ latestUpdates, filters, userAreas, users }) {
     }, [debouncedSearch]);
 
     const handleClearFilters = () => {
-        setDateRange("");
-        setCustomDateFrom("");
-        setCustomDateTo("");
         setSelectedArea("");
         setSelectedStatus("");
         setSelectedUser("");
@@ -63,10 +57,6 @@ export default function Index({ latestUpdates, filters, userAreas, users }) {
         router.get(
             "/updates",
             {
-                date_range: dateRange,
-                custom_date_from:
-                    dateRange === "custom" ? customDateFrom : null,
-                custom_date_to: dateRange === "custom" ? customDateTo : null,
                 selected_area: selectedArea,
                 selected_status: selectedStatus,
                 selected_user: selectedUser
@@ -129,52 +119,6 @@ export default function Index({ latestUpdates, filters, userAreas, users }) {
                             </div>
                             <div className="flex flex-col justify-between h-full">
                                 <div className="flex flex-col justify-center gap-6">
-                                    <div>
-                                        <label className="label text-md">
-                                            By Date Range
-                                        </label>
-                                        <select
-                                            className="select w-full rounded-xl"
-                                            value={dateRange}
-                                            onChange={(e) => setDateRange(e.target.value)}
-                                        >
-                                            <option value="">Select</option>
-                                            <option value="today">Today</option>
-                                            <option value="7days">Last 7 days</option>
-                                            <option value="30days">Last 30 days</option>
-                                            <option value="custom">Custom Range</option>
-                                        </select>
-                                    </div>
-
-                                    {dateRange === "custom" && (
-                                        <>
-                                            <div>
-                                                <label className="label text-md">
-                                                    From Date
-                                                </label>
-                                                <input
-                                                    type="date"
-                                                    className="input w-full rounded-xl"
-                                                    value={customDateFrom}
-                                                    onChange={(e) => setCustomDateFrom(e.target.value)}
-                                                    disabled={dateRange !== "custom"}
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="label text-md">
-                                                    To Date
-                                                </label>
-                                                <input
-                                                    type="date"
-                                                    className="input w-full rounded-xl"
-                                                    value={customDateTo}
-                                                    onChange={(e) => setCustomDateTo(e.target.value)}
-                                                    disabled={dateRange !== "custom"}
-                                                />
-                                            </div>
-                                        </>
-                                    )}
-
                                     <div>
                                         <label className="label text-md">
                                             By Area
