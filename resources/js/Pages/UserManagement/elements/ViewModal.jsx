@@ -32,13 +32,8 @@ export default function ViewModal({ selectedUser, setOpenViewModal }) {
         <dialog open className="modal">
             <div className="modal-box max-w-xl bg-white rounded-2xl shadow-2xl p-0">
                 <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                    <h3 className="font-semibold text-xl text-gray-900">
-                        Details
-                    </h3>
-                    <button
-                        onClick={() => setOpenViewModal(false)}
-                        className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-                    >
+                    <h3 className="font-semibold text-xl text-gray-900">Details</h3>
+                    <button onClick={() => setOpenViewModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
                         <X size={20} />
                     </button>
                 </div>
@@ -47,39 +42,22 @@ export default function ViewModal({ selectedUser, setOpenViewModal }) {
                     <div className="mb-6">
                         <p className="text-xs text-gray-500 mb-1">Full Name</p>
                         <div className="flex items-center justify-between">
-                            <p className="text-blue-600 font-medium text-lg">
-                                {selectedUser.name}
-                            </p>
-                            <span className="bg-orange-100 text-orange-600 text-xs font-medium px-3 py-1 rounded-full">
-                                {accessLevel}
-                            </span>
+                            <p className="text-blue-600 font-medium text-lg">{selectedUser.name}</p>
+                            <span className="bg-orange-100 text-orange-600 text-xs font-medium px-3 py-1 rounded-full">{accessLevel}</span>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-6">
                         <div className="bg-gray-50 rounded-lg p-4">
-                            <p className="text-xs text-gray-500 mb-2">
-                                Username
-                            </p>
+                            <p className="text-xs text-gray-500 mb-2">Username</p>
                             <div className="flex items-center justify-between">
-                                <p className="text-sm text-gray-900 font-medium break-all">
-                                    {selectedUser.username}
-                                </p>
-                                <button
-                                    onClick={() =>
-                                        handleCopy(
-                                            selectedUser.username,
-                                            "username",
-                                        )
-                                    }
+                                <p className="text-sm text-gray-900 font-medium break-all">{selectedUser.username}</p>
+                                <button onClick={() => handleCopy(selectedUser.username, "username")}
                                     className="text-gray-400 hover:text-gray-600 transition-colors ml-2 flex-shrink-0 cursor-pointer tooltip"
                                     data-tip="copy"
                                 >
                                     {copiedField === "username" ? (
-                                        <Check
-                                            size={16}
-                                            className="text-green-500 animate-scale-in"
-                                        />
+                                        <Check size={16} className="text-green-500 animate-scale-in" />
                                     ) : (
                                         <Copy size={16} />
                                     )}
@@ -87,28 +65,18 @@ export default function ViewModal({ selectedUser, setOpenViewModal }) {
                             </div>
                         </div>
                         <div className="bg-gray-50 rounded-lg p-4">
-                            <p className="text-xs text-gray-500 mb-2">
-                                Password
-                            </p>
+                            <p className="text-xs text-gray-500 mb-2">Password</p>
                             <div className="flex items-center justify-between">
                                 <p className="text-sm text-gray-900 font-medium">
                                     {selectedUser.plain_password}
                                 </p>
                                 <button
-                                    onClick={() =>
-                                        handleCopy(
-                                            selectedUser.plain_password,
-                                            "password",
-                                        )
-                                    }
+                                    onClick={() => handleCopy(selectedUser.plain_password, "password")}
                                     className="text-gray-400 hover:text-gray-600 transition-colors ml-2 flex-shrink-0 cursor-pointer tooltip"
                                     data-tip="copy"
                                 >
                                     {copiedField === "password" ? (
-                                        <Check
-                                            size={16}
-                                            className="text-green-500 animate-scale-in"
-                                        />
+                                        <Check size={16} className="text-green-500 animate-scale-in" />
                                     ) : (
                                         <Copy size={16} />
                                     )}
@@ -118,12 +86,12 @@ export default function ViewModal({ selectedUser, setOpenViewModal }) {
                     </div>
                 </div>
             </div>
-            <div
+
+            <form
+                method="dialog"
                 className="modal-backdrop"
                 onClick={() => setOpenViewModal(false)}
-            >
-                <button>close</button>
-            </div>
+            />
         </dialog>
     );
 }

@@ -1,27 +1,16 @@
 import { router } from "@inertiajs/react";
 
-export default function DeleteUserModal({
-    setOpenDeleteModal,
-    selectedUser,
-    setShowToast,
-    setSuccessMessage,
-}) {
+export default function DeleteUserModal({ setOpenDeleteModal, selectedUser, setShowToast, setSuccessMessage }) {
     return (
         <dialog open className="modal">
             <div className="modal-box">
-                <h3 className="font-bold text-lg mb-2">
-                    Are you absolutely sure?
-                </h3>
+                <h3 className="font-bold text-lg mb-2">Are you absolutely sure?</h3>
                 <p className="text-sm text-gray-500">
-                    This action cannot be undone. This will permanently delete
-                    the agent's information and remove the data from our server.
+                    This action cannot be undone. This will permanently delete the agent's information and remove the data from our server.
                 </p>
 
                 <div className="flex justify-end mt-5">
-                    <button
-                        className="btn btn-outline mr-2 rounded-xl"
-                        onClick={() => setOpenDeleteModal(false)}
-                    >
+                    <button className="btn btn-outline mr-2 rounded-xl" onClick={() => setOpenDeleteModal(false)}>
                         Cancel
                     </button>
                     <button
@@ -34,17 +23,10 @@ export default function DeleteUserModal({
                                     onSuccess: () => {
                                         setOpenDeleteModal(false);
                                         setShowToast(true);
-                                        setSuccessMessage(
-                                            `${selectedUser.name} deleted successfully`
-                                        );
-                                        setTimeout(
-                                            () => setShowToast(false),
-                                            3000
-                                        );
+                                        setSuccessMessage(`${selectedUser.name} deleted successfully`);
+                                        setTimeout(() => setShowToast(false), 3000);
                                     },
-                                    onError: (error) => {
-                                        setError(error);
-                                    },
+                                    onError: (error) => setError(error)
                                 }
                             );
                         }}

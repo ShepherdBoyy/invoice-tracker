@@ -1,13 +1,7 @@
 import { Form } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Create({
-    setOpenCreateModal,
-    setShowToast,
-    setSuccessMessage,
-    areas,
-    permissionList,
-}) {
+export default function Create({ setOpenCreateModal, setShowToast, setSuccessMessage, areas, permissionList }) {
     const [error, setError] = useState("");
     const [username, setUsername] = useState("");
     const [selectedPermissions, setSelectedPermissions] = useState([]);
@@ -34,8 +28,7 @@ export default function Create({
     };
 
     const hasAreaRestriction = selectedPermissions.some((permissionId) => {
-        const permission = Object.values(permissionList)
-            .flat()
+        const permission = Object.values(permissionList).flat()
             .find((p) => p.id === permissionId);
         return permission.name === "view_area_hospitals";
     });
@@ -59,9 +52,7 @@ export default function Create({
                 >
                     <div className="flex flex-col gap-2 mt-3">
                         <div className="flex justify-between">
-                            <label htmlFor="name" className="text-sm">
-                                Name:
-                            </label>
+                            <label htmlFor="name" className="text-sm">Name:</label>
                             {error.name && (
                                 <span className="text-red-500 text-sm">
                                     {error.name}
@@ -80,9 +71,7 @@ export default function Create({
 
                     <div className="flex flex-col gap-2 mt-3">
                         <div className="flex justify-between">
-                            <label htmlFor="username" className="text-sm">
-                                Username:
-                            </label>
+                            <label htmlFor="username" className="text-sm">Username:</label>
                             {error.username && (
                                 <span className="text-red-500 text-sm">
                                     {error.username}
@@ -99,9 +88,7 @@ export default function Create({
 
                     <div className="flex flex-col gap-2 mt-3">
                         <div className="flex justify-between">
-                            <label htmlFor="password" className="text-sm">
-                                Password:
-                            </label>
+                            <label htmlFor="password" className="text-sm">Password:</label>
                             {error.password && (
                                 <span className="text-red-500 text-sm">
                                     {error.password}
@@ -118,9 +105,7 @@ export default function Create({
 
                     <div className="flex flex-col gap-2 mt-3">
                         <div className="flex justify-between">
-                            <label htmlFor="permissions" className="text-sm">
-                                Permissions:
-                            </label>
+                            <label htmlFor="permissions" className="text-sm">Permissions:</label>
                             {error.permissions && (
                                 <span className="text-red-500 text-sm">
                                     {error.permissions}
@@ -129,48 +114,32 @@ export default function Create({
                         </div>
                         <div className="rounded-lg max-h-74 px-4">
                             <div className="grid grid-cols-2 grid-rows-2 gap-6">
-                                {Object.entries(permissionList).map(
-                                    ([category, permissions]) => (
-                                        <div key={category}>
-                                            <h4 className="capitalize mb-2 text-sm">
-                                                {category.replace("_", " ")}
-                                            </h4>
-                                            <div className="space-y-2">
-                                                {permissions.map(
-                                                    (permission) => (
-                                                        <label
-                                                            key={permission.id}
-                                                            className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-base-200"
-                                                        >
+                                {Object.entries(permissionList).map(([category, permissions]) => (
+                                    <div key={category}>
+                                        <h4 className="capitalize mb-2 text-sm">{category.replace("_", " ")}</h4>
+                                        <div className="space-y-2">
+                                            {permissions.map((permission) => (
+                                                    <label key={permission.id} className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-base-200">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="toggle toggle-xs"
+                                                            onChange={() => handlePermissionChange(permission.id)}
+                                                            checked={selectedPermissions.includes(permission.id)}
+                                                        />
+                                                        {selectedPermissions.includes(permission.id) && (
                                                             <input
-                                                                type="checkbox"
-                                                                className="toggle toggle-xs"
-                                                                onChange={() =>
-                                                                    handlePermissionChange(
-                                                                        permission.id,
-                                                                    )
-                                                                }
-                                                                checked={selectedPermissions.includes(
-                                                                    permission.id,
-                                                                )}
+                                                                type="hidden"
+                                                                name="permissions[]"
+                                                                value={permission.id}
                                                             />
-                                                            {selectedPermissions.includes(permission.id) && (
-                                                                <input
-                                                                    type="hidden"
-                                                                    name="permissions[]"
-                                                                    value={permission.id}
-                                                                />
-                                                            )}
-                                                            <span className="text-sm">
-                                                                {permission.display_name}
-                                                            </span>
-                                                        </label>
-                                                    ),
-                                                )}
-                                            </div>
+                                                        )}
+                                                        <span className="text-sm">{permission.display_name}</span>
+                                                    </label>
+                                                ),
+                                            )}
                                         </div>
-                                    ),
-                                )}
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -178,9 +147,7 @@ export default function Create({
                     {hasAreaRestriction && (
                         <div className="flex flex-col gap-2">
                             <div className="flex justify-between">
-                                <label htmlFor="areas" className="text-sm">
-                                    Assigned Areas:
-                                </label>
+                                <label htmlFor="areas" className="text-sm">Assigned Areas:</label>
                                 {error.areas && (
                                     <span className="text-red-500 text-sm">
                                         {error.areas}
@@ -190,30 +157,17 @@ export default function Create({
                             <div className="rounded-lg px-4 max-h-96 overflow-y-auto">
                                 <div className="grid grid-cols-3">
                                     {areas.map((area) => (
-                                        <label
-                                            key={area.id}
-                                            className="flex items-center gap-2 cursor-pointer hover:bg-base-200 p-2 rounded"
-                                        >
+                                        <label key={area.id} className="flex items-center gap-2 cursor-pointer hover:bg-base-200 p-2 rounded">
                                             <input
                                                 type="checkbox"
                                                 className="checkbox checkbox-xs"
-                                                checked={selectedAreas.includes(
-                                                    area.id,
-                                                )}
-                                                onChange={() =>
-                                                    handleAreaChange(area.id)
-                                                }
+                                                checked={selectedAreas.includes(area.id)}
+                                                onChange={() => handleAreaChange(area.id)}
                                             />
                                             {selectedAreas.includes(area.id) && (
-                                                <input
-                                                    type="hidden"
-                                                    name="areas[]"
-                                                    value={area.id}
-                                                />
+                                                <input type="hidden" name="areas[]" value={area.id} />
                                             )}
-                                            <span className="text-sm">
-                                                {area.area_name}
-                                            </span>
+                                            <span className="text-sm">{area.area_name}</span>
                                         </label>
                                     ))}
                                 </div>
@@ -222,18 +176,10 @@ export default function Create({
                     )}
 
                     <div className="flex justify-end mt-6 gap-2">
-                        <button
-                            className="btn btn-outline rounded-xl"
-                            onClick={() => {
-                                setOpenCreateModal(false);
-                            }}
-                        >
+                        <button className="btn btn-outline rounded-xl" onClick={() => setOpenCreateModal(false)}>
                             Cancel
                         </button>
-                        <button
-                            type="submit"
-                            className="btn bg-gray-800 text-white rounded-xl "
-                        >
+                        <button type="submit" className="btn bg-gray-800 text-white rounded-xl">
                             Confirm
                         </button>
                     </div>
