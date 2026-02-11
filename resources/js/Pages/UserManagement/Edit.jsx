@@ -115,7 +115,7 @@ export default function Edit({
                             )}
                         </div>
                         <input
-                            type="text"
+                            type="password"
                             placeholder="Type here"
                             className="input w-full"
                             name="password"

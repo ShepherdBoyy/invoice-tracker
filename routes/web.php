@@ -35,7 +35,7 @@ Route::middleware(["auth"])->group(function () {
                         Route::post("/delete", [InvoiceController::class, "destroy"]);
 
                         Route::post("/update-history", [InvoiceController::class, "bulkUpdateHistory"]);
-                        Route::get("/{invoice_id}/view-history", [InvoiceController::class, "viewHistory"]);
+                        Route::get("/{invoice_id}/view-history", [InvoiceController::class, "viewPdf"]);
                 });
     }); 
 

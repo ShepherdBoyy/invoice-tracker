@@ -20,14 +20,11 @@ export default function Index({ hospitals, userAreas, filters, breadcrumbs, proc
     const [showToast, setShowToast] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [search, setSearch] = useState(filters.search || "");
-    const [sortBy, setSortBy] = useState(filters.sort_by || "");
+    const [sortBy, setSortBy] = useState("");
     const [sortOrder, setSortOrder] = useState(filters.sort_order || "asc");
     const [selectedArea, setSelectedArea] = useState(filters.area || "");
     const [showFilters, setShowFilters] = useState(false);
     const { permissions } = usePage().props;
-
-    console.log(processingDaysTotals);
-
     const debouncedSearch = useDebounce(search, 500);
 
     useEffect(() => {

@@ -4,7 +4,7 @@ import SearchIt from "../components/SearchIt";
 import { router, usePage } from "@inertiajs/react";
 import useDebounce from "../hooks/useDebounce";
 import Pagination from "../components/Pagination";
-import { ListFilter, Pencil, Plus, Trash2, UserRoundPen, X } from "lucide-react";
+import { Pencil, Plus, Trash2, UserRoundPen } from "lucide-react";
 import Create from "./Create";
 import DeleteInvoiceModal from "./elements/DeleteInvoiceModal";
 import { motion } from "framer-motion";
@@ -22,7 +22,6 @@ export default function Index({
     processingFilter,
     processingCounts,
     hospitalFilters,
-    filters
 }) {
     const [search, setSearch] = useState(searchQuery || "");
     const [openCreateInvoiceModal, setOpenCreateInvoiceModal] = useState(false);
