@@ -22,8 +22,8 @@ class UpdateHospitalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "hospital_number" => "sometimes|string|max:255|unique:hospitals,hospital_number",
-            "hospital_name" => "sometimes|string|max:255|regex:/^[A-Za-z](?:[A-Za-z\s\.\'\-,]*[A-Za-z])?$/",
+            "hospital_number" => "sometimes|string|max:100",
+            "hospital_name" => "sometimes|string|max:150",
             "area_id" => "sometimes|integer"
         ];
     }

@@ -22,8 +22,8 @@ class StoreHospitalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "hospital_number" => "required|string|max:255|unique:hospitals,hospital_number",
-            "hospital_name" => "required|string|max:255|regex:/^[A-Za-z](?:[A-Za-z\s\.\'\-,]*[A-Za-z])?$/",
+            "hospital_number" => "required|string|max:100|unique:hospitals,hospital_number",
+            "hospital_name" => "required|string|max:150|regex:/^[A-Za-z](?:[A-Za-z\s\.\'\-,]*[A-Za-z])?$/",
             "area_id" => "required|integer"
         ];
     }
