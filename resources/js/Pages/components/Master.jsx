@@ -36,7 +36,7 @@ export default function Master({ children }) {
             />
             <div className="drawer-content flex flex-col">
                 <Navbar />
-                <main className="flex-1 overflow-auto bg-base-200 px-10 py-5">
+                <main className="flex-1 overflow-auto bg-base-200 px-4 sm:px-6 lg:px-10 py-4 sm:py-5">
                     <PageWrapper>{children}</PageWrapper>
                 </main>
             </div>

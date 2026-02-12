@@ -44,14 +44,14 @@ export default function Sidebar() {
     const visibleNavItems = navItems.filter((item) => item.canView);
 
     return (
-        <div className="drawer-side is-drawer-close:overflow-visible">
+        <div className="drawer-side z-40">
             <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay"></label>
-            <div className="flex min-h-full flex-col items-start is-drawer-close:w-14 is-drawer-open:w-74 border-r border-base-content/5 bg-base-100">
+            <div className="flex min-h-full flex-col items-start is-drawer-close:w-14 is-drawer-open:w-74 w-74 lg:w-auto border-r border-base-content/5 bg-base-100">
                 <ul className="menu w-full grow gap-y-2">
                     <div className="flex justify-between items-center mb-3">
                         <span className="text-lg is-drawer-close:hidden ml-3">Track Wise</span>
                         <label htmlFor="my-drawer-4" className="btn btn-square btn-ghost">
-                            <ArrowRightLeft className="size-3" />
+                            <ArrowRightLeft size={12} />
                         </label>
                     </div>
 

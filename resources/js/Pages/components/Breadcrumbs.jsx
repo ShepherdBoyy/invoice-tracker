@@ -5,22 +5,29 @@ export default function Breadcrumbs({ items }) {
     if (!items || items.length === 0) return null;
 
     return (
-        <div className="breadcrumbs flex items-center gap-3">
+        <div className="breadcrumbs flex items-center gap-2 sm:gap-3 min-w-0">
             {items.length > 1 && (
-                <div className="tooltip tooltip-right hover:bg-gray-200 rounded-xl" data-tip="Back">
-                    <Link href={items[0].url} ><ArrowLeft /></Link>
+                <div className="tooltip tooltip-right hover:bg-gray-200 rounded-xl flex-shrink-0" data-tip="Back">
+                    <Link href={items[0].url}><ArrowLeft /></Link>
                 </div>
             )}
-            <ul>
+            <ul className="flex-1 min-w-0">
                 {items.map((item, index) => {
                     const isLast = index === items.length - 1;
 
                     return (
-                        <li key={index}>
+                        <li key={index} className="min-w-0">
                             {isLast || !item.url ? (
-                                <span className="text-2xl no-underline cursor-default">{item.label}</span>
+                                <span className="text-lg sm:text-2xl no-underline cursor-default truncate block">
+                                    {item.label}
+                                </span>
                             ) : (
-                                <Link href={item.url} className="text-2xl text-gray-600">{item.label}</Link>
+                                <Link
+                                    href={item.url}
+                                    className="text-lg sm:text-2xl text-gray-600 truncate block"
+                                >
+                                    {item.label}
+                                </Link>
                             )}
                         </li>
                     );
