@@ -45,13 +45,7 @@ class UserController extends Controller
         
         $areas = Area::all();
         $permissions = Permission::query()
-            ->where(function ($query) {
-                $query->where("category", "!=", "invoices")
-                    ->orWhere(function ($q) {
-                        $q->where("category", "invoices")
-                            ->where("name", "!=", "manage_invoices");
-                    });
-            })
+            ->whereNotIn("name", ["manage_invoices", "manage_hospitals"])
             ->get()
             ->groupBy("category");
 

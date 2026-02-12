@@ -130,6 +130,7 @@ class HospitalController extends Controller
         ->orderBy("areas.area_name")
         ->get();
 
+        // Total amount of invoice per processing days
         $overallTotals = [
             "current" => (float) $results->sum("current"),
             "thirty_days" => (float) $results->sum("thirty_days"),

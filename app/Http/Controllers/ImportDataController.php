@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Validators\ValidationException;
-
-use function PHPSTORM_META\map;
 
 class ImportDataController extends Controller
 {
@@ -26,7 +23,7 @@ class ImportDataController extends Controller
     {
         Gate::authorize("viewImportData");
 
-        return Excel::download(new TemplateExport, "Invoice_Tracker_Template.xlsx");
+        return Excel::download(new TemplateExport, "Track_Wise_Template.xlsx");
     }
 
     public function store(Request $request)
@@ -43,6 +40,7 @@ class ImportDataController extends Controller
         ini_set("memory_limit", "512M");
 
         try {
+            // Validate each data in excel
             $validator = new DataValidationImport();
             Excel::import($validator, $file);
 
@@ -61,6 +59,7 @@ class ImportDataController extends Controller
                 ]);
             }
 
+            // If no errors in validation then import data
             Excel::import(new DataImport(), $file);
             return redirect()->back()->with("success", true);
         } catch (\Exception $e) {

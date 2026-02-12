@@ -80,6 +80,7 @@ class InvoiceController extends Controller
             "91-over" => (clone $baseQuery)->having("processing_days", "<=", -91)->whereNull("date_closed")->count(),
         ];
 
+        // Convert back the processing days label to original
         $processingLabelMap = [
             "Current" => "Current",
             "30-days" => "30 days",
@@ -88,10 +89,10 @@ class InvoiceController extends Controller
             "91-over" => "91-over",
         ];
 
+        // Get the query parameters of hospitals so it preserve when go back to hospitals
         $filteredParams = array_filter($queryParams, function($value) {
             return !is_null($value) && $value !== '' && $value !== [];
         });
-        
         $queryString = http_build_query($filteredParams);
         $hospitalsUrl = '/hospitals' . ($queryString ? '?' . $queryString : '');
 
