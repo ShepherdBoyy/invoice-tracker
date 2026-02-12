@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Menu } from "lucide-react";
 
 export default function Navbar() {
-    const { user } = usePage().props.auth;
+    const { user, userInitials } = usePage().props.auth;
 
     const [openProfile, setOpenProfile] = useState(false);
     const [showToast, setShowToast] = useState(false);
@@ -29,11 +29,10 @@ export default function Navbar() {
             <div className="flex-none">
                 <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar mr-1 sm:mr-3">
-                        <div className="w-10 rounded-full">
-                            <img
-                                alt="User avatar"
-                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                            />
+                        <div className="avatar avatar-placeholder">
+                            <div className="bg-neutral text-neutral-content w-9 rounded-full">
+                                <span className="text-xs">{userInitials}</span>
+                            </div>
                         </div>
                     </div>
                     <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow">

@@ -11,7 +11,7 @@ export default function SearchIt({ search, setSearch }) {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
             />
-            <button type="submit" className="flex items-center cursor-pointer ">
+            <button type="submit" className="flex items-center cursor-pointer">
                 <Search size="16" />
             </button>
         </label>
