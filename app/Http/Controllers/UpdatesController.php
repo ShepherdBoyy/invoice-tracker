@@ -38,6 +38,7 @@ class UpdatesController extends Controller
             ->orderBy("name")
             ->get(["id", "name"]);
 
+        // Get the latest history of an invoice
         $latestHistoryIds = InvoiceHistory::query()
             ->select("invoice_id", DB::raw("MAX(id) as latest_id"))
             ->groupBy("invoice_id");
@@ -156,6 +157,7 @@ class UpdatesController extends Controller
                 "search" => $searchQuery,
                 "area" => $filterArea,
                 "status" => $filterStatus,
+                "users" => $filterUser,
                 "sort_order" => $sortOrder,
                 "sort_by" => $sortBy,
             ]

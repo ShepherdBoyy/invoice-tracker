@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function Filters({ setShowFilters, userAreas, users, filters }) {
     const [selectedArea, setSelectedArea] = useState(filters.area || "");
     const [selectedStatus, setSelectedStatus] = useState(filters.status || "");
-    const [selectedUser, setSelectedUser] = useState("");
+    const [selectedUser, setSelectedUser] = useState(filters.users || "");
 
     const handleClearFilters = () => {
         setSelectedArea("");

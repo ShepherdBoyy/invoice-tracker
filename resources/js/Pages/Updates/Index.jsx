@@ -5,7 +5,6 @@ import useDebounce from "../hooks/useDebounce";
 import { router } from "@inertiajs/react";
 import Pagination from "../components/Pagination";
 import { ListFilter } from "lucide-react";
-import Show from "../Invoices/Show";
 import Filters from "./elements/Filters";
 import UpdatesTable from "./elements/UpdatesTable";
 
