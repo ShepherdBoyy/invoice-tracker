@@ -20,7 +20,8 @@ class HandleInertiaRequests extends Middleware
 
         return array_merge(parent::share($request), [
             "auth" => [
-                "user" => $request->user()
+                "user" => $request->user(),
+                "userInitials" => $request->user() ? $request->user()->initials : ""
             ],
             "permissions" => $user ? [
                 "canAccessHospitals" => $user->hasAnyPermission(["view_all_hospitals", "view_area_hospitals"]),

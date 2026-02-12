@@ -58,4 +58,15 @@ class User extends Authenticatable
     {
         return $this->permissions()->whereIn("name", $permissions)->exists();
     }
+
+    public function getInitialsAttribute(): string
+    {
+        $words = explode(" ", trim($this->name));
+
+        if (count($words) >= 2) {
+            return strtoupper(substr($words[0], 0, 1) . substr($words[1], 0 ,1));
+        }
+
+        return strtoupper(substr($words[0], 0, 2));
+    }
 }
