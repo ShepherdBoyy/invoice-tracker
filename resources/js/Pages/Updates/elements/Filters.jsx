@@ -33,7 +33,7 @@ export default function Filters({ setShowFilters, userAreas, users, filters }) {
     };
 
   return (
-    <div className="fixed top-0 right-0 h-full w-90 bg-base-100 shadow-lg pt-6 pb-18 px-6 z-50 transition-transform duration-300">
+    <div className="fixed top-0 right-0 h-full w-full sm:w-90 bg-base-100 shadow-lg pt-6 pb-18 px-6 z-50 transition-transform duration-300">
         <div className="flex justify-between mb-6">
             <p className="text-xl">Filter Options</p>
             <X size={20} onClick={() => setShowFilters(false)} className="cursor-pointer" />
@@ -83,11 +83,11 @@ export default function Filters({ setShowFilters, userAreas, users, filters }) {
                 </div>
             </div>
 
-            <div className="flex justify-center gap-2 ml-4">
-                <button className="btn btn-outline rounded-3xl" onClick={handleClearFilters}>
+            <div className="flex justify-center gap-2">
+                <button className="btn btn-outline rounded-3xl flex-1" onClick={handleClearFilters}>
                     Clear All
                 </button>
-                <button className="btn bg-gray-800 text-white rounded-3xl" onClick={handleApplyFilters}>
+                <button className="btn bg-gray-800 text-white rounded-3xl flex-1" onClick={handleApplyFilters}>
                     Apply Filters
                 </button>
             </div>

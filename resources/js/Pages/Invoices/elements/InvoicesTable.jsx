@@ -12,12 +12,12 @@ export default function InvoicesTable({ isSelectMode, setIsSelectMode, selectedI
     const { permissions } = usePage().props;
 
   return (
-    <div className="rounded-box border border-base-content/5 bg-base-100 pt-5">
-        <table className="table table-fixed">
+    <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 pt-5">
+        <table className="table w-full">
             <thead>
                 <tr>
                     {permissions.canUpdateInvoices && (
-                        <th className="w-[30px]">
+                        <th className="w-[40px]">
                             <input
                                 type="checkbox"
                                 className="checkbox w-5 h-5"
@@ -34,15 +34,15 @@ export default function InvoicesTable({ isSelectMode, setIsSelectMode, selectedI
                             />
                         </th>
                     )}
-                    <th className="w-[50px]">Invoice No.</th>
-                    <th className="w-[60px]">Document Date</th>
-                    <th className="w-[50px]">Due Date</th>
-                    <th className="w-[50px]">Amount</th>
-                    <th className="w-[60px]">Processing Days</th>
-                    <th className="w-[50px]">Status</th>
-                    <th className="w-[200px]">Remarks</th>
+                    <th>Invoice No.</th>
+                    <th>Document Date</th>
+                    <th>Due Date</th>
+                    <th>Amount</th>
+                    <th>Processing Days</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
                     {permissions.canManageInvoices && (
-                        <th className="w-[20px] text-rights">
+                        <th className="text-right">
                             Action
                         </th>
                     )}

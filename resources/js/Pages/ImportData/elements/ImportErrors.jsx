@@ -27,8 +27,8 @@ export default function ImportErrors({ import_errors }) {
                 </p>
             </div>
         </div>
-        <div className="max-h-96 overflow-y-auto">
-            <table className="w-full text-sm">
+        <div className="max-h-96 overflow-y-auto overflow-x-auto">
+            <table className="w-full min-w-[500px] text-sm">
                 <thead className="bg-white sticky top-0 rounded-lg">
                     <tr>
                         <th className="px-4 py-2 text-red-800 text-left font-semibold border-b border-red-200">Row</th>

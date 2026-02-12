@@ -33,14 +33,14 @@ export default function Index({ latestUpdates, filters, userAreas, users }) {
     return (
         <Master>
             <div className="bg-base-200">
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
                     <span className="text-2xl">Summary</span>
                     <SearchIt
                         search={search}
                         setSearch={setSearch}
                     />
                 </div>
-                <div className="p-6 bg-white rounded-xl shadow-lg">
+                <div className="p-4 md:p-6 bg-white rounded-xl shadow-lg">
                     <div className="flex justify-between items-center mb-4">
                         <div>
                             <span className="text-xl">Recent Updates</span>

@@ -35,15 +35,15 @@ export default function Index({ users, areas, filters, permissionList }) {
 
     return (
         <Master>
-            <div className="bg-base-200 ">
-                <div className="flex justify-between items-center mb-4">
+            <div className="bg-base-200">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
                     <span className="text-2xl">User Management</span>
                     <SearchIt
                         search={search}
                         setSearch={setSearch}
                     />
                 </div>
-                <div className="p-6 bg-white rounded-xl shadow-lg">
+                <div className="p-4 md:p-6 bg-white rounded-xl shadow-lg">
                     <div className="flex items-center justify-between mb-4 gap-2">
                         <div className="flex items-center gap-x-3">
                             <span className="text-xl">All Users</span>

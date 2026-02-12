@@ -38,12 +38,12 @@ export default function UsersTable({ filters, users, permissionList, setShowToas
 
   return (
     <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 pt-5">
-        <table className="table table-fixed">
+        <table className="table w-full">
             <thead>
                 <tr>
                     <th className="w-[100px]">#</th>
                     <th
-                        className={`${permissions.canManageUsers ? "1/4" : "1/3"} cursor-pointer hover:bg-base-200`}
+                        className="cursor-pointer hover:bg-base-200"
                         onClick={() => handleSort("name")}
                     >
                         <div className="flex items-center gap-2">
@@ -51,11 +51,11 @@ export default function UsersTable({ filters, users, permissionList, setShowToas
                             <SortIcon column={"name"} sortOrder={sortOrder} sortBy={sortBy} />
                         </div>
                     </th>
-                    <th className={`${permissions.canManageUsers ? "1/4" : "1/3"}`}>
+                    <th className={`${permissions.canManageUsers ? "w-1/4" : "w-1/3"}`}>
                         <div className="flex items-center gap-2">Area</div>
                     </th>
                     <th
-                        className={`${permissions.canManageUsers ? "1/4" : "1/3"} cursor-pointer hover:bg-base-200`}
+                        className="cursor-pointer hover:bg-base-200"
                         onClick={() => handleSort("created_at")}
                     >
                         <div className="flex items-center gap-2">
@@ -64,7 +64,7 @@ export default function UsersTable({ filters, users, permissionList, setShowToas
                         </div>
                     </th>
                     {permissions.canManageUsers && (
-                        <th className="w-[100px] text-right">Action</th>
+                        <th className="text-right">Action</th>
                     )}
                 </tr>
             </thead>

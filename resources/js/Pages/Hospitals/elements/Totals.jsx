@@ -8,17 +8,17 @@ export default function Totals({ processingDaysTotals }) {
     }
 
   return (
-    <div className="mt-6">
-        <table className="table table-fixed">
+    <div className="mt-6 overflow-x-auto">
+        <table className="table table-fixed min-w-[600px]">
             <thead>
                 <tr>
                     <th className="w-[80px] text-right">Totals:</th>
                     <th className="w-1/6 text-center">{formatCurrency(processingDaysTotals.overall.current)}</th>
-                    <th className="ww-1/6 text-center">{formatCurrency(processingDaysTotals.overall.thirty_days)}</th>
-                    <th className="ww-1/6 text-center">{formatCurrency(processingDaysTotals.overall.sixty_days)}</th>
-                    <th className="ww-1/6 text-center">{formatCurrency(processingDaysTotals.overall.ninety_days)}</th>
-                    <th className="ww-1/6 text-center">{formatCurrency(processingDaysTotals.overall.over_ninety)}</th>
-                    <th className="ww-1/6 text-center">{formatCurrency(processingDaysTotals.overall.total)}</th>
+                    <th className="w-1/6 text-center">{formatCurrency(processingDaysTotals.overall.thirty_days)}</th>
+                    <th className="w-1/6 text-center">{formatCurrency(processingDaysTotals.overall.sixty_days)}</th>
+                    <th className="w-1/6 text-center">{formatCurrency(processingDaysTotals.overall.ninety_days)}</th>
+                    <th className="w-1/6 text-center">{formatCurrency(processingDaysTotals.overall.over_ninety)}</th>
+                    <th className="w-1/6 text-center">{formatCurrency(processingDaysTotals.overall.total)}</th>
                 </tr>
             </thead>
             <tbody>

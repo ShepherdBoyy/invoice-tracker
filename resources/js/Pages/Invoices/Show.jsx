@@ -4,8 +4,8 @@ export default function Show({ invoice, setSelectedInvoice, setOpenHistoryModal 
 
   return (
     <dialog open className="modal">
-        <div className="modal-box max-w-4xl">
-            <div className="p-6 bg-linear-to-br from-primary/10 to-base-200 border-b border-base-300 rounded-t-xl flex justify-between items-center">
+        <div className="modal-box w-full max-w-4xl mx-4 sm:mx-auto">
+            <div className="p-4 sm:p-6 bg-linear-to-br from-primary/10 to-base-200 border-b border-base-300 rounded-t-xl flex justify-between items-center">
                 <span>History</span>
                 <a
                     href={`/hospitals/${invoice.hospital.id}/invoices/${invoice.id}/view-history`}
@@ -16,14 +16,14 @@ export default function Show({ invoice, setSelectedInvoice, setOpenHistoryModal 
                     <FileText />
                 </a>
             </div>
-            <div className="p-4">
-                <table className="table table-md">
+            <div className="p-3 sm:p-4 overflow-x-auto">
+                <table className="table table-md min-w-[500px]">
                     <thead>
                         <tr>
                             <th className='w-[120px]'>Updated At</th>
-                            <th className='w-[200px]'>Updated By</th>
-                            <th className='w-[800px]'>Remarks</th>
-                            <th>Status</th>
+                            <th className='w-[160px]'>Updated By</th>
+                            <th>Remarks</th>
+                            <th className='w-[90px]'>Status</th>
                         </tr>
                     </thead>
                     <tbody>

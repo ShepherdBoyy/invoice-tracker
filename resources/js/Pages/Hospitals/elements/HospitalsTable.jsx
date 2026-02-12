@@ -53,18 +53,18 @@ export default function HospitalsTable({
     };
 
     return (
-    <div className="rounded-box border border-base-content/5 bg-base-100 pt-5">
-        <table className="table table-fixed">
+    <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 pt-5">
+        <table className="table w-full">
             <thead>
                 <tr>
                     <th className="w-[50px]">#</th>
-                    <th className="w-[150px] cursor-pointer hover:bg-base-200" onClick={() => handleSort("area_name")}>
+                    <th className="cursor-pointer hover:bg-base-200" onClick={() => handleSort("area_name")}>
                         <div className="flex items-center gap-2">
                             Area
                             <SortIcon column="area_name" sortOrder={sortOrder} sortBy={sortBy} />
                         </div>
                     </th>
-                    <th className="w-[150px] cursor-pointer hover:bg-base-200" onClick={() => handleSort("hospital_number")}>
+                    <th className="cursor-pointer hover:bg-base-200" onClick={() => handleSort("hospital_number")}>
                         <div className="flex items-center gap-2">
                             Hospital No.
                             <SortIcon column="hospital_number" sortOrder={sortOrder} sortBy={sortBy} />
@@ -76,20 +76,22 @@ export default function HospitalsTable({
                             <SortIcon column="hospital_name" sortOrder={sortOrder} sortBy={sortBy} />
                         </div>
                     </th>
-                    <th className="w-[230px] cursor-pointer hover:bg-base-200" onClick={() => handleSort("invoices_count")}>
+                    <th className="cursor-pointer hover:bg-base-200" onClick={() => handleSort("invoices_count")}>
                         <div className="flex items-center gap-2">
-                            Number of Invoices
+                            <div className="flex flex-col items-center">
+                                <span>Number of Invoices</span>
+                            </div>
                             <SortIcon column="invoices_count" sortOrder={sortOrder} sortBy={sortBy} />
                         </div>
                     </th>
-                    <th className="w-[250px] cursor-pointer hover:bg-base-200" onClick={() => handleSort("invoices_sum_amount")}>
+                    <th className="cursor-pointer hover:bg-base-200" onClick={() => handleSort("invoices_sum_amount")}>
                         <div className="flex items-center gap-2">
                             Total Amount of Invoices
                             <SortIcon column="invoices_sum_amount" sortOrder={sortOrder} sortBy={sortBy} />
                         </div>
                     </th>
                     {permissions.canManageHospitals && (
-                        <th className="w-[100px] text-right">Action</th>
+                        <th className="text-right">Action</th>
                     )}
                 </tr>
             </thead>
@@ -101,10 +103,7 @@ export default function HospitalsTable({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{
-                            duration: 0.2,
-                            delay: index * 0.05,
-                        }}
+                        transition={{ duration: 0.2, delay: index * 0.05 }}
                         onClick={() => router.get(`/hospitals/${hospital.id}/invoices`,
                             {
                                 hospital_search: filters.search || undefined,

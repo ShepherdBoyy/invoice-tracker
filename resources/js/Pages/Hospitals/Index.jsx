@@ -47,9 +47,9 @@ export default function Index({ hospitals, userAreas, filters, breadcrumbs, proc
     return (
         <Master>
             <div className="bg-base-200">
-                <div className="flex items-center justify-between pb-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4">
                     <Breadcrumbs items={breadcrumbs} />
-                    <div className="flex justify-content-end gap-2">
+                    <div className="flex justify-content-end gap-2 w-full sm:w-auto">
                         <SearchIt search={search} setSearch={setSearch} />
                         <button className="btn btn-outline border border-gray-300 rounded-xl" onClick={() => setShowFilters(!showFilters)}>
                             <ListFilter size={16} />
@@ -57,12 +57,12 @@ export default function Index({ hospitals, userAreas, filters, breadcrumbs, proc
                         </button>
                     </div>
                 </div>
-                <div className="p-6 bg-white rounded-xl shadow-lg ">
-                    <div className="flex items-center justify-between mb-4">
+                <div className="p-4 md:p-6 bg-white rounded-xl shadow-lg">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
                         <span className="text-xl">List of Hospitals with their invoices</span>
                         <div className="flex gap-2">
                             {permissions.canManageHospitals && (
-                                <button className="btn btn-primary rounded-xl flex" onClick={() => setOpenCreateModal(true)}>
+                                <button className="btn btn-primary rounded-xl flex w-full sm:w-auto" onClick={() => setOpenCreateModal(true)}>
                                     <CirclePlus size={18} />
                                     Add Hospital
                                 </button>

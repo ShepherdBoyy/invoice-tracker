@@ -85,13 +85,13 @@ export default function Index({
     return (
         <Master>
             <div className="bg-base-200">
-                <div className="flex items-center gap-2 justify-between pb-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 justify-between pb-4">
                     <Breadcrumbs items={breadcrumbs} />
                     <SearchIt search={search} setSearch={setSearch} />
                 </div>
-                <div className="p-6 bg-white rounded-xl shadow-lg">
-                    <div className="flex justify-between items-center mb-4">
-                        <div className="tabs tabs-box">
+                <div className="p-4 md:p-6 bg-white rounded-xl shadow-lg">
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 mb-4">
+                        <div className="tabs tabs-box w-full lg:w-auto">
                             {processingDays.map((day, index) => (
                                 <button
                                     key={index}
@@ -108,7 +108,7 @@ export default function Index({
                                 </button>
                             ))}
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2 w-full lg:w-auto">
                             {permissions.canUpdateInvoices && (
                                 <button
                                     className="btn btn-outline border border-gray-300 rounded-xl"

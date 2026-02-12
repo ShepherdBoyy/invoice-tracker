@@ -32,7 +32,7 @@ export default function UpdatesTable({ filters, latestUpdates }) {
 
   return (
     <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 pt-5">
-        <table className="table table-fixed">
+        <table className="table table-fixed min-w-[750px]">
             <thead>
                 <tr>
                     <th className="w-[100px] cursor-pointer hover:bg-base-200" onClick={() => handleSort("invoice_number")}>
@@ -41,7 +41,7 @@ export default function UpdatesTable({ filters, latestUpdates }) {
                             <SortIcon column="invoice_number" sortOrder={sortOrder} sortBy={sortBy} />
                         </div>
                     </th>
-                    <th className="w-[300px] cursor-pointer hover:bg-base-200" onClick={() => handleSort("hospital_name")}>
+                    <th className="w-[200px] cursor-pointer hover:bg-base-200" onClick={() => handleSort("hospital_name")}>
                         <div className="flex items-center gap-2">
                             Hospital Name
                             <SortIcon column="hospital_name" sortOrder={sortOrder} sortBy={sortBy} />

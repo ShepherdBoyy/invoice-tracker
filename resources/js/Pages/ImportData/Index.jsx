@@ -108,17 +108,15 @@ export default function Index() {
                     <span className="text-2xl">Import New Data</span>
                 </div>
                 <div className="p-6 bg-white rounded-xl shadow-lg flex flex-col gap-6">
-                    <div className="flex gap-5">
+                    <div className="flex flex-col lg:flex-row gap-5">
                         <ExcelFormat />
 
-                        <div className="w-1/2 mx-auto">
+                        <div className="w-full lg:w-1/2 mx-auto">
                             <span className="text-md block text-center font-semibold mb-3">Upload</span>
                             <div
-                                className={`relative bg-white border-2 ${dragActive
-                                        ? "border-blue-500"
-                                        : "border-gray-300"
-                                    } border-dashed rounded-md p-4 min-h-[300px] flex flex-col items-center justify-center transition-colors`
-                                }
+                                className={`relative bg-white border-2
+                                    ${dragActive ? "border-blue-500" : "border-gray-300"}
+                                    border-dashed rounded-md p-4 min-h-[300px] flex flex-col items-center justify-center transition-colors`}
                                 onDragEnter={handleDragIn}
                                 onDragLeave={handleDragOut}
                                 onDragOver={handleDrag}
@@ -134,10 +132,7 @@ export default function Index() {
                                     <div className="flex flex-col items-center gap-4">
                                         <div
                                             className="radial-progress text-blue-600"
-                                            style={{
-                                                "--value": progress || 0,
-                                                "--size": "5rem",
-                                            }}
+                                            style={{ "--value": progress || 0, "--size": "5rem" }}
                                             role="progressbar"
                                         >
                                             {Math.round(progress) || 0}%
