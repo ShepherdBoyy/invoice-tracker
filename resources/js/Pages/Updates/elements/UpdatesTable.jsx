@@ -32,35 +32,35 @@ export default function UpdatesTable({ filters, latestUpdates }) {
 
   return (
     <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 pt-5">
-        <table className="table table-fixed min-w-[750px]">
+        <table className="table w-full">
             <thead>
                 <tr>
-                    <th className="w-[100px] cursor-pointer hover:bg-base-200" onClick={() => handleSort("invoice_number")}>
+                    <th className="cursor-pointer hover:bg-base-200" onClick={() => handleSort("invoice_number")}>
                         <div className="flex items-center gap-2">
                             Invoice No.
                             <SortIcon column="invoice_number" sortOrder={sortOrder} sortBy={sortBy} />
                         </div>
                     </th>
-                    <th className="w-[200px] cursor-pointer hover:bg-base-200" onClick={() => handleSort("hospital_name")}>
+                    <th className="cursor-pointer hover:bg-base-200" onClick={() => handleSort("hospital_name")}>
                         <div className="flex items-center gap-2">
                             Hospital Name
                             <SortIcon column="hospital_name" sortOrder={sortOrder} sortBy={sortBy} />
                         </div>
                     </th>
-                    <th className="w-2/6">Remarks</th>
-                    <th className="w-[140px] cursor-pointer hover:bg-base-200" onClick={() => handleSort("updated_by")}>
+                    <th>Remarks</th>
+                    <th className="cursor-pointer hover:bg-base-200" onClick={() => handleSort("updated_by")}>
                         <div className="flex items-center gap-2">
                             Updated by
                             <SortIcon column="updated_by" sortOrder={sortOrder} sortBy={sortBy} />
                         </div>
                     </th>
-                    <th className="w-[130px] cursor-pointer hover:bg-base-200" onClick={() => handleSort("processing_days")}>
+                    <th className="cursor-pointer hover:bg-base-200" onClick={() => handleSort("processing_days")}>
                         <div className="flex items-center gap-2">
                             Processing Days
                             <SortIcon column="processing_days" sortOrder={sortOrder} sortBy={sortBy} />
                         </div>
                     </th>
-                    <th className="w-[100px]">Status</th>
+                    <th>Status</th>
                 </tr>
             </thead>
 
@@ -94,7 +94,7 @@ export default function UpdatesTable({ filters, latestUpdates }) {
                                 {update.invoice.hospital.hospital_name}
                             </span>
                         </td>
-                        <td className="truncate">{update.remarks}</td>
+                        <td>{update.remarks}</td>
                         <td>{update.updater.name}</td>
                         <td>{update.invoice.processing_days}</td>
                         <td>
