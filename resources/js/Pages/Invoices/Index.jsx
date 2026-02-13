@@ -34,15 +34,6 @@ export default function Index({
     const { permissions } = usePage().props;
     const debouncedSearch = useDebounce(search, 300);
     
-    const processingDays = [
-        { label: "All", count: processingCounts?.["All"] || 0 },
-        { label: "Current", count: processingCounts?.["Current"] || 0 },
-        { label: "30 days", count: processingCounts?.["30 days"] || 0 },
-        { label: "31-60 days", count: processingCounts?.["31-60 days"] || 0 },
-        { label: "61-90 days", count: processingCounts?.["61-90 days"] || 0 },
-        { label: "91-over", count: processingCounts?.["91-over"] || 0 },
-    ];
-    
     useEffect(() => {
         const allParams = { ...hospitalFilters };
 
@@ -92,19 +83,19 @@ export default function Index({
                 <div className="p-4 md:p-6 bg-white rounded-xl shadow-lg">
                     <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 mb-4">
                         <div className="tabs tabs-box w-full lg:w-auto">
-                            {processingDays.map((day, index) => (
+                            {Object.entries(processingCounts).map(([label, data]) => (
                                 <button
-                                    key={index}
+                                    key={label}
                                     type="button"
                                     className={`px-4 border-b-0 rounded-2xl text-black tab gap-2 ${
-                                        active === day.label
+                                        active === label
                                             ? "tab-active font-semibold"
                                             : "hover:bg-white hover:text-black"
                                     }`}
-                                    onClick={() => handleTabClick(day.label)}
+                                    onClick={() => handleTabClick(label)}
                                 >
-                                    {day.label}
-                                    <div className="badge badge-sm bg-blue-200 border-none">{day.count}</div>
+                                    {label}
+                                    <div className="badge badge-sm bg-blue-200 border-none">{data.count}</div>
                                 </button>
                             ))}
                         </div>
@@ -142,6 +133,8 @@ export default function Index({
                         invoices={invoices}
                         setShowToast={setShowToast}
                         setSuccessMessage={setSuccessMessage}
+                        processingCounts={processingCounts}
+                        active={active}
                     />
 
                     <Pagination data={invoices} />

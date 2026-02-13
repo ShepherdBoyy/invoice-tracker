@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class InvoiceController extends Controller
@@ -71,14 +72,7 @@ class InvoiceController extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
-        $processingCounts = [
-            "All" => (clone $baseQuery)->count(),
-            "Current" => (clone $baseQuery)->having("processing_days", ">", 0)->whereNull("date_closed")->count(),
-            "30 days" => (clone $baseQuery)->havingBetween("processing_days", [-30, -1])->whereNull("date_closed")->count(),
-            "31-60 days" => (clone $baseQuery)->havingBetween("processing_days", [-60, -31])->whereNull("date_closed")->count(),
-            "61-90 days" => (clone $baseQuery)->havingBetween("processing_days", [-90, -61])->whereNull("date_closed")->count(),
-            "91-over" => (clone $baseQuery)->having("processing_days", "<=", -91)->whereNull("date_closed")->count(),
-        ];
+        $processingCounts = $this->getProcessingCounts($baseQuery);
 
         // Convert back the processing days label to original
         $processingLabelMap = [
@@ -109,6 +103,73 @@ class InvoiceController extends Controller
                     ["label" => $hospital?->hospital_name, "url" => null]
                 ]
             ]);
+    }
+
+    private function getProcessingCounts($baseQuery)
+    {
+        $subQuery = (clone $baseQuery)
+            ->select("invoices.*")
+            ->selectRaw("
+                CASE
+                    WHEN date_closed is NOT NULL
+                        THEN DATEDIFF(due_date, date_closed)
+                    ELSE
+                        DATEDIFF(due_date, CURDATE())
+                END as processing_days
+            ");
+        
+        $sql = $subQuery->toSql();
+        $bindings = $subQuery->getBindings();
+
+        $results = DB::table(DB::raw("({$sql}) as sub"))
+            ->addBinding($bindings, "where")
+            ->selectRaw("
+                COUNT(*) as total_count,
+                SUM(amount) as total_amount,
+
+                SUM(CASE WHEN processing_days > 0 AND date_closed IS NULL THEN 1 ELSE 0 END) as current_count,
+                SUM(CASE WHEN processing_days > 0 AND date_closed IS NULL THEN amount ELSE 0 END) as current_amount,
+
+                SUM(CASE WHEN processing_days BETWEEN -30 AND -1 AND date_closed IS NULL THEN 1 ELSE 0 END) as thirty_days_count,
+                SUM(CASE WHEN processing_days BETWEEN -30 AND -1 AND date_closed IS NULL THEN amount ELSE 0 END) as thirty_days_amount,
+
+                SUM(CASE WHEN processing_days BETWEEN -60 AND -31 AND date_closed IS NULL THEN 1 ELSE 0 END) as sixty_days_count,
+                SUM(CASE WHEN processing_days BETWEEN -60 AND -31 AND date_closed IS NULL THEN amount ELSE 0 END) as sixty_days_amount,
+
+                SUM(CASE WHEN processing_days BETWEEN -90 AND -61 AND date_closed IS NULL THEN 1 ELSE 0 END) as ninety_days_count,
+                SUM(CASE WHEN processing_days BETWEEN -90 AND -61 AND date_closed IS NULL THEN amount ELSE 0 END) as ninety_days_amount,
+
+                SUM(CASE WHEN processing_days <= -91 AND date_closed IS NULL THEN 1 ELSE 0 END) as over_ninety_count,
+                SUM(CASE WHEN processing_days <= -91 AND date_closed IS NULL THEN amount ELSE 0 END) as over_ninety_amount
+            ")
+            ->first();
+        
+        return [
+            "All" => [
+                "count" => $results->total_count ?? 0,
+                "total_amount" => $results->total_amount ?? 0,
+            ],
+            "Current" => [
+                "count" => $results->current_count ?? 0,
+                "total_amount" => $results->current_amount ?? 0,
+            ],
+            "30 days" => [
+                "count" => $results->thirty_days_count ?? 0,
+                "total_amount" => $results->thirty_days_amount ?? 0,
+            ],
+            "31-60 days" => [
+                "count" => $results->sixty_days_count ?? 0,
+                "total_amount" => $results->sixty_days_amount ?? 0,
+            ],
+            "61-90 days" => [
+                "count" => $results->ninety_days_count ?? 0,
+                "total_amount" => $results->ninety_days_amount ?? 0,
+            ],
+            "91 over" => [
+                "count" => $results->over_ninety_count ?? 0,
+                "total_amount" => $results->over_ninety_amount ?? 0
+            ]
+        ];
     }
 
     public function store(StoreInvoiceRequest $request)

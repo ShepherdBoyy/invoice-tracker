@@ -5,7 +5,17 @@ import Edit from "../Edit";
 import { useState } from "react";
 import Show from "../Show";
 
-export default function InvoicesTable({ isSelectMode, setIsSelectMode, selectedIds, setSelectedIds, invoices, setShowToast, setSuccessMessage }) {
+export default function InvoicesTable({
+    isSelectMode,
+    setIsSelectMode,
+    selectedIds,
+    setSelectedIds,
+    invoices, 
+    setShowToast,
+    setSuccessMessage,
+    processingCounts,
+    active
+}) {
     const [selectedInvoice, setSelectedInvoice] = useState("");
     const [openEditInvoiceModal, setOpenEditInvoiceModal] = useState(false);
     const [openHistoryModal, setOpenHistoryModal] = useState(false);
@@ -88,7 +98,7 @@ export default function InvoicesTable({ isSelectMode, setIsSelectMode, selectedI
                         <td>{invoice.invoice_number}</td>
                         <td>{new Date(invoice.document_date).toLocaleDateString()}</td>
                         <td>{new Date(invoice.due_date).toLocaleDateString()}</td>
-                        <td>₱{parseFloat(invoice.amount,).toLocaleString("en-PH", {minimumFractionDigits: 2})}</td>
+                        <td>₱{parseFloat(invoice.amount).toLocaleString("en-PH", {minimumFractionDigits: 2})}</td>
                         <td>{invoice.processing_days}</td>
                         <td>
                             <span className={`badge badge-md text-sm rounded-full   ${
@@ -122,6 +132,15 @@ export default function InvoicesTable({ isSelectMode, setIsSelectMode, selectedI
                     </motion.tr>
                 ))}
             </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td className="text-right">Total:</td>
+                    <td>₱{parseFloat(processingCounts[active].total_amount).toLocaleString("en-PH", {minimumFractionDigits: 2})}</td>
+                </tr>
+            </tfoot>
         </table>
 
         {openEditInvoiceModal && (
