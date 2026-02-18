@@ -14,8 +14,6 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-use function Symfony\Component\Clock\now;
-
 class DataImport implements ToCollection, WithHeadingRow
 {
     public function collection(Collection $rows)
@@ -153,28 +151,6 @@ class DataImport implements ToCollection, WithHeadingRow
                 }
 
                 foreach (array_chunk($historiesToCreate, 500) as $chunk) {
-                    InvoiceHistory::insert($chunk);
-                }
-            }
-
-            if (!empty($invoicesToUpdate)) {
-                $updatedInvoices = Invoice::whereIn("invoice_number", array_keys($invoicesToUpdate))
-                    ->get()
-                    ->keyBy("invoice_number");
-
-                $updateHistoriesToCreate = [];
-                foreach ($invoicesToUpdate as $invoiceNumber => $updateData) {
-                    $updateHistoriesToCreate[] = [
-                        "invoice_id" => $updatedInvoices[$invoiceNumber]->id,
-                        "updated_by" => Auth::id(),
-                        "remarks" => "Invoice has been updated from the imported Excel file",
-                        "status" => $this->determineStatus($updateData["due_date"], $updateData["date_closed"]),
-                        "updated_at" => now(),
-                        "created_at" => now()
-                    ];
-                }
-
-                foreach (array_chunk($updateHistoriesToCreate, 500) as $chunk) {
                     InvoiceHistory::insert($chunk);
                 }
             }
