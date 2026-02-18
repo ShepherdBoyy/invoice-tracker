@@ -11,11 +11,18 @@ export default function Create({ setOpenCreateModal, setShowToast, setSuccessMes
 
     const handleAreaChange = (areaId) => {
         setSelectedAreas((prev) => {
-            if (prev.includes(areaId)) {
-                return prev.filter((id) => id !== areaId);
-            } else {
-                return [...prev, areaId];
+            const updated = prev.includes(areaId)
+                ? prev.filter((id) => id !== areaId)
+                : [...prev, areaId];
+
+            if (updated.length === areas.length) {
+                if(!selectedPermissions.includes(1)) {
+                    handlePermissionChange(1);
+                }
+                return [];
             }
+            
+            return updated;
         });
     };
 
