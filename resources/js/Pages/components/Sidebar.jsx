@@ -4,13 +4,21 @@ import {
     Hospital,
     ArrowRightLeft,
     CircleUserRound,
-    TrendingUp
+    TrendingUp,
+    // House
 } from "lucide-react";
 
 export default function Sidebar() {
     const { url, props } = usePage();
 
     const navItems = [
+        // {
+        //     id: "home",
+        //     label: "Home",
+        //     href: "/",
+        //     icon: House,
+        //     canView: true,
+        // },
         {
             id: "updates",
             label: "Updates",
@@ -38,13 +46,13 @@ export default function Sidebar() {
             href: "/user-management",
             icon: CircleUserRound,
             canView: props.permissions.canViewUsers
-        },
+        }
     ];
 
     const visibleNavItems = navItems.filter((item) => item.canView);
 
     return (
-        <div className="drawer-side z-40">
+        <div className="drawer-side z-40 overflow-visible">
             <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay"></label>
             <div className="flex min-h-full flex-col items-start is-drawer-close:w-14 is-drawer-open:w-74 w-74 lg:w-auto border-r border-base-content/5 bg-base-100">
                 <ul className="menu w-full grow gap-y-2">
@@ -57,15 +65,18 @@ export default function Sidebar() {
 
                     {visibleNavItems.length > 0 ? (
                         visibleNavItems.map((item) => {
-                            const isActive = url.startsWith(item.href);
+                            const isActive = item.href === "/" ? url === "/" : url.startsWith(item.href);
                             const Icon = item.icon;
 
                             return (
                                 <li key={item.id}>
                                     <Link
                                         href={item.href}
-                                        className={`is-drawer-close:tooltip is-drawer-close:tooltip-right rounded-lg transition-colors duration-300 ease-in-out 
-                                            ${isActive ? "bg-linear-to-br from-primary/40 to-primary/20 text-black"
+                                        className={`rounded-lg transition-colors duration-300 ease-in-out
+                                            is-drawer-close:tooltip
+                                            is-drawer-close:tooltip-right
+                                            ${isActive
+                                                ? "bg-linear-to-br from-primary/40 to-primary/20 text-black"
                                                 : "hover:bg-gray-100 hover:text-gray-900 text-gray-400"
                                             }`}
                                         data-tip={item.label}
