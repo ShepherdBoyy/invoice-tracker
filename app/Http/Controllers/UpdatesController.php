@@ -29,6 +29,7 @@ class UpdatesController extends Controller
         $userAreas = Gate::allows("viewAll", Hospital::class) ? Area::all() : $user->areas;
 
         $users = User::query()
+            ->where("username", "!=", "developer")
             ->when(!Gate::allows("viewAll", Hospital::class), function ($query) use ($user) {
                 $userAreaIds = $user->areas->pluck("id");
                 $query->whereHas("areas", function ($q) use ($userAreaIds) {
