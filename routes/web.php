@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+// use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UpdatesController;
 use App\Http\Controllers\HospitalController;
 use App\Http\Controllers\ImportDataController;
@@ -16,6 +17,8 @@ Route::middleware(["guest"])->group(function () {
 });
 
 Route::middleware(["auth"])->group(function () {
+    // Route::get('/', [HomeController::class, "index"]);
+
     Route::get("/updates", [UpdatesController::class, "index"]);
 
     Route::prefix("hospitals")
