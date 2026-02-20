@@ -49,6 +49,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Area::class, "user_areas");
     }
 
+    public function importHistories()
+    {
+        return $this->hasMany(ImportHistory::class);
+    }
+
     public function hasPermission(string $permissionName)
     {
         return $this->permissions()->where("name", $permissionName)->exists();
