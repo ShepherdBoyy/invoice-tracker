@@ -1,14 +1,16 @@
-import React from 'react'
+import { History } from 'lucide-react';
 
 export default function ImportHistory({ importHistory }) {
-    console.log(importHistory);
 
   return (
     <div className="p-6 bg-white rounded-xl shadow-lg flex flex-col gap-6 mt-4">
-        <p className="font-semibold text-lg mb-2">Import History</p>
-        <div className="max-h-96 overflow-y-auto overflow-x-auto">
-            <table className="w-full min-w-[500px] text-sm">
-                <thead className="rounded-lg">
+        <div className='flex gap-2 items-center'>
+            <History size={25} />
+            <p className="font-semibold text-lg">Import History</p>
+        </div>
+        <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 pt-5">
+            <table className="table w-full">
+                <thead>
                     <tr>
                         <th className="px-4 py-2 text-left font-semibold border-b border-red-200">Date</th>
                         <th className="px-4 py-2 text-left font-semibold border-b border-red-200">Time</th>
@@ -24,7 +26,7 @@ export default function ImportHistory({ importHistory }) {
                             <td>{new Date(history.created_at).toLocaleTimeString()}</td>
                             <td>{history.importer.name}</td>
                             <td>{history.file_name}</td>
-                            <td>{history.total_rows}</td>
+                            <td>{(history.total_rows).toLocaleString()}</td>
                         </tr>
                     ))}
                 </tbody>
