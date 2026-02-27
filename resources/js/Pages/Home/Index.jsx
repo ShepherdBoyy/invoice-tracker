@@ -10,7 +10,6 @@ import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContaine
 import { Link } from "@inertiajs/react";
 
 export default function Index({ kpi, agingBreakdown, topAreas, topHospitals }) {
-
     console.log(topHospitals);
 
     const AgingTooltip = ({ active, payload }) => {
@@ -249,14 +248,12 @@ export default function Index({ kpi, agingBreakdown, topAreas, topHospitals }) {
                                     <th>Area</th>
                                     <th className="text-right">Outstanding</th>
                                     <th className="text-center">Invoices</th>
-                                    <th className="text-center">Overdue</th>
-                                    <th className="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {topHospitals.map((hospital) => (
                                     <tr key={hospital.id}>
-                                        <td className="font-bold text-center text-md">
+                                        <td className="font-bold text-center text-lg">
                                             {getMedalIcon(hospital.rank)}
                                         </td>
                                         <td>

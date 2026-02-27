@@ -180,9 +180,7 @@ class HomeController extends Controller
             ->join("areas", "hospitals.area_id", "=", "areas.id")
             ->selectRaw("
                 SUM(invoices.amount) as outstanding_amount,
-                COUNT(invoices.id) as invoice_count,
-                SUM(CASE WHEN invoices.due_date < CURDATE() THEN 1 ELSE 0 END) as overdue_count,
-                MAX(DATEDIFF(CURDATE(), invoices.due_date)) as oldest_overdue_days
+                COUNT(invoices.id) as invoice_count
             ")
             ->join("invoices", "hospitals.id", "=", "invoices.hospital_id")
             ->whereIn("invoices.id", $invoiceIds)
@@ -192,14 +190,14 @@ class HomeController extends Controller
             ->get();
         
         $areaColors = [
-            '#8b5cf6', // purple
-            '#3b82f6', // blue
-            '#10b981', // green
-            '#f59e0b', // amber
-            '#ef4444', // red
-            '#ec4899', // pink
-            '#14b8a6', // teal
-            '#f97316', // orange
+            '#8b5cf6',
+            '#3b82f6',
+            '#10b981',
+            '#f59e0b',
+            '#ef4444',
+            '#ec4899',
+            '#14b8a6',
+            '#f97316',
         ];
 
         $areas = $hospitals->pluck("area_name")->unique()->values();
@@ -209,12 +207,6 @@ class HomeController extends Controller
         }
 
         return $hospitals->map(function ($hospital, $index) use ($colorMap) {
-            $overduePercentage = $hospital->invoice_count > 0
-                ? round(($hospital->overdue_count / $hospital->invoice_count) * 100, 0)
-                : 0;
-        
-            $status = $overduePercentage > 70 ? "critical" : ($overduePercentage > 30 ? "warning" : "ok");
-
             return [
                 "rank" => $index + 1,
                 "id" => $hospital->id,
@@ -224,10 +216,6 @@ class HomeController extends Controller
                 "area_color" => $colorMap[$hospital->area_name] ?? "#6b7280",
                 "outstanding_amount" => $hospital->outstanding_amount,
                 "invoice_count" => $hospital->invoice_count,
-                "overdue_count" => $hospital->overdue_count,
-                "overdue_percentage" => $overduePercentage,
-                "oldest_overdue_days" => $hospital->oldest_overdue_days ?? 0,
-                "status" => $status
             ];
         })->toArray();
     }
