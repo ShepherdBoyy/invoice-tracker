@@ -69,7 +69,7 @@ export default function Index({ hospitals, userAreas, filters, breadcrumbs, proc
 
                 <div className="flex justify-evenly gap-4 mb-6">
                     {statItems.map(({ label, key, style }) => (
-                        <div className={`stats shadow flex-1 ${style}`}>
+                        <div className={`stats shadow flex-1 ${style}`} key={label}>
                             <div className="stat">
                                 <div className="stat-title mb-6 text-md">{label}</div>
                                 <div className="stat-value flex gap-2 items-center text-xl">
