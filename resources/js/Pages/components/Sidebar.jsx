@@ -66,7 +66,8 @@ export default function Sidebar() {
 
                     {visibleNavItems.length > 0 ? (
                         visibleNavItems.map((item) => {
-                            const isActive = item.href === "/" ? url === "/" : url.startsWith(item.href);
+                            const cleanUrl = url.split("?")[0];
+                            const isActive = item.href === "/" ? cleanUrl === "/" : url.startsWith(item.href);
                             const Icon = item.icon;
 
                             return (
