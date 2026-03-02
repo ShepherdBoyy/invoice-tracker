@@ -13,7 +13,7 @@ use Inertia\Inertia;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $baseQuery = Invoice::query();
@@ -56,6 +56,11 @@ class HomeController extends Controller
 
         $topHospitals = $this->getTopHospitals($baseQuery);
 
+        $availableYears = $this->getAvailableYears($baseQuery);
+        $currentYear = $request->input('year', date('Y'));
+        $monthlyOutstanding = $this->getMonthlyOutstanding($baseQuery, $currentYear);
+        $invoiceVolume = $this->getInvoiceVolume($baseQuery);
+
         return Inertia::render("Home/Index", [
             "kpi" => [
                 "totalOutstanding" => $totalOutstanding,
@@ -68,7 +73,13 @@ class HomeController extends Controller
             ],
             "agingBreakdown" => $agingBreakdown,
             "topAreas" => $topAreas,
-            "topHospitals" => $topHospitals
+            "topHospitals" => $topHospitals,
+            "monthlyOutstanding" => [
+                "data" => $monthlyOutstanding,
+                "availableYears" => $availableYears,
+                "currentYear" => $currentYear
+            ],
+            "invoiceVolume" => $invoiceVolume
         ]);
     }
 
@@ -190,14 +201,14 @@ class HomeController extends Controller
             ->get();
         
         $areaColors = [
-            '#8b5cf6',
-            '#3b82f6',
-            '#10b981',
-            '#f59e0b',
-            '#ef4444',
-            '#ec4899',
-            '#14b8a6',
-            '#f97316',
+            '#AEEA94',
+            '#80A1BA',
+            '#B4DEBD',
+            '#91C4C3',
+            '#DDEB9D',
+            '#A0C878',
+            '#27667B',
+            '#143D60',
         ];
 
         $areas = $hospitals->pluck("area_name")->unique()->values();
@@ -216,6 +227,62 @@ class HomeController extends Controller
                 "area_color" => $colorMap[$hospital->area_name] ?? "#6b7280",
                 "outstanding_amount" => $hospital->outstanding_amount,
                 "invoice_count" => $hospital->invoice_count,
+            ];
+        })->toArray();
+    }
+
+    private function getAvailableYears($baseQuery)
+    {
+        return (clone $baseQuery)
+            ->selectRaw("DISTINCT YEAR(document_date) as year")
+            ->orderByDesc("year")
+            ->pluck("year")
+            ->toArray();
+    }
+
+    private function getMonthlyOutstanding($baseQuery, $year)
+    {
+        $months = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $startDate = "{$year}-" . str_pad($month, 2, "0", STR_PAD_LEFT) . "-01";
+            $endDate = date("Y-m-t", strtotime($startDate));
+
+            $outstanding = (clone $baseQuery)
+                ->whereBetween("document_date", [$startDate, $endDate])
+                ->whereNull("date_closed")
+                ->sum("amount");
+
+            $months[] = [
+                "month" => date("M", strtotime($startDate)),
+                "month_number" => $month,
+                "amount" => $outstanding
+            ];
+        }
+
+        return $months;
+    }
+
+    private function getInvoiceVolume($baseQuery)
+    {
+        $sixMonthsAgo = now()->subMonths(6)->startOfMonth();
+
+        $results = (clone $baseQuery)
+            ->selectRaw("
+                DATE_FORMAT(document_date, '%b') as month,
+                MONTH(document_date) as month_number,
+                YEAR(document_date) as year,
+                COUNT(*) as count
+            ")
+            ->where("document_date", ">=", $sixMonthsAgo)
+            ->groupBy("year", "month_number", "month")
+            ->orderBy("year")
+            ->orderBy("month_number")
+            ->get();
+
+        return $results->map(function($item) {
+            return [
+                "month" => $item->month,
+                "count" => $item->count
             ];
         })->toArray();
     }
