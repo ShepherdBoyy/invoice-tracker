@@ -1,16 +1,34 @@
 import {
     CalendarX2,
+    ChevronDown,
     DollarSign,
     ExternalLink,
     FileText,
     TrendingUp,
 } from "lucide-react";
 import Master from "../components/Master";
-import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Link } from "@inertiajs/react";
+import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Link, router } from "@inertiajs/react";
+import { useState } from "react";
 
-export default function Index({ kpi, agingBreakdown, topAreas, topHospitals }) {
-    console.log(topHospitals);
+export default function Index({
+    kpi,
+    agingBreakdown,
+    topAreas,
+    topHospitals,
+    monthlyOutstanding,
+    invoiceVolume
+}) {
+    console.log(monthlyOutstanding);
+    const [selectedYear, setSelectedYear] = useState(monthlyOutstanding.currentYear);
+
+    const handleYearChange = (year) => {
+        setSelectedYear(year);
+        router.get("/",
+            { year },
+            { preserveScroll: true, preserveState: true }
+        )
+    }
 
     const AgingTooltip = ({ active, payload }) => {
         if (active && payload && payload.length) {
@@ -51,13 +69,25 @@ export default function Index({ kpi, agingBreakdown, topAreas, topHospitals }) {
         }
     };
 
-    const getMedalIcon = (rank) => {
-        switch(rank) {
-            case 1: return '🥇';
-            case 2: return '🥈';
-            case 3: return '🥉';
-            default: return rank;
+    const OutstandingTooltip = ({ active, payload }) => {
+        if (active && payload && payload.length) {
+            const data = payload[0].payload;
+            console.log(data);
+            return (
+                <div className="bg-base-100 p-4 rounded-lg shadow-xl border border-base-300">
+                    <p className="font-semibold mb-2">{data.month}</p>
+                    <p className="text-sm">
+                        {Intl.NumberFormat("en-PH", {
+                            style: "currency",
+                            currency: "PHP",
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2,
+                        }).format(data.amount || 0)}
+                    </p>
+                </div>
+            );
         }
+        return null;
     };
 
   return (
@@ -198,7 +228,6 @@ export default function Index({ kpi, agingBreakdown, topAreas, topHospitals }) {
                                     opacity={0.6}
                                     radius={[8, 8, 0, 0]}
                                 />
-                                
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -252,9 +281,20 @@ export default function Index({ kpi, agingBreakdown, topAreas, topHospitals }) {
                             </thead>
                             <tbody>
                                 {topHospitals.map((hospital) => (
-                                    <tr key={hospital.id}>
+                                    <tr
+                                        key={hospital.id}
+                                        className="hover:bg-base-300 cursor-pointer transition-colors"
+                                        onClick={() => router.get(`/hospitals/${hospital.id}/invoices`)}
+                                    >
                                         <td className="font-bold text-center text-lg">
-                                            {getMedalIcon(hospital.rank)}
+                                            {(() => {
+                                                switch(hospital.rank) {
+                                                    case 1: return '🥇';
+                                                    case 2: return '🥈';
+                                                    case 3: return '🥉';
+                                                    default: return hospital.rank;
+                                                }
+                                            })()}
                                         </td>
                                         <td>
                                             <div className="flex items-center gap-3">
@@ -278,7 +318,7 @@ export default function Index({ kpi, agingBreakdown, topAreas, topHospitals }) {
                                             </div>
                                         </td>
                                         <td>
-                                            <div className="badge badge-sm text-white" style={{ backgroundColor: hospital.area_color }}>
+                                            <div className="badge badge-sm" style={{ backgroundColor: hospital.area_color }}>
                                                 {hospital.area_name}
                                             </div>
                                         </td>
@@ -297,6 +337,56 @@ export default function Index({ kpi, agingBreakdown, topAreas, topHospitals }) {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="card bg-base-100 shadow-xl">
+                    <div className="card-body">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="card-title">Monthly Outstanding Trend</h2>
+                            
+                            <div className="dropdown dropdown-end">
+                                <label tabIndex={0} className="btn btn-sm btn-ghost gap-2">
+                                    {selectedYear}
+                                    <ChevronDown className="w-4 h-4" />
+                                </label>
+                                <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-32">
+                                    {monthlyOutstanding.availableYears.map((year) => (
+                                        <li key={year}>
+                                            <a className={selectedYear === year ? 'active' : ''} onClick={() => handleYearChange(year)}>
+                                                {year}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <ResponsiveContainer width="100%" height={300}>
+                            <LineChart
+                                data={monthlyOutstanding.data.map(item => ({
+                                    ...item,
+                                    amount: item.amount === 0 ? null : item.amount
+                                }))}
+                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" opacity={0.5} />
+                                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                                <YAxis tickFormatter={(value) => `₱${(value / 1000000).toFixed(1)}M`} tick={{ fontSize: 12 }} />
+                                <Tooltip content={<OutstandingTooltip />} />
+                                <Line
+                                    type="monotone"
+                                    dataKey="amount"
+                                    stroke="#8b5cf6"
+                                    strokeWidth={3}
+                                    activeDot={{ r: 6 }}
+                                    fill="url(#colorOutstanding)"
+                                    connectNulls
+                                />
+                            </LineChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
             </div>
