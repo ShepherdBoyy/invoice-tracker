@@ -24,7 +24,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended("/updates");
+        return redirect()->intended("/");
     }
 
     public function update(UpdateProfileRequest $request, string $id)
